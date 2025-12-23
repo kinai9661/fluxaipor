@@ -1,4 +1,4 @@
-name = "flux-ai-pro"
+name = "fluxaipor"
 compatibility_date = "2025-12-10"
 main = "worker.js"
 
