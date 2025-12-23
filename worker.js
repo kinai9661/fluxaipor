@@ -219,7 +219,6 @@ const CONFIG = {
     STORAGE_KEY: "flux_ai_history"
   }
 };
-
 // 🚀 API 優化配置
 const API_OPTIMIZATION = {
   RATE_LIMIT: {
@@ -422,6 +421,7 @@ async function translateToEnglish(text, env) {
         return { text: text, translated: false, error: error.message };
     }
 }
+
 class PromptAnalyzer {
     static analyzeComplexity(prompt) {
         const complexKeywords = ['detailed', 'intricate', 'complex', 'elaborate', 'realistic', 'photorealistic', 'hyperrealistic', 'architecture', 'cityscape', 'landscape', 'portrait', 'face', 'eyes', 'hair', 'texture', 'material', 'fabric', 'skin', 'lighting', 'shadows', 'reflections', 'fine details', 'high detail', 'ultra detailed', '4k', '8k', 'uhd'];
@@ -1216,152 +1216,6 @@ function handleStylesRequest() {
         headers: corsHeaders({ 'Content-Type': 'application/json' }) 
     });
 }
-
-export default {
-    async fetch(request, env, ctx) {
-        const url = new URL(request.url);
-        const startTime = Date.now();
-        const clientIP = getClientIP(request);
-        
-        console.log("=== API Request ===");
-        console.log("IP:", clientIP);
-        console.log("Path:", url.pathname);
-        console.log("Method:", request.method);
-        console.log("Workers AI:", !!env.AI);
-        console.log("==================");
-        
-        if (request.method === 'OPTIONS') {
-            return new Response(null, { status: 204, headers: corsHeaders() });
-        }
-        
-        if (API_OPTIMIZATION.RATE_LIMIT.enabled && url.pathname.startsWith('/v1/')) {
-            const rateLimitResult = await rateLimiter.check(clientIP);
-            if (!rateLimitResult.allowed) {
-                perfMonitor.recordRequest(false, Date.now() - startTime, rateLimitResult.reason);
-                return new Response(JSON.stringify({
-                    error: {
-                        message: rateLimitResult.reason,
-                        code: 'RATE_LIMIT_EXCEEDED',
-                        limit: rateLimitResult.limit,
-                        current: rateLimitResult.current,
-                        retryAfter: rateLimitResult.retryAfter,
-                        blockedUntil: rateLimitResult.blockedUntil
-                    }
-                }), {
-                    status: 429,
-                    headers: corsHeaders({
-                        'Content-Type': 'application/json',
-                        'Retry-After': rateLimitResult.retryAfter || '60',
-                        'X-RateLimit-Limit': API_OPTIMIZATION.RATE_LIMIT.max_requests_per_minute.toString(),
-                        'X-RateLimit-Remaining': '0'
-                    })
-                });
-            }
-            ctx.rateLimitHeaders = {
-                'X-RateLimit-Limit-Minute': API_OPTIMIZATION.RATE_LIMIT.max_requests_per_minute.toString(),
-                'X-RateLimit-Limit-Hour': API_OPTIMIZATION.RATE_LIMIT.max_requests_per_hour.toString(),
-                'X-RateLimit-Remaining-Minute': rateLimitResult.remaining?.perMinute.toString() || '0',
-                'X-RateLimit-Remaining-Hour': rateLimitResult.remaining?.perHour.toString() || '0'
-            };
-        }
-        
-        try {
-            let response;
-            if (url.pathname === '/') {
-                response = handleUI(request);
-            } else if (url.pathname === '/v1/chat/completions') {
-                response = await handleChatCompletions(request, env, ctx);
-            } else if (url.pathname === '/v1/images/generations') {
-                response = await handleImageGenerations(request, env, ctx);
-            } else if (url.pathname === '/v1/models') {
-                response = handleModelsRequest();
-            } else if (url.pathname === '/v1/providers') {
-                response = handleProvidersRequest();
-            } else if (url.pathname === '/v1/styles') {
-                response = handleStylesRequest();
-            } else if (url.pathname === '/health') {
-                response = new Response(JSON.stringify({
-                    status: 'ok',
-                    version: CONFIG.PROJECT_VERSION,
-                    timestamp: new Date().toISOString(),
-                    workers_ai: !!env.AI,
-                    performance: perfMonitor.getStats(),
-                    cache: {
-                        enabled: API_OPTIMIZATION.CACHE.enabled,
-                        size: apiCache.cache.size,
-                        max_size: API_OPTIMIZATION.CACHE.max_size
-                    },
-                    rate_limit: {
-                        enabled: API_OPTIMIZATION.RATE_LIMIT.enabled,
-                        active_ips: rateLimiter.requests.size,
-                        blacklisted_ips: rateLimiter.blacklist.size
-                    }
-                }), { headers: corsHeaders({ 'Content-Type': 'application/json' }) });
-            } else if (url.pathname === '/stats') {
-                response = new Response(JSON.stringify({
-                    performance: perfMonitor.getStats(),
-                    cache: {
-                        size: apiCache.cache.size,
-                        max_size: API_OPTIMIZATION.CACHE.max_size
-                    },
-                    rate_limit: {
-                        active_monitoring: rateLimiter.requests.size,
-                        blacklisted: rateLimiter.blacklist.size
-                    }
-                }), { headers: corsHeaders({ 'Content-Type': 'application/json' }) });
-            } else {
-                response = new Response(JSON.stringify({
-                    project: CONFIG.PROJECT_NAME,
-                    version: CONFIG.PROJECT_VERSION,
-                    optimizations: [
-                        'Rate Limiting 🔒',
-                        'Response Caching 💾',
-                        'Performance Monitoring 📊',
-                        'Seed Control 🎲',
-                        'Batch Generation 📦',
-                        '39 Art Styles 🎨',
-                        '35+ Size Presets 📐'
-                    ],
-                    endpoints: [
-                        '/v1/images/generations',
-                        '/v1/chat/completions',
-                        '/v1/models',
-                        '/v1/providers',
-                        '/v1/styles',
-                        '/health',
-                        '/stats'
-                    ]
-                }), { headers: corsHeaders({ 'Content-Type': 'application/json' }) });
-            }
-            
-            const duration = Date.now() - startTime;
-            perfMonitor.recordRequest(true, duration);
-            const headers = new Headers(response.headers);
-            headers.set('X-Response-Time', duration + 'ms');
-            headers.set('X-Worker-Version', CONFIG.PROJECT_VERSION);
-            if (ctx.rateLimitHeaders) {
-                Object.entries(ctx.rateLimitHeaders).forEach(([key, value]) => {
-                    headers.set(key, value);
-                });
-            }
-            return new Response(response.body, { status: response.status, headers: headers });
-        } catch (error) {
-            const duration = Date.now() - startTime;
-            perfMonitor.recordRequest(false, duration, error.message);
-            console.error('Worker error:', error);
-            return new Response(JSON.stringify({
-                error: {
-                    message: error.message,
-                    type: 'worker_error',
-                    timestamp: new Date().toISOString()
-                }
-            }), {
-                status: 500,
-                headers: corsHeaders({ 'Content-Type': 'application/json' })
-            });
-        }
-    }
-};
 function handleUI() {
   const html = `<!DOCTYPE html>
 <html lang="zh-TW">
@@ -2077,3 +1931,174 @@ updateRefImageLimit();
 </html>`;
   return new Response(html, { headers: corsHeaders({ 'Content-Type': 'text/html; charset=utf-8' }) });
 }
+
+// ✨ 新增:處理 /app 路由的函數
+async function handleAppUI(request, env) {
+    try {
+        // 從 GitHub 獲取 app.html
+        const response = await fetch('https://raw.githubusercontent.com/kinai9661/fluxaipor/main/app.html');
+        if (!response.ok) {
+            throw new Error('無法獲取 app.html');
+        }
+        const html = await response.text();
+        return new Response(html, { 
+            headers: corsHeaders({ 'Content-Type': 'text/html; charset=utf-8' }) 
+        });
+    } catch (error) {
+        return new Response('Error loading app UI: ' + error.message, { 
+            status: 500,
+            headers: corsHeaders({ 'Content-Type': 'text/plain' }) 
+        });
+    }
+}
+export default {
+    async fetch(request, env, ctx) {
+        const url = new URL(request.url);
+        const startTime = Date.now();
+        const clientIP = getClientIP(request);
+        
+        console.log("=== API Request ===");
+        console.log("IP:", clientIP);
+        console.log("Path:", url.pathname);
+        console.log("Method:", request.method);
+        console.log("Workers AI:", !!env.AI);
+        console.log("==================");
+        
+        if (request.method === 'OPTIONS') {
+            return new Response(null, { status: 204, headers: corsHeaders() });
+        }
+        
+        if (API_OPTIMIZATION.RATE_LIMIT.enabled && url.pathname.startsWith('/v1/')) {
+            const rateLimitResult = await rateLimiter.check(clientIP);
+            if (!rateLimitResult.allowed) {
+                perfMonitor.recordRequest(false, Date.now() - startTime, rateLimitResult.reason);
+                return new Response(JSON.stringify({
+                    error: {
+                        message: rateLimitResult.reason,
+                        code: 'RATE_LIMIT_EXCEEDED',
+                        limit: rateLimitResult.limit,
+                        current: rateLimitResult.current,
+                        retryAfter: rateLimitResult.retryAfter,
+                        blockedUntil: rateLimitResult.blockedUntil
+                    }
+                }), {
+                    status: 429,
+                    headers: corsHeaders({
+                        'Content-Type': 'application/json',
+                        'Retry-After': rateLimitResult.retryAfter || '60',
+                        'X-RateLimit-Limit': API_OPTIMIZATION.RATE_LIMIT.max_requests_per_minute.toString(),
+                        'X-RateLimit-Remaining': '0'
+                    })
+                });
+            }
+            ctx.rateLimitHeaders = {
+                'X-RateLimit-Limit-Minute': API_OPTIMIZATION.RATE_LIMIT.max_requests_per_minute.toString(),
+                'X-RateLimit-Limit-Hour': API_OPTIMIZATION.RATE_LIMIT.max_requests_per_hour.toString(),
+                'X-RateLimit-Remaining-Minute': rateLimitResult.remaining?.perMinute.toString() || '0',
+                'X-RateLimit-Remaining-Hour': rateLimitResult.remaining?.perHour.toString() || '0'
+            };
+        }
+        
+        try {
+            let response;
+            
+            // ✨ 新增:/app 路由處理
+            if (url.pathname === '/app' || url.pathname === '/app/') {
+                response = await handleAppUI(request, env);
+            } else if (url.pathname === '/') {
+                response = handleUI(request);
+            } else if (url.pathname === '/v1/chat/completions') {
+                response = await handleChatCompletions(request, env, ctx);
+            } else if (url.pathname === '/v1/images/generations') {
+                response = await handleImageGenerations(request, env, ctx);
+            } else if (url.pathname === '/v1/models') {
+                response = handleModelsRequest();
+            } else if (url.pathname === '/v1/providers') {
+                response = handleProvidersRequest();
+            } else if (url.pathname === '/v1/styles') {
+                response = handleStylesRequest();
+            } else if (url.pathname === '/health') {
+                response = new Response(JSON.stringify({
+                    status: 'ok',
+                    version: CONFIG.PROJECT_VERSION,
+                    timestamp: new Date().toISOString(),
+                    workers_ai: !!env.AI,
+                    performance: perfMonitor.getStats(),
+                    cache: {
+                        enabled: API_OPTIMIZATION.CACHE.enabled,
+                        size: apiCache.cache.size,
+                        max_size: API_OPTIMIZATION.CACHE.max_size
+                    },
+                    rate_limit: {
+                        enabled: API_OPTIMIZATION.RATE_LIMIT.enabled,
+                        active_ips: rateLimiter.requests.size,
+                        blacklisted_ips: rateLimiter.blacklist.size
+                    }
+                }), { headers: corsHeaders({ 'Content-Type': 'application/json' }) });
+            } else if (url.pathname === '/stats') {
+                response = new Response(JSON.stringify({
+                    performance: perfMonitor.getStats(),
+                    cache: {
+                        size: apiCache.cache.size,
+                        max_size: API_OPTIMIZATION.CACHE.max_size
+                    },
+                    rate_limit: {
+                        active_monitoring: rateLimiter.requests.size,
+                        blacklisted: rateLimiter.blacklist.size
+                    }
+                }), { headers: corsHeaders({ 'Content-Type': 'application/json' }) });
+            } else {
+                response = new Response(JSON.stringify({
+                    project: CONFIG.PROJECT_NAME,
+                    version: CONFIG.PROJECT_VERSION,
+                    optimizations: [
+                        'Rate Limiting 🔒',
+                        'Response Caching 💾',
+                        'Performance Monitoring 📊',
+                        'Seed Control 🎲',
+                        'Batch Generation 📦',
+                        '39 Art Styles 🎨',
+                        '35+ Size Presets 📐'
+                    ],
+                    endpoints: [
+                        '/ - 原始 UI',
+                        '/app - ShadCN 風格 UI 🆕',
+                        '/v1/images/generations',
+                        '/v1/chat/completions',
+                        '/v1/models',
+                        '/v1/providers',
+                        '/v1/styles',
+                        '/health',
+                        '/stats'
+                    ]
+                }), { headers: corsHeaders({ 'Content-Type': 'application/json' }) });
+            }
+            
+            const duration = Date.now() - startTime;
+            perfMonitor.recordRequest(true, duration);
+            const headers = new Headers(response.headers);
+            headers.set('X-Response-Time', duration + 'ms');
+            headers.set('X-Worker-Version', CONFIG.PROJECT_VERSION);
+            if (ctx.rateLimitHeaders) {
+                Object.entries(ctx.rateLimitHeaders).forEach(([key, value]) => {
+                    headers.set(key, value);
+                });
+            }
+            return new Response(response.body, { status: response.status, headers: headers });
+        } catch (error) {
+            const duration = Date.now() - startTime;
+            perfMonitor.recordRequest(false, duration, error.message);
+            console.error('Worker error:', error);
+            return new Response(JSON.stringify({
+                error: {
+                    message: error.message,
+                    type: 'worker_error',
+                    timestamp: new Date().toISOString()
+                }
+            }), {
+                status: 500,
+                headers: corsHeaders({ 'Content-Type': 'application/json' })
+            });
+        }
+    }
+};
