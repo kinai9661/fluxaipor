@@ -3,13 +3,13 @@
 //  版本: 9.6.1-extended-styles (✅ 45+ 種藝術風格)
 //  作者: Enhanced by AI Assistant  
 //  日期: 2025-12-17
-//  更新: ✅ 45+ 種藝術風格 | ✅ 分類組織 | ✅ 新 API 端點
+//  更新: ✅ 45+ 種藝術風格 | ✅ 分類組織 | ✅ 新 API 端點 | ✅ Shadcn UI
 //  模型: zimage, flux, turbo, kontext (4個模型)
 // =================================================================================
 
 const CONFIG = {
   PROJECT_NAME: "Flux-AI-Pro",
-  PROJECT_VERSION: "9.6.1-extended-styles",
+  PROJECT_VERSION: "9.6.1-extended-styles-shadcn",
   API_MASTER_KEY: "1",
   FETCH_TIMEOUT: 120000,
   MAX_RETRIES: 3,
@@ -444,6 +444,7 @@ const CONFIG = {
       description: "奇幻魔法世界"
     }
   },
+  
   // ========================================
   // 風格分類配置
   // ========================================
@@ -558,7 +559,6 @@ const CONFIG = {
     }
   }
 };
-
 // =================================================================================
 // 工具類：Logger, IP獲取, 翻譯, 優化器
 // =================================================================================
@@ -1545,13 +1545,13 @@ async function handleInternalGenerate(request, env, ctx) {
   }
 }
 // =================================================================================
-// Web UI 界面處理函數（包含 45+ 風格分類選擇器）
+// Web UI 界面處理函數（Shadcn 風格）
 // =================================================================================
 
 function handleUI() {
   const authStatus = CONFIG.POLLINATIONS_AUTH.enabled ? 
-    '<span style="color:#22c55e;font-weight:600;font-size:12px">🔐 已認證</span>' : 
-    '<span style="color:#f59e0b;font-weight:600;font-size:12px">⚠️ 需要 API Key</span>';
+    '<span class="text-green-500 font-semibold text-xs">🔐 已認證</span>' : 
+    '<span class="text-amber-500 font-semibold text-xs">⚠️ 需要 API Key</span>';
     
   const apiEndpoint = CONFIG.PROVIDERS.pollinations.endpoint;
   const stylesCount = Object.keys(CONFIG.STYLE_PRESETS).length;
@@ -1583,333 +1583,585 @@ function handleUI() {
   }
   
   const html = `<!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flux AI Pro v${CONFIG.PROJECT_VERSION} - ${stylesCount} 種風格</title>
+<title>Flux AI Pro v${CONFIG.PROJECT_VERSION}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        border: 'hsl(240 3.7% 15.9%)',
+        input: 'hsl(240 3.7% 15.9%)',
+        ring: 'hsl(142.4 71.8% 29.2%)',
+        background: 'hsl(240 10% 3.9%)',
+        foreground: 'hsl(0 0% 98%)',
+        primary: {
+          DEFAULT: 'hsl(142.1 70.6% 45.3%)',
+          foreground: 'hsl(144.9 80.4% 10%)',
+        },
+        secondary: {
+          DEFAULT: 'hsl(240 3.7% 15.9%)',
+          foreground: 'hsl(0 0% 98%)',
+        },
+        destructive: {
+          DEFAULT: 'hsl(0 62.8% 30.6%)',
+          foreground: 'hsl(0 0% 98%)',
+        },
+        muted: {
+          DEFAULT: 'hsl(240 3.7% 15.9%)',
+          foreground: 'hsl(240 5% 64.9%)',
+        },
+        accent: {
+          DEFAULT: 'hsl(240 3.7% 15.9%)',
+          foreground: 'hsl(0 0% 98%)',
+        },
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideDown: {
+          '0%': { opacity: '0', transform: 'translateY(-10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.3s ease-out',
+        slideDown: 'slideDown 0.2s ease-out',
+      },
+    },
+  },
+}
+</script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 100%);color:#fff;min-height:100vh}
-.container{max-width:100%;margin:0;padding:0;height:100vh;display:flex;flex-direction:column}
-.top-nav{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.1);padding:15px 25px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.nav-left{display:flex;align-items:center;gap:20px}
-.logo{color:#f59e0b;font-size:24px;font-weight:800;text-shadow:0 0 20px rgba(245,158,11,0.6);display:flex;align-items:center;gap:10px}
-.badge{background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
-.badge-new{background:linear-gradient(135deg,#ec4899 0%,#db2777 100%);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
-.badge-styles{background:linear-gradient(135deg,#8b5cf6 0%,#7c3aed 100%);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
-.nav-menu{display:flex;gap:10px}
-.nav-btn{padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#9ca3af;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.3s;display:flex;align-items:center;gap:6px}
-.nav-btn:hover{border-color:#f59e0b;color:#fff}
-.nav-btn.active{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;border-color:#f59e0b}
-.api-status{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;background:rgba(16,185,129,0.1);border:1px solid #10b981}
-.api-endpoint{font-size:10px;color:#6b7280;margin-top:4px}
-.main-content{flex:1;display:flex;overflow:hidden}
-.left-panel{width:320px;background:rgba(255,255,255,0.03);border-right:1px solid rgba(255,255,255,0.1);overflow-y:auto;padding:20px;flex-shrink:0}
-.center-panel{flex:1;padding:20px;overflow-y:auto}
-.right-panel{width:380px;background:rgba(255,255,255,0.03);border-left:1px solid rgba(255,255,255,0.1);overflow-y:auto;padding:20px;flex-shrink:0}
-@media(max-width:1400px){.left-panel{width:280px}.right-panel{width:320px}}
-@media(max-width:1024px){.main-content{flex-direction:column}.left-panel,.right-panel{width:100%;border:none;border-bottom:1px solid rgba(255,255,255,0.1)}}
-.page{display:none}
-.page.active{display:block}
-.page.active .main-content{display:flex}
-.section-title{font-size:16px;font-weight:700;color:#f59e0b;margin-bottom:15px;display:flex;align-items:center;gap:8px}
-.form-group{margin-bottom:16px}
-label{display:block;margin-bottom:6px;font-weight:600;font-size:13px;color:#e5e7eb}
-input,select,textarea{width:100%;padding:10px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:13px;transition:all 0.3s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.1)}
-textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.6}
-select{cursor:pointer}
-.input-hint{font-size:11px;color:#6b7280;margin-top:4px}
-.style-hint{font-size:11px;color:#8b5cf6;margin-top:4px;font-weight:600}
-.btn{padding:12px 24px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;justify-content:center;width:100%}
-.btn-primary{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;box-shadow:0 4px 15px rgba(245,158,11,0.3)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,158,11,0.4)}
-.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.btn-secondary{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)}
-.btn-secondary:hover{background:rgba(255,255,255,0.15)}
-.btn-danger{background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-.gallery-item{background:rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);transition:all 0.3s}
-.gallery-item:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(245,158,11,0.3)}
-.gallery-item img{width:100%;height:280px;object-fit:cover;display:block;cursor:pointer}
-.gallery-info{padding:15px}
-.gallery-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:5px}
-.model-badge{background:rgba(245,158,11,0.2);color:#f59e0b;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
-.seed-badge{background:rgba(16,185,129,0.2);color:#10b981;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
-.style-badge{background:rgba(139,92,246,0.2);color:#8b5cf6;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
-.time-badge{background:rgba(59,130,246,0.2);color:#3b82f6;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
-.gallery-actions{display:flex;gap:8px;margin-top:10px}
-.action-btn{padding:6px 12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;font-size:12px;color:#fff;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:5px;flex:1;justify-content:center}
-.action-btn:hover{background:rgba(255,255,255,0.2);border-color:#f59e0b}
-.action-btn.delete{border-color:rgba(239,68,68,0.5)}
-.action-btn.delete:hover{background:rgba(239,68,68,0.2);border-color:#ef4444}
-.prompt-display{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:15px;margin-bottom:20px}
-.prompt-display .label{font-size:12px;color:#9ca3af;margin-bottom:6px;font-weight:600}
-.prompt-display .content{color:#e5e7eb;font-size:13px;line-height:1.6;word-break:break-word}
-.loading{text-align:center;padding:60px 20px;color:#9ca3af}
-.spinner{border:3px solid rgba(255,255,255,0.1);border-top:3px solid #f59e0b;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:0 auto 15px}
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.empty-state{text-align:center;padding:60px 20px;color:#9ca3af}
-.empty-state svg{margin:0 auto 20px;opacity:0.5}
-.alert{padding:12px 15px;border-radius:8px;margin-bottom:15px;border-left:4px solid;font-size:13px}
-.alert-success{background:rgba(16,185,129,0.1);border-color:#10b981;color:#10b981}
-.alert-error{background:rgba(239,68,68,0.1);border-color:#ef4444;color:#ef4444}
-.alert-warning{background:rgba(245,158,11,0.1);border-color:#f59e0b;color:#f59e0b}
-.alert-info{background:rgba(139,92,246,0.1);border-color:#8b5cf6;color:#8b5cf6}
-.advanced-toggle{cursor:pointer;color:#3b82f6;font-size:13px;margin-bottom:12px;display:inline-block}
-.advanced-toggle:hover{text-decoration:underline}
-.advanced-section{display:none;animation:fadeIn 0.3s}
-.advanced-section.show{display:block}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);align-items:center;justify-content:center}
-.modal.show{display:flex}
-.modal-content{max-width:90%;max-height:90%;position:relative}
-.modal-content img{max-width:100%;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-.modal-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:none;color:#fff;font-size:32px;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
-.modal-close:hover{background:rgba(255,255,255,0.2);transform:rotate(90deg)}
-.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:20px;background:rgba(255,255,255,0.03);border-radius:12px}
-.history-stats{display:flex;gap:20px;font-size:14px}
-.stat-item{display:flex;flex-direction:column;gap:4px}
-.stat-item .label{color:#9ca3af;font-size:12px}
-.stat-item .value{color:#f59e0b;font-size:20px;font-weight:700}
-.history-actions{display:flex;gap:10px}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-track{background:rgba(255,255,255,0.05)}
-::-webkit-scrollbar-thumb{background:rgba(245,158,11,0.3);border-radius:4px}
-::-webkit-scrollbar-thumb:hover{background:rgba(245,158,11,0.5)}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-muted/50;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-md hover:bg-primary/50 transition-colors;
+}
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid hsl(142.1 70.6% 45.3%);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.badge-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .8; }
+}
 </style>
 </head>
-<body>
-<div class="container">
-<div class="top-nav">
-<div class="nav-left">
-<div class="logo">
-🎨 Flux AI Pro
-<span class="badge">v${CONFIG.PROJECT_VERSION}</span>
-<span class="badge-new">NEW API</span>
-<span class="badge-styles">${stylesCount} 風格</span>
-</div>
-<div>
-<div class="api-status">${authStatus}</div>
-<div class="api-endpoint">📡 ${apiEndpoint}</div>
-</div>
-</div>
-<div class="nav-menu">
-<button class="nav-btn active" data-page="generate"><span>🎨</span> 生成圖像</button>
-<button class="nav-btn" data-page="history"><span>📚</span> 歷史記錄 <span id="historyCount" style="background:rgba(245,158,11,0.2);padding:2px 8px;border-radius:10px;font-size:11px">0</span></button>
-</div>
-</div>
+<body class="bg-background text-foreground antialiased">
 
-<div id="generatePage" class="page active">
-<div class="main-content">
-<div class="left-panel">
-<div class="section-title">⚙️ 生成參數</div>
-<form id="generateForm">
-<div class="form-group">
-<label>模型選擇</label>
-<select id="model">
-<optgroup label="⚡ Z-Image 系列（默認）">
-<option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>
-</optgroup>
-<optgroup label="🎨 Flux 系列">
-<option value="flux">Flux 標準版 (平衡速度與質量)</option>
-<option value="turbo">Flux Turbo ⚡ (超快速生成)</option>
-</optgroup>
-<optgroup label="🖼️ Kontext 系列（圖生圖）">
-<option value="kontext">Kontext 🎨 (支持參考圖像)</option>
-</optgroup>
-</select>
-<div class="input-hint">💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003) | Kontext (0.04)</div>
-</div>
+<!-- 主容器 -->
+<div class="min-h-screen flex flex-col">
 
-<div class="form-group">
-<label>尺寸預設</label>
-<select id="size">
-<option value="square-1k" selected>方形 1024x1024</option>
-<option value="square-1.5k">方形 1536x1536</option>
-<option value="square-2k">方形 2048x2048</option>
-<option value="portrait-9-16-hd">豎屏 1080x1920</option>
-<option value="landscape-16-9-hd">橫屏 1920x1080</option>
-<option value="instagram-square">Instagram 方形</option>
-<option value="wallpaper-fhd">桌布 Full HD</option>
-</select>
-</div>
+<!-- 頂部導航欄 -->
+<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="container flex h-16 items-center justify-between px-4 max-w-screen-2xl mx-auto">
+    
+    <!-- 左側 Logo -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">
+          <span class="text-2xl">🎨</span>
+        </div>
+        <div class="flex flex-col">
+          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
+            Flux AI Pro
+          </h1>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
+              v${CONFIG.PROJECT_VERSION}
+            </span>
+            <span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-bold text-pink-500 ring-1 ring-inset ring-pink-500/20 badge-pulse">
+              NEW
+            </span>
+            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">
+              ${stylesCount} 風格
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- API 狀態 -->
+      <div class="hidden md:flex flex-col ml-4 border-l border-border/40 pl-4">
+        <div class="inline-flex items-center gap-2 text-sm">
+          ${authStatus}
+        </div>
+        <div class="text-xs text-muted-foreground truncate max-w-[200px]" title="${apiEndpoint}">
+          📡 ${apiEndpoint}
+        </div>
+      </div>
+    </div>
+    
+    <!-- 右側導航按鈕 -->
+    <nav class="flex items-center gap-2">
+      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring h-10 py-2 px-4 gap-2 bg-primary text-primary-foreground shadow hover:bg-primary/90" data-page="generate">
+        <span class="text-lg">🎨</span>
+        <span class="hidden sm:inline">生成圖像</span>
+      </button>
+      
+      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 gap-2" data-page="history">
+        <span class="text-lg">📚</span>
+        <span class="hidden sm:inline">歷史</span>
+        <span id="historyCount" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
+          0
+        </span>
+      </button>
+    </nav>
+  </div>
+</header>
 
-<div class="form-group">
-<label>藝術風格 🎨</label>
-<select id="style">
-${styleOptionsHTML}
-</select>
-<div class="style-hint">✨ ${stylesCount} 種風格可選，分 ${Object.keys(CONFIG.STYLE_CATEGORIES).length} 大類</div>
-</div>
+<!-- 主內容區 -->
+<main class="flex-1">
+  
+  <!-- 生成頁面 -->
+  <div id="generatePage" class="page active">
+    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+`;
 
-<div class="form-group">
-<label>質量模式</label>
-<select id="qualityMode">
-<option value="economy">經濟模式 (快速)</option>
-<option value="standard" selected>標準模式 (平衡)</option>
-<option value="ultra">超高清模式 (極致)</option>
-</select>
-</div>
-
-<a class="advanced-toggle" id="advancedToggle">▼ 進階選項</a>
-<div id="advancedSection" class="advanced-section">
-<div class="form-group">
-<label>Seed</label>
-<input type="number" id="seed" value="-1" min="-1" max="999999">
-<div class="input-hint">-1 = 隨機</div>
-</div>
-<div class="form-group">
-<label>生成數量</label>
-<input type="number" id="numOutputs" value="1" min="1" max="4">
-</div>
-<div class="form-group">
-<label><input type="checkbox" id="autoOptimize" checked> 自動優化參數</label>
-</div>
-<div class="form-group">
-<label><input type="checkbox" id="autoHD" checked> 自動HD增強</label>
-</div>
-</div>
-
-<button type="submit" class="btn btn-primary" id="generateBtn">🎨 開始生成</button>
-</form>
-</div>
-
-<div class="center-panel">
-<div class="section-title">🖼️ 生成結果</div>
-<div id="results">
-<div class="empty-state">
-<svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-<p style="font-size:16px;margin-bottom:10px">尚未生成任何圖像</p>
-<p style="font-size:14px">填寫左側參數並輸入提示詞後點擊生成</p>
-</div>
-</div>
-</div>
-
-<div class="right-panel">
-<div class="section-title">💬 提示詞</div>
-<div class="form-group">
-<label>正面提示詞</label>
-<textarea id="prompt" placeholder="描述你想生成的圖像...
+  return html + getLeftPanel(styleOptionsHTML) + getCenterPanel() + getRightPanel(apiEndpoint) + getHistoryPage() + getModalAndScripts(stylesCount);
+}
+function getLeftPanel(styleOptionsHTML) {
+  return `
+        <!-- 左側欄：參數設置 (3列) -->
+        <aside class="lg:col-span-3 space-y-4">
+          <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-4">
+              <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                <span>⚙️</span>
+                <span>生成參數</span>
+              </h3>
+            </div>
+            
+            <div class="p-6 pt-0 space-y-4">
+              <form id="generateForm" class="space-y-4">
+                
+                <!-- 模型選擇 -->
+                <div class="space-y-2">
+                  <label class="text-sm font-medium leading-none">
+                    模型選擇
+                  </label>
+                  <select id="model" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <optgroup label="⚡ Z-Image 系列（默認）">
+                      <option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>
+                    </optgroup>
+                    <optgroup label="🎨 Flux 系列">
+                      <option value="flux">Flux 標準版 (平衡速度與質量)</option>
+                      <option value="turbo">Flux Turbo ⚡ (超快速生成)</option>
+                    </optgroup>
+                    <optgroup label="🖼️ Kontext 系列（圖生圖）">
+                      <option value="kontext">Kontext 🎨 (支持參考圖像)</option>
+                    </optgroup>
+                  </select>
+                  <p class="text-xs text-muted-foreground">
+                    💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003)
+                  </p>
+                </div>
+                
+                <!-- 尺寸預設 -->
+                <div class="space-y-2">
+                  <label class="text-sm font-medium leading-none">
+                    尺寸預設
+                  </label>
+                  <select id="size" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <option value="square-1k" selected>方形 1024x1024</option>
+                    <option value="square-1.5k">方形 1536x1536</option>
+                    <option value="square-2k">方形 2048x2048</option>
+                    <option value="portrait-9-16-hd">豎屏 1080x1920</option>
+                    <option value="landscape-16-9-hd">橫屏 1920x1080</option>
+                    <option value="instagram-square">Instagram 方形</option>
+                    <option value="wallpaper-fhd">桌布 Full HD</option>
+                  </select>
+                </div>
+                
+                <!-- 藝術風格 -->
+                <div class="space-y-2">
+                  <label class="text-sm font-medium leading-none flex items-center gap-2">
+                    <span>🎨</span>
+                    <span>藝術風格</span>
+                  </label>
+                  <select id="style" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    ${styleOptionsHTML}
+                  </select>
+                  <p class="text-xs text-purple-400 font-medium">
+                    ✨ 45+ 種風格可選，分 13 大類
+                  </p>
+                </div>
+                
+                <!-- 質量模式 -->
+                <div class="space-y-2">
+                  <label class="text-sm font-medium leading-none">
+                    質量模式
+                  </label>
+                  <select id="qualityMode" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <option value="economy">經濟模式 (快速)</option>
+                    <option value="standard" selected>標準模式 (平衡)</option>
+                    <option value="ultra">超高清模式 (極致)</option>
+                  </select>
+                </div>
+                
+                <!-- 進階選項切換 -->
+                <div class="pt-2">
+                  <button type="button" id="advancedToggle" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline cursor-pointer">
+                    <span id="advancedToggleIcon">▼</span>
+                    <span>進階選項</span>
+                  </button>
+                </div>
+                
+                <!-- 進階選項區域 -->
+                <div id="advancedSection" class="hidden space-y-4">
+                  <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none">
+                      Seed
+                    </label>
+                    <input type="number" id="seed" value="-1" min="-1" max="999999" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <p class="text-xs text-muted-foreground">-1 = 隨機</p>
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <label class="text-sm font-medium leading-none">
+                      生成數量
+                    </label>
+                    <input type="number" id="numOutputs" value="1" min="1" max="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                  </div>
+                  
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="autoOptimize" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
+                    <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">
+                      自動優化參數
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="autoHD" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
+                    <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">
+                      自動HD增強
+                    </label>
+                  </div>
+                </div>
+                
+                <!-- 生成按鈕 -->
+                <button type="submit" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full gap-2 shadow-lg shadow-primary/25 active:scale-95">
+                  <span class="text-lg">🎨</span>
+                  <span class="font-bold">開始生成</span>
+                </button>
+                
+              </form>
+            </div>
+          </div>
+        </aside>
+`;
+}
+function getRightPanel(apiEndpoint) {
+  return `
+        <!-- 右側欄：提示詞輸入 (3列) -->
+        <aside class="lg:col-span-3 space-y-4">
+          
+          <!-- 提示詞卡片 -->
+          <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-4">
+              <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">
+                <span>💬</span>
+                <span>提示詞</span>
+              </h3>
+            </div>
+            
+            <div class="p-6 pt-0 space-y-4">
+              
+              <!-- 正面提示詞 -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">
+                  正面提示詞
+                </label>
+                <textarea 
+                  id="prompt" 
+                  rows="6"
+                  placeholder="描述你想生成的圖像...
 
 例如：
 • A beautiful sunset over mountains
 • 一隻可愛的貓咪在花園裡玩耍
 • Cyberpunk city at night, neon lights
-• Anime girl with blue hair" required></textarea>
-<div class="input-hint">✅ 支持中文自動翻譯</div>
-</div>
-
-<div class="form-group">
-<label>負面提示詞 (可選)</label>
-<textarea id="negativePrompt" placeholder="描述不想要的內容...
+• Anime girl with blue hair"
+                  class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+                  required
+                ></textarea>
+                <p class="text-xs text-primary font-medium">
+                  ✅ 支持中文自動翻譯
+                </p>
+              </div>
+              
+              <!-- 負面提示詞 -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">
+                  負面提示詞 (可選)
+                </label>
+                <textarea 
+                  id="negativePrompt" 
+                  rows="3"
+                  placeholder="描述不想要的內容...
 
 例如：
 • blurry, low quality, distorted
-• ugly, deformed, bad anatomy" rows="4"></textarea>
-</div>
-
-<div class="form-group">
-<label>參考圖像 URL (可選)</label>
-<textarea id="referenceImages" placeholder="多張圖片用逗號分隔
+• ugly, deformed, bad anatomy"
+                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+                ></textarea>
+              </div>
+              
+              <!-- 參考圖像 URL -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium leading-none">
+                  參考圖像 URL (可選)
+                </label>
+                <textarea 
+                  id="referenceImages" 
+                  rows="3"
+                  placeholder="多張圖片用逗號分隔
 
 例如：
 https://example.com/image1.jpg,
-https://example.com/image2.jpg" rows="3"></textarea>
-<div class="input-hint">📌 支持圖生圖的模型：Kontext</div>
+https://example.com/image2.jpg"
+                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+                ></textarea>
+                <p class="text-xs text-muted-foreground">
+                  📌 支持圖生圖的模型：Kontext
+                </p>
+              </div>
+              
+            </div>
+          </div>
+          
+          <!-- 風格提示卡片 -->
+          <div class="rounded-lg border border-purple-500/20 bg-purple-500/5 p-4">
+            <div class="flex items-start gap-3">
+              <div class="rounded-lg bg-purple-500/10 p-2">
+                <span class="text-2xl">🎨</span>
+              </div>
+              <div class="flex-1 space-y-1">
+                <h4 class="text-sm font-semibold text-purple-400">風格提示</h4>
+                <p class="text-xs text-muted-foreground">
+                  當前已選: <span id="currentStyleName" class="text-foreground font-medium">無風格</span>
+                </p>
+                <p id="styleDescription" class="text-xs text-muted-foreground/80">
+                  使用原始提示詞
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 配置預覽卡片 -->
+          <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 p-6 pb-4">
+              <h3 class="text-sm font-semibold leading-none tracking-tight flex items-center gap-2">
+                <span>📋</span>
+                <span>當前配置</span>
+              </h3>
+            </div>
+            
+            <div class="p-6 pt-0 space-y-3">
+              
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">模型</div>
+                <div id="previewModel" class="text-sm font-medium">Z-Image Turbo</div>
+              </div>
+              
+              <div class="h-px bg-border"></div>
+              
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">尺寸</div>
+                <div id="previewSize" class="text-sm font-medium">1024x1024</div>
+              </div>
+              
+              <div class="h-px bg-border"></div>
+              
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">風格</div>
+                <div id="previewStyle" class="text-sm font-medium">無風格</div>
+              </div>
+              
+              <div class="h-px bg-border"></div>
+              
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">API 端點</div>
+                <div class="text-xs font-mono text-muted-foreground/80 break-all">
+                  ${apiEndpoint}
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          
+        </aside>
+      </div>
+    </div>
+  </div>
+`;
+}
+function getHistoryPage() {
+  return `
+  <!-- 歷史記錄頁面 -->
+  <div id="historyPage" class="page hidden">
+    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">
+      
+      <!-- 歷史記錄頭部 -->
+      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm mb-6">
+        <div class="p-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            
+            <!-- 統計數據 -->
+            <div class="flex flex-wrap items-center gap-6">
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">📊 總記錄數</div>
+                <div id="historyTotal" class="text-3xl font-bold text-primary">0</div>
+              </div>
+              
+              <div class="hidden sm:block h-12 w-px bg-border"></div>
+              
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">💾 存儲空間</div>
+                <div id="storageSize" class="text-2xl font-bold">0 KB</div>
+              </div>
+              
+              <div class="hidden sm:block h-12 w-px bg-border"></div>
+              
+              <div class="space-y-1">
+                <div class="text-xs font-medium text-muted-foreground">🎨 最近風格</div>
+                <div id="recentStyle" class="text-sm font-medium">-</div>
+              </div>
+            </div>
+            
+            <!-- 操作按鈕 -->
+            <div class="flex items-center gap-2">
+              <button id="exportBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">
+                <span>📥</span>
+                <span>導出</span>
+              </button>
+              
+              <button id="clearBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 gap-2">
+                <span>🗑️</span>
+                <span>清空</span>
+              </button>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      
+      <!-- 歷史記錄列表 -->
+      <div id="historyList">
+        <!-- 空狀態 -->
+        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div class="rounded-full bg-muted/50 p-6 mb-4">
+            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>
+          <p class="text-sm text-muted-foreground max-w-sm">
+            生成的圖像會自動保存在這裡
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</main>
+`;
+}
+function getModalAndScripts(stylesCount) {
+  return `
+<!-- 圖片預覽模態框 -->
+<div id="imageModal" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out">
+  <div class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl p-4">
+    <div class="relative">
+      <button id="modalCloseBtn" class="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm p-2 text-foreground transition-all hover:bg-background hover:rotate-90 focus:outline-none focus:ring-2 focus:ring-ring">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      <div class="rounded-lg overflow-hidden border border-border shadow-2xl">
+        <img id="modalImage" src="" alt="Preview" class="w-full h-auto max-h-[85vh] object-contain bg-black">
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="alert alert-info" style="margin-top:20px">
-<strong>🎨 風格提示</strong><br>
-當前已選: <span id="currentStyleName">無風格</span><br>
-<span id="styleDescription" style="font-size:11px;opacity:0.8">使用原始提示詞</span>
-</div>
-
-<div class="section-title" style="margin-top:25px">📋 當前配置預覽</div>
-<div class="prompt-display">
-<div class="label">模型</div>
-<div class="content" id="previewModel">Z-Image Turbo</div>
-</div>
-<div class="prompt-display">
-<div class="label">尺寸</div>
-<div class="content" id="previewSize">1024x1024</div>
-</div>
-<div class="prompt-display">
-<div class="label">風格</div>
-<div class="content" id="previewStyle">無風格</div>
-</div>
-<div class="prompt-display">
-<div class="label">API 端點</div>
-<div class="content" style="font-size:11px">${apiEndpoint}</div>
-</div>
-</div>
-</div>
-</div>
-
-<div id="historyPage" class="page">
-<div class="main-content" style="flex-direction:column;padding:20px">
-<div class="history-header">
-<div class="history-stats">
-<div class="stat-item">
-<div class="label">📊 總記錄數</div>
-<div class="value" id="historyTotal">0</div>
-</div>
-<div class="stat-item">
-<div class="label">💾 存儲空間</div>
-<div class="value" id="storageSize">0 KB</div>
-</div>
-<div class="stat-item">
-<div class="label">🎨 最近風格</div>
-<div class="value" id="recentStyle" style="font-size:14px">-</div>
-</div>
-</div>
-<div class="history-actions">
-<button class="btn btn-secondary" id="exportBtn" style="width:auto;padding:10px 20px">📥 導出記錄</button>
-<button class="btn btn-danger" id="clearBtn" style="width:auto;padding:10px 20px">🗑️ 清空記錄</button>
-</div>
-</div>
-<div id="historyList" style="padding:0 20px">
-<div class="empty-state">
-<p style="font-size:16px;margin-bottom:10px">暫無歷史記錄</p>
-<p style="font-size:14px">生成的圖像會自動保存在這裡</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<div id="imageModal" class="modal">
-<button class="modal-close" id="modalCloseBtn">×</button>
-<div class="modal-content" id="modalContentDiv">
-<img id="modalImage" src="" alt="Preview">
-</div>
 </div>
 
 <script>
-// 風格配置數據
+// ==================== 全局配置 ====================
 const STYLE_PRESETS = ${JSON.stringify(CONFIG.STYLE_PRESETS)};
 const PRESET_SIZES = ${JSON.stringify(CONFIG.PRESET_SIZES)};
+const STORAGE_KEY = 'flux_ai_history';
+const MAX_HISTORY = 100;
 
-// 導航切換
-document.querySelectorAll('.nav-btn').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    const pageName=this.dataset.page;
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById(pageName+'Page').classList.add('active');
-    this.classList.add('active');
-    if(pageName==='history')updateHistoryDisplay();
+// ==================== 頁面導航 ====================
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const pageName = this.dataset.page;
+    
+    // 移除所有active類
+    document.querySelectorAll('.page').forEach(p => {
+      p.classList.remove('active');
+      p.classList.add('hidden');
+    });
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.remove('bg-primary', 'text-primary-foreground', 'shadow', 'hover:bg-primary/90');
+      b.classList.add('border', 'border-input', 'bg-background', 'hover:bg-accent');
+    });
+    
+    // 添加active類
+    document.getElementById(pageName + 'Page').classList.remove('hidden');
+    document.getElementById(pageName + 'Page').classList.add('active');
+    this.classList.add('bg-primary', 'text-primary-foreground', 'shadow', 'hover:bg-primary/90');
+    this.classList.remove('border', 'border-input', 'bg-background', 'hover:bg-accent');
+    
+    if (pageName === 'history') {
+      updateHistoryDisplay();
+    }
   });
 });
 
-// 進階選項切換
-document.getElementById('advancedToggle').addEventListener('click',function(){
-  document.getElementById('advancedSection').classList.toggle('show');
+// ==================== 進階選項切換 ====================
+document.getElementById('advancedToggle').addEventListener('click', function() {
+  const section = document.getElementById('advancedSection');
+  const icon = document.getElementById('advancedToggleIcon');
+  
+  if (section.classList.contains('hidden')) {
+    section.classList.remove('hidden');
+    icon.textContent = '▲';
+  } else {
+    section.classList.add('hidden');
+    icon.textContent = '▼';
+  }
 });
 
-// 更新風格描述
+// ==================== 風格描述更新 ====================
 function updateStyleDescription() {
   const styleSelect = document.getElementById('style');
   const selectedStyle = styleSelect.value;
@@ -1921,441 +2173,556 @@ function updateStyleDescription() {
   }
 }
 
-// 更新預覽
-function updatePreview(){
-  const model=document.getElementById('model').value;
-  const sizePreset=document.getElementById('size').value;
-  const style=document.getElementById('style').value;
+// ==================== 預覽更新 ====================
+function updatePreview() {
+  const model = document.getElementById('model').value;
+  const sizePreset = document.getElementById('size').value;
+  const style = document.getElementById('style').value;
   
-  const sizeConfig=PRESET_SIZES[sizePreset]||PRESET_SIZES['square-1k'];
-  const styleConfig=STYLE_PRESETS[style];
+  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES['square-1k'];
+  const styleConfig = STYLE_PRESETS[style];
   
-  const modelNames={
-    'zimage':'Z-Image Turbo ⚡',
-    'flux':'Flux 標準版',
-    'turbo':'Flux Turbo ⚡',
-    'kontext':'Kontext 🎨'
+  const modelNames = {
+    'zimage': 'Z-Image Turbo ⚡',
+    'flux': 'Flux 標準版',
+    'turbo': 'Flux Turbo ⚡',
+    'kontext': 'Kontext 🎨'
   };
   
-  document.getElementById('previewModel').textContent=modelNames[model]||model;
-  document.getElementById('previewSize').textContent=sizeConfig.name+' ('+sizeConfig.width+'x'+sizeConfig.height+')';
-  document.getElementById('previewStyle').textContent=styleConfig ? styleConfig.icon + ' ' + styleConfig.name : '無風格';
+  document.getElementById('previewModel').textContent = modelNames[model] || model;
+  document.getElementById('previewSize').textContent = sizeConfig.name + ' (' + sizeConfig.width + 'x' + sizeConfig.height + ')';
+  document.getElementById('previewStyle').textContent = styleConfig ? styleConfig.icon + ' ' + styleConfig.name : '無風格';
   
   updateStyleDescription();
 }
 
-document.getElementById('model').addEventListener('change',updatePreview);
-document.getElementById('size').addEventListener('change',updatePreview);
-document.getElementById('style').addEventListener('change',updatePreview);
+document.getElementById('model').addEventListener('change', updatePreview);
+document.getElementById('size').addEventListener('change', updatePreview);
+document.getElementById('style').addEventListener('change', updatePreview);
 updatePreview();
 
-// 歷史記錄管理
-const STORAGE_KEY='flux_ai_history';
-const MAX_HISTORY=100;
-
-function getHistory(){
-  try{
-    const data=localStorage.getItem(STORAGE_KEY);
-    return data?JSON.parse(data):[];
-  }catch(e){
-    console.error('Failed to load history:',e);
-    return[];
+// ==================== 歷史記錄管理 ====================
+function getHistory() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    console.error('Failed to load history:', e);
+    return [];
   }
 }
 
-function saveHistory(history){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(history));
+function saveHistory(history) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
     updateHistoryStats();
-  }catch(e){
-    console.error('Failed to save history:',e);
+  } catch (e) {
+    console.error('Failed to save history:', e);
   }
 }
 
-function addToHistory(item){
-  let history=getHistory();
+function addToHistory(item) {
+  let history = getHistory();
   history.unshift({
     ...item,
-    id:Date.now()+Math.random(),
-    timestamp:new Date().toISOString()
+    id: Date.now() + Math.random(),
+    timestamp: new Date().toISOString()
   });
-  if(history.length>MAX_HISTORY)history=history.slice(0,MAX_HISTORY);
+  if (history.length > MAX_HISTORY) {
+    history = history.slice(0, MAX_HISTORY);
+  }
   saveHistory(history);
 }
 
-function deleteFromHistory(id){
-  if(!confirm('確定要刪除這條記錄嗎？'))return;
-  let history=getHistory();
-  history=history.filter(item=>item.id!==id);
+function deleteFromHistory(id) {
+  if (!confirm('確定要刪除這條記錄嗎？')) return;
+  let history = getHistory();
+  history = history.filter(item => item.id !== id);
   saveHistory(history);
   updateHistoryDisplay();
 }
 
-function clearHistory(){
-  if(!confirm('確定要清空所有歷史記錄嗎？此操作不可恢復！'))return;
+function clearHistory() {
+  if (!confirm('確定要清空所有歷史記錄嗎？此操作不可恢復！')) return;
   localStorage.removeItem(STORAGE_KEY);
   updateHistoryDisplay();
   updateHistoryStats();
 }
 
-function exportHistory(){
-  const history=getHistory();
-  const dataStr=JSON.stringify(history,null,2);
-  const dataBlob=new Blob([dataStr],{type:'application/json'});
-  const url=URL.createObjectURL(dataBlob);
-  const link=document.createElement('a');
-  link.href=url;
-  link.download='flux-ai-history-'+new Date().toISOString().split('T')[0]+'.json';
+function exportHistory() {
+  const history = getHistory();
+  const dataStr = JSON.stringify(history, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'flux-ai-history-' + new Date().toISOString().split('T')[0] + '.json';
   link.click();
   URL.revokeObjectURL(url);
 }
 
-function updateHistoryStats(){
-  const history=getHistory();
-  document.getElementById('historyCount').textContent=history.length;
-  document.getElementById('historyTotal').textContent=history.length;
+function updateHistoryStats() {
+  const history = getHistory();
+  document.getElementById('historyCount').textContent = history.length;
+  document.getElementById('historyTotal').textContent = history.length;
   
-  const sizeKB=new Blob([JSON.stringify(history)]).size/1024;
-  document.getElementById('storageSize').textContent=sizeKB.toFixed(1)+' KB';
+  const sizeKB = new Blob([JSON.stringify(history)]).size / 1024;
+  document.getElementById('storageSize').textContent = sizeKB.toFixed(1) + ' KB';
   
-  if(history.length>0){
-    const styleConfig=STYLE_PRESETS[history[0].style];
-    document.getElementById('recentStyle').textContent=styleConfig ? styleConfig.name : history[0].style;
-  }else{
-    document.getElementById('recentStyle').textContent='-';
+  if (history.length > 0) {
+    const styleConfig = STYLE_PRESETS[history[0].style];
+    document.getElementById('recentStyle').textContent = styleConfig ? styleConfig.name : history[0].style;
+  } else {
+    document.getElementById('recentStyle').textContent = '-';
   }
 }
 
-function updateHistoryDisplay(){
-  const history=getHistory();
-  const historyList=document.getElementById('historyList');
+// ==================== 歷史記錄顯示 ====================
+function updateHistoryDisplay() {
+  const history = getHistory();
+  const historyList = document.getElementById('historyList');
   
-  if(history.length===0){
-    historyList.innerHTML='<div class="empty-state"><p style="font-size:16px;margin-bottom:10px">暫無歷史記錄</p><p style="font-size:14px">生成的圖像會自動保存在這裡</p></div>';
+  if (history.length === 0) {
+    historyList.innerHTML = \`
+      <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+        <div class="rounded-full bg-muted/50 p-6 mb-4">
+          <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>
+        <p class="text-sm text-muted-foreground max-w-sm">生成的圖像會自動保存在這裡</p>
+      </div>
+    \`;
     updateHistoryStats();
     return;
   }
   
-  const galleryDiv=document.createElement('div');
-  galleryDiv.className='gallery';
+  const galleryDiv = document.createElement('div');
+  galleryDiv.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4';
   
-  history.forEach(item=>{
-    const date=new Date(item.timestamp);
-    const timeStr=date.toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const styleConfig=STYLE_PRESETS[item.style];
-    const styleName=styleConfig ? styleConfig.icon + ' ' + styleConfig.name : item.style;
+  history.forEach(item => {
+    const date = new Date(item.timestamp);
+    const timeStr = date.toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const styleConfig = STYLE_PRESETS[item.style];
+    const styleName = styleConfig ? styleConfig.icon + ' ' + styleConfig.name : item.style;
     
-    const itemDiv=document.createElement('div');
-    itemDiv.className='gallery-item';
-    itemDiv.innerHTML=\`
-      <img src="\${item.url}" alt="History" loading="lazy">
-      <div class="gallery-info">
-        <div class="gallery-meta">
-          <span class="model-badge">\${item.model}</span>
-          <span class="seed-badge">Seed: \${item.seed}</span>
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group';
+    itemDiv.innerHTML = \`
+      <div class="relative overflow-hidden aspect-square">
+        <img src="\${item.url}" alt="History" loading="lazy" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
+            \${item.model}
+          </span>
+          <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
+            Seed: \${item.seed}
+          </span>
         </div>
-        <div class="gallery-meta" style="margin-top:5px">
-          <span class="style-badge">\${styleName}</span>
-          <span class="time-badge">\${timeStr}</span>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">
+            \${styleName}
+          </span>
+          <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
+            \${timeStr}
+          </span>
         </div>
-        <div style="margin-top:8px;font-size:11px;color:#6b7280">
-          \${item.width}x\${item.height} | \${item.quality_mode||'standard'}
+        <div class="text-xs text-muted-foreground">
+          \${item.width}x\${item.height} | \${item.quality_mode || 'standard'}
         </div>
-        <div class="gallery-actions">
-          <button class="action-btn reuse-btn">🔄 重用</button>
-          <button class="action-btn download-btn">💾 下載</button>
-          <button class="action-btn delete delete-btn">🗑️ 刪除</button>
+        <div class="flex gap-2 pt-2">
+          <button class="reuse-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
+            <span>🔄</span>
+            <span>重用</span>
+          </button>
+          <button class="download-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
+            <span>💾</span>
+            <span>下載</span>
+          </button>
+          <button class="delete-btn inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-8 px-3">
+            <span>🗑️</span>
+          </button>
         </div>
       </div>
     \`;
     
-    const img=itemDiv.querySelector('img');
-    img.addEventListener('click',function(){openModal(item.url)});
+    const img = itemDiv.querySelector('img');
+    img.addEventListener('click', () => openModal(item.url));
     
-    const reuseBtn=itemDiv.querySelector('.reuse-btn');
-    reuseBtn.addEventListener('click',function(){reusePrompt(item.id)});
+    const reuseBtn = itemDiv.querySelector('.reuse-btn');
+    reuseBtn.addEventListener('click', () => reusePrompt(item.id));
     
-    const downloadBtn=itemDiv.querySelector('.download-btn');
-    downloadBtn.addEventListener('click',function(){downloadImage(item.url,item.seed)});
+    const downloadBtn = itemDiv.querySelector('.download-btn');
+    downloadBtn.addEventListener('click', () => downloadImage(item.url, item.seed));
     
-    const deleteBtn=itemDiv.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click',function(){deleteFromHistory(item.id)});
+    const deleteBtn = itemDiv.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', () => deleteFromHistory(item.id));
     
     galleryDiv.appendChild(itemDiv);
   });
   
-  historyList.innerHTML='';
+  historyList.innerHTML = '';
   historyList.appendChild(galleryDiv);
   updateHistoryStats();
 }
 
-function reusePrompt(id){
-  const history=getHistory();
-  const item=history.find(h=>h.id===id);
-  if(!item)return;
+function reusePrompt(id) {
+  const history = getHistory();
+  const item = history.find(h => h.id === id);
+  if (!item) return;
   
-  document.getElementById('prompt').value=item.prompt||'';
-  document.getElementById('model').value=item.model||'zimage';
-  document.getElementById('seed').value=item.seed||-1;
-  document.getElementById('style').value=item.style||'none';
-  document.getElementById('negativePrompt').value=item.negative_prompt||'';
-  document.getElementById('referenceImages').value=(item.reference_images||[]).join(', ');
+  document.getElementById('prompt').value = item.prompt || '';
+  document.getElementById('model').value = item.model || 'zimage';
+  document.getElementById('seed').value = item.seed || -1;
+  document.getElementById('style').value = item.style || 'none';
+  document.getElementById('negativePrompt').value = item.negative_prompt || '';
+  document.getElementById('referenceImages').value = (item.reference_images || []).join(', ');
   
   updatePreview();
   document.querySelector('[data-page="generate"]').click();
   document.getElementById('prompt').focus();
 }
 
-function downloadImage(url,seed){
-  const link=document.createElement('a');
-  link.href=url;
-  link.download='flux-ai-'+seed+'-'+Date.now()+'.png';
+function downloadImage(url, seed) {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'flux-ai-' + seed + '-' + Date.now() + '.png';
   link.click();
 }
 
-function openModal(url){
-  document.getElementById('modalImage').src=url;
-  document.getElementById('imageModal').classList.add('show');
+function openModal(url) {
+  document.getElementById('modalImage').src = url;
+  document.getElementById('imageModal').classList.remove('hidden');
 }
 
-function closeModal(){
-  document.getElementById('imageModal').classList.remove('show');
+function closeModal() {
+  document.getElementById('imageModal').classList.add('hidden');
 }
 
-document.getElementById('exportBtn').addEventListener('click',exportHistory);
-document.getElementById('clearBtn').addEventListener('click',clearHistory);
-document.getElementById('modalCloseBtn').addEventListener('click',closeModal);
-document.getElementById('imageModal').addEventListener('click',function(e){
-  if(e.target===this)closeModal();
+document.getElementById('exportBtn').addEventListener('click', exportHistory);
+document.getElementById('clearBtn').addEventListener('click', clearHistory);
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+document.getElementById('imageModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
 });
-document.getElementById('modalContentDiv').addEventListener('click',function(e){
-  e.stopPropagation();
-});
+`;
+}
+// 接續 Part 10 的 script 標籤內
 
-function displayGeneratedImages(images){
-  const history=getHistory();
-  const galleryDiv=document.createElement('div');
-  galleryDiv.className='gallery';
+// ==================== 顯示生成的圖片 ====================
+function displayGeneratedImages(images) {
+  const history = getHistory();
+  const galleryDiv = document.createElement('div');
+  galleryDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn';
   
-  const newImages=history.slice(0,images.length);
+  const newImages = history.slice(0, images.length);
   
-  newImages.forEach((item,index)=>{
-    const date=new Date(item.timestamp);
-    const timeStr=date.toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-    const styleConfig=STYLE_PRESETS[item.style];
-    const styleName=styleConfig ? styleConfig.icon + ' ' + styleConfig.name : item.style;
+  newImages.forEach((item, index) => {
+    const date = new Date(item.timestamp);
+    const timeStr = date.toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const styleConfig = STYLE_PRESETS[item.style];
+    const styleName = styleConfig ? styleConfig.icon + ' ' + styleConfig.name : item.style;
     
-    const itemDiv=document.createElement('div');
-    itemDiv.className='gallery-item';
-    itemDiv.style.animation='fadeIn 0.5s ease-in';
-    itemDiv.innerHTML=\`
-      <img src="\${item.url}" alt="Generated \${index+1}" loading="lazy">
-      <div class="gallery-info">
-        <div style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;text-align:center">
-          ✅ 剛剛生成
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group';
+    itemDiv.innerHTML = \`
+      <div class="relative overflow-hidden aspect-square">
+        <img src="\${item.url}" alt="Generated \${index + 1}" loading="lazy" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105">
+        <div class="absolute top-2 left-2">
+          <span class="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg">
+            ✅ 剛剛生成
+          </span>
         </div>
-        <div class="gallery-meta">
-          <span class="model-badge">\${item.model}</span>
-          <span class="seed-badge">Seed: \${item.seed}</span>
+      </div>
+      <div class="p-4 space-y-3">
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
+            \${item.model}
+          </span>
+          <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
+            Seed: \${item.seed}
+          </span>
         </div>
-        <div class="gallery-meta" style="margin-top:5px">
-          <span class="style-badge">\${styleName}</span>
-          <span class="time-badge">\${timeStr}</span>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">
+            \${styleName}
+          </span>
+          <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
+            \${timeStr}
+          </span>
         </div>
-        <div style="margin-top:8px;font-size:11px;color:#6b7280">
-          \${item.width}x\${item.height} | \${item.quality_mode||'standard'}\${item.generation_mode?' | '+item.generation_mode:''}
+        <div class="text-xs text-muted-foreground">
+          \${item.width}x\${item.height} | \${item.quality_mode || 'standard'}\${item.generation_mode ? ' | ' + item.generation_mode : ''}
         </div>
-        <div class="gallery-actions">
-          <button class="action-btn reuse-result-btn">🔄 重用</button>
-          <button class="action-btn download-result-btn">💾 下載</button>
-          <button class="action-btn view-history-btn">📚 查看歷史</button>
+        <div class="flex gap-2 pt-2">
+          <button class="reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
+            <span>🔄</span>
+            <span>重用</span>
+          </button>
+          <button class="download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
+            <span>💾</span>
+            <span>下載</span>
+          </button>
+          <button class="view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1">
+            <span>📚</span>
+            <span>歷史</span>
+          </button>
         </div>
       </div>
     \`;
     
-    const img=itemDiv.querySelector('img');
-    img.addEventListener('click',function(){openModal(item.url)});
+    const img = itemDiv.querySelector('img');
+    img.addEventListener('click', () => openModal(item.url));
     
-    const reuseBtn=itemDiv.querySelector('.reuse-result-btn');
-    reuseBtn.addEventListener('click',function(){reusePrompt(item.id)});
+    const reuseBtn = itemDiv.querySelector('.reuse-result-btn');
+    reuseBtn.addEventListener('click', () => reusePrompt(item.id));
     
-    const downloadBtn=itemDiv.querySelector('.download-result-btn');
-    downloadBtn.addEventListener('click',function(){downloadImage(item.url,item.seed)});
+    const downloadBtn = itemDiv.querySelector('.download-result-btn');
+    downloadBtn.addEventListener('click', () => downloadImage(item.url, item.seed));
     
-    const viewBtn=itemDiv.querySelector('.view-history-btn');
-    viewBtn.addEventListener('click',function(){
+    const viewBtn = itemDiv.querySelector('.view-history-btn');
+    viewBtn.addEventListener('click', () => {
       document.querySelector('[data-page="history"]').click();
     });
     
     galleryDiv.appendChild(itemDiv);
   });
   
-  const resultsDiv=document.getElementById('results');
-  resultsDiv.innerHTML='';
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = '';
   
-  const successDiv=document.createElement('div');
-  successDiv.className='alert alert-success';
-  successDiv.innerHTML='<strong>✅ 生成成功！</strong> 已生成 '+images.length+' 張圖片並保存到歷史記錄';
+  const successDiv = document.createElement('div');
+  successDiv.className = 'rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4';
+  successDiv.innerHTML = \`
+    <div class="flex items-center gap-3">
+      <div class="rounded-lg bg-green-500/20 p-2">
+        <span class="text-2xl">✅</span>
+      </div>
+      <div>
+        <h4 class="text-sm font-semibold text-green-400">生成成功！</h4>
+        <p class="text-xs text-muted-foreground">已生成 \${images.length} 張圖片並保存到歷史記錄</p>
+      </div>
+    </div>
+  \`;
   resultsDiv.appendChild(successDiv);
   resultsDiv.appendChild(galleryDiv);
 }
 
-// 表單提交
-const form=document.getElementById('generateForm');
-const resultsDiv=document.getElementById('results');
-const generateBtn=document.getElementById('generateBtn');
+// ==================== 表單提交 ====================
+const form = document.getElementById('generateForm');
+const resultsDiv = document.getElementById('results');
+const generateBtn = document.getElementById('generateBtn');
 
-form.addEventListener('submit',async(e)=>{
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
   
-  const prompt=document.getElementById('prompt').value;
-  if(!prompt.trim()){
+  const prompt = document.getElementById('prompt').value;
+  if (!prompt.trim()) {
     alert('請輸入提示詞');
     document.getElementById('prompt').focus();
     return;
   }
   
-  const model=document.getElementById('model').value;
-  const sizePreset=document.getElementById('size').value;
-  const style=document.getElementById('style').value;
-  const qualityMode=document.getElementById('qualityMode').value;
-  const seed=parseInt(document.getElementById('seed').value);
-  const numOutputs=parseInt(document.getElementById('numOutputs').value);
-  const negativePrompt=document.getElementById('negativePrompt').value;
-  const autoOptimize=document.getElementById('autoOptimize').checked;
-  const autoHD=document.getElementById('autoHD').checked;
-  const refImagesInput=document.getElementById('referenceImages').value;
+  const model = document.getElementById('model').value;
+  const sizePreset = document.getElementById('size').value;
+  const style = document.getElementById('style').value;
+  const qualityMode = document.getElementById('qualityMode').value;
+  const seed = parseInt(document.getElementById('seed').value);
+  const numOutputs = parseInt(document.getElementById('numOutputs').value);
+  const negativePrompt = document.getElementById('negativePrompt').value;
+  const autoOptimize = document.getElementById('autoOptimize').checked;
+  const autoHD = document.getElementById('autoHD').checked;
+  const refImagesInput = document.getElementById('referenceImages').value;
   
-  let referenceImages=[];
-  if(refImagesInput.trim()){
-    referenceImages=refImagesInput.split(',').map(url=>url.trim()).filter(url=>url);
+  let referenceImages = [];
+  if (refImagesInput.trim()) {
+    referenceImages = refImagesInput.split(',').map(url => url.trim()).filter(url => url);
   }
   
-  const sizeConfig=PRESET_SIZES[sizePreset]||PRESET_SIZES['square-1k'];
+  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES['square-1k'];
   
-  generateBtn.disabled=true;
-  generateBtn.innerHTML='<div class="spinner"></div>生成中...';
-  resultsDiv.innerHTML='<div class="loading"><div class="spinner"></div><p>正在生成圖像，請稍候...</p><p style="font-size:12px;color:#6b7280;margin-top:10px">API: ${apiEndpoint}</p></div>';
+  generateBtn.disabled = true;
+  generateBtn.innerHTML = '<div class="spinner"></div><span>生成中...</span>';
+  resultsDiv.innerHTML = \`
+    <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+      <div class="spinner mb-4"></div>
+      <p class="text-sm font-medium mb-2">正在生成圖像，請稍候...</p>
+      <p class="text-xs text-muted-foreground">這可能需要幾秒鐘到一分鐘</p>
+    </div>
+  \`;
   
-  try{
-    const response=await fetch('/_internal/generate',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
+  try {
+    const response = await fetch('/_internal/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         prompt,
         model,
-        width:sizeConfig.width,
-        height:sizeConfig.height,
+        width: sizeConfig.width,
+        height: sizeConfig.height,
         style,
-        quality_mode:qualityMode,
-        seed:seed,
-        n:numOutputs,
-        negative_prompt:negativePrompt,
-        auto_optimize:autoOptimize,
-        auto_hd:autoHD,
-        reference_images:referenceImages
+        quality_mode: qualityMode,
+        seed: seed,
+        n: numOutputs,
+        negative_prompt: negativePrompt,
+        auto_optimize: autoOptimize,
+        auto_hd: autoHD,
+        reference_images: referenceImages
       })
     });
     
-    const contentType=response.headers.get('content-type');
+    const contentType = response.headers.get('content-type');
     
-    if(!response.ok){
-      const errorText=await response.text();
-      let errorMsg='生成失敗';
-      try{
-        const errorJson=JSON.parse(errorText);
-        errorMsg=errorJson.error?.message||errorMsg;
-      }catch(e){
-        errorMsg=errorText.substring(0,200);
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMsg = '生成失敗';
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorMsg = errorJson.error?.message || errorMsg;
+      } catch (e) {
+        errorMsg = errorText.substring(0, 200);
       }
-      resultsDiv.innerHTML='<div class="alert alert-error"><strong>錯誤:</strong> '+errorMsg+'</div>';
       
-      if(response.status===401||response.status===403){
-        resultsDiv.innerHTML+='<div class="alert alert-warning"><strong>⚠️ 認證問題:</strong> 請確保已設置有效的 POLLINATIONS_API_KEY 環境變量。<br>使用命令: <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px">wrangler secret put POLLINATIONS_API_KEY</code></div>';
+      resultsDiv.innerHTML = \`
+        <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
+          <div class="flex items-start gap-3">
+            <div class="rounded-lg bg-destructive/20 p-2">
+              <span class="text-2xl">❌</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>
+              <p class="text-xs text-muted-foreground">\${errorMsg}</p>
+            </div>
+          </div>
+        </div>
+      \`;
+      
+      if (response.status === 401 || response.status === 403) {
+        resultsDiv.innerHTML += \`
+          <div class="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4">
+            <div class="flex items-start gap-3">
+              <div class="rounded-lg bg-amber-500/20 p-2">
+                <span class="text-2xl">⚠️</span>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-amber-400 mb-1">認證問題</h4>
+                <p class="text-xs text-muted-foreground mb-2">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p>
+                <code class="text-xs bg-background/50 px-2 py-1 rounded">wrangler secret put POLLINATIONS_API_KEY</code>
+              </div>
+            </div>
+          </div>
+        \`;
       }
       return;
     }
     
-    if(contentType&&contentType.startsWith('image/')){
-      const imageBlob=await response.blob();
-      const imageUrl=URL.createObjectURL(imageBlob);
+    if (contentType && contentType.startsWith('image/')) {
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
       
-      const modelUsed=response.headers.get('X-Model')||model;
-      const seedUsed=parseInt(response.headers.get('X-Seed'))||seed;
-      const widthUsed=parseInt(response.headers.get('X-Width'))||sizeConfig.width;
-      const heightUsed=parseInt(response.headers.get('X-Height'))||sizeConfig.height;
-      const qualityUsed=response.headers.get('X-Quality-Mode')||qualityMode;
-      const styleUsed=response.headers.get('X-Style')||style;
-      const genMode=response.headers.get('X-Generation-Mode')||'文生圖';
+      const modelUsed = response.headers.get('X-Model') || model;
+      const seedUsed = parseInt(response.headers.get('X-Seed')) || seed;
+      const widthUsed = parseInt(response.headers.get('X-Width')) || sizeConfig.width;
+      const heightUsed = parseInt(response.headers.get('X-Height')) || sizeConfig.height;
+      const qualityUsed = response.headers.get('X-Quality-Mode') || qualityMode;
+      const styleUsed = response.headers.get('X-Style') || style;
+      const genMode = response.headers.get('X-Generation-Mode') || '文生圖';
       
       addToHistory({
-        url:imageUrl,
-        prompt:prompt,
-        model:modelUsed,
-        seed:seedUsed,
-        width:widthUsed,
-        height:heightUsed,
-        style:styleUsed,
-        quality_mode:qualityUsed,
-        negative_prompt:negativePrompt,
-        reference_images:referenceImages,
-        generation_mode:genMode
+        url: imageUrl,
+        prompt: prompt,
+        model: modelUsed,
+        seed: seedUsed,
+        width: widthUsed,
+        height: heightUsed,
+        style: styleUsed,
+        quality_mode: qualityUsed,
+        negative_prompt: negativePrompt,
+        reference_images: referenceImages,
+        generation_mode: genMode
       });
       
       displayGeneratedImages([{
-        url:imageUrl,
-        model:modelUsed,
-        seed:seedUsed,
-        width:widthUsed,
-        height:heightUsed,
-        quality_mode:qualityUsed,
-        style:styleUsed
+        url: imageUrl,
+        model: modelUsed,
+        seed: seedUsed,
+        width: widthUsed,
+        height: heightUsed,
+        quality_mode: qualityUsed,
+        style: styleUsed
       }]);
-    }else if(contentType&&contentType.includes('application/json')){
-      const data=await response.json();
+    } else if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
       
-      if(data.error){
-        resultsDiv.innerHTML='<div class="alert alert-error"><strong>錯誤:</strong> '+data.error.message+'</div>';
-      }else{
-        const images=data.data.map(item=>{
+      if (data.error) {
+        resultsDiv.innerHTML = \`
+          <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
+            <div class="flex items-start gap-3">
+              <div class="rounded-lg bg-destructive/20 p-2">
+                <span class="text-2xl">❌</span>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>
+                <p class="text-xs text-muted-foreground">\${data.error.message}</p>
+              </div>
+            </div>
+          </div>
+        \`;
+      } else {
+        const images = data.data.map(item => {
           addToHistory({
-            url:item.image,
-            prompt:prompt,
-            model:item.model,
-            seed:item.seed,
-            width:item.width,
-            height:item.height,
-            style:item.style,
-            quality_mode:item.quality_mode,
-            negative_prompt:negativePrompt,
-            reference_images:referenceImages,
-            generation_mode:item.generation_mode
+            url: item.image,
+            prompt: prompt,
+            model: item.model,
+            seed: item.seed,
+            width: item.width,
+            height: item.height,
+            style: item.style,
+            quality_mode: item.quality_mode,
+            negative_prompt: negativePrompt,
+            reference_images: referenceImages,
+            generation_mode: item.generation_mode
           });
           return item;
         });
         displayGeneratedImages(images);
       }
     }
-  }catch(error){
-    resultsDiv.innerHTML='<div class="alert alert-error"><strong>錯誤:</strong> '+error.message+'</div>';
-  }finally{
-    generateBtn.disabled=false;
-    generateBtn.innerHTML='🎨 開始生成';
+  } catch (error) {
+    resultsDiv.innerHTML = \`
+      <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
+        <div class="flex items-start gap-3">
+          <div class="rounded-lg bg-destructive/20 p-2">
+            <span class="text-2xl">❌</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-sm font-semibold text-destructive mb-1">網路錯誤</h4>
+            <p class="text-xs text-muted-foreground">\${error.message}</p>
+          </div>
+        </div>
+      </div>
+    \`;
+  } finally {
+    generateBtn.disabled = false;
+    generateBtn.innerHTML = '<span class="text-lg">🎨</span><span class="font-bold">開始生成</span>';
   }
 });
 
-window.addEventListener('DOMContentLoaded',()=>{
+// ==================== 初始化 ====================
+window.addEventListener('DOMContentLoaded', () => {
   updateHistoryStats();
   updatePreview();
+  console.log('✅ Flux AI Pro 已加載完成');
+  console.log('📊 風格數量:', Object.keys(STYLE_PRESETS).length);
+  console.log('🎨 Shadcn UI 風格已應用');
 });
+
 </script>
 </body>
-</html>`;
-  
-  return new Response(html, {
-    headers: {
-      'Content-Type': 'text/html;charset=UTF-8',
-      ...corsHeaders()
-    }
-  });
+</html>
+`;
 }
