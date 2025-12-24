@@ -1,83 +1,19 @@
-# =================================================================================
-# Flux-AI-Pro Cloudflare Workers 配置 (Wrangler v4 兼容)
-# =================================================================================
-
 name = "fluxaipor1"
 main = "src/index.js"
 compatibility_date = "2024-12-01"
-
-# 使用 nodejs_compat 替代已棄用的 node_compat
 compatibility_flags = ["nodejs_compat"]
 
-# =================================================================================
-# 環境變數
-# =================================================================================
 [vars]
 PROJECT_NAME = "Flux-AI-Pro"
-PROJECT_VERSION = "9.6.1-extended-styles-shadcn-complete"
+PROJECT_VERSION = "9.6.1"
 
-# =================================================================================
-# R2 存儲桶綁定（圖片永久存儲）
-# =================================================================================
 [[r2_buckets]]
 binding = "IMAGES_BUCKET"
 bucket_name = "flux-ai-images"
-preview_bucket_name = "flux-ai-images-preview"
-
-# =================================================================================
-# KV 命名空間綁定（圖片元數據存儲）
-# =================================================================================
-# 請先執行以下命令創建 KV 命名空間，然後替換下面的 ID：
-# wrangler kv:namespace create IMAGE_METADATA
-# wrangler kv:namespace create IMAGE_METADATA --preview
 
 [[kv_namespaces]]
 binding = "IMAGE_METADATA"
-id = "YOUR_KV_NAMESPACE_ID_HERE"
-preview_id = "YOUR_KV_PREVIEW_NAMESPACE_ID_HERE"
+id = "YOUR_KV_ID"
 
-# =================================================================================
-# Workers AI 綁定（翻譯功能 - 可選）
-# =================================================================================
 [ai]
 binding = "AI"
-
-# =================================================================================
-# 限制和配額
-# =================================================================================
-[limits]
-cpu_ms = 50000
-
-# =================================================================================
-# 開發環境配置
-# =================================================================================
-[env.dev]
-name = "flux-ai-pro-dev"
-
-[env.dev.vars]
-ENVIRONMENT = "development"
-
-[[env.dev.r2_buckets]]
-binding = "IMAGES_BUCKET"
-bucket_name = "flux-ai-images-preview"
-
-[[env.dev.kv_namespaces]]
-binding = "IMAGE_METADATA"
-id = "YOUR_KV_PREVIEW_NAMESPACE_ID_HERE"
-
-# =================================================================================
-# 生產環境配置
-# =================================================================================
-[env.production]
-name = "flux-ai-pro-production"
-
-[env.production.vars]
-ENVIRONMENT = "production"
-
-[[env.production.r2_buckets]]
-binding = "IMAGES_BUCKET"
-bucket_name = "flux-ai-images"
-
-[[env.production.kv_namespaces]]
-binding = "IMAGE_METADATA"
-id = "YOUR_KV_NAMESPACE_ID_HERE"
