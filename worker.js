@@ -1,763 +1,1247 @@
+// =================================================================================
+//  項目: Flux AI Pro - Permanent URL Edition
+//  版本: 3.5.0-permanent-url
+//  更新: ✅ 永久 URL 存儲 | ✅ 新 API 端點 | ✅ 46 種風格
+//  API: https://gen.pollinations.ai (官方新端點)
+// =================================================================================
+
 const CONFIG = {
-  PROJECT_NAME: 'Flux AI Pro',
-  PROJECT_VERSION: '3.4.0',
+  PROJECT_NAME: "Flux-AI-Pro",
+  PROJECT_VERSION: "3.5.0-permanent-url",
+  FETCH_TIMEOUT: 120000,
+  MAX_RETRIES: 3,
+  
+  POLLINATIONS_AUTH: {
+    enabled: true,
+    token: "",
+    method: "header"
+  },
+  
+  PRESET_SIZES: {
+    "square-1k": { name: "方形 1024x1024", width: 1024, height: 1024 },
+    "square-1.5k": { name: "方形 1536x1536", width: 1536, height: 1536 },
+    "square-2k": { name: "方形 2048x2048", width: 2048, height: 2048 },
+    "portrait-9-16-hd": { name: "豎屏 9:16 HD", width: 1080, height: 1920 },
+    "landscape-16-9-hd": { name: "橫屏 16:9 HD", width: 1920, height: 1080 },
+    "instagram-square": { name: "Instagram 方形", width: 1080, height: 1080 },
+    "wallpaper-fhd": { name: "桌布 Full HD", width: 1920, height: 1080 }
+  },
+  
   PROVIDERS: {
     pollinations: {
-      endpoint: 'https://gen.pollinations.ai',
-      apiKey: '',
+      name: "Pollinations.ai",
+      endpoint: "https://gen.pollinations.ai",
+      pathPrefix: "/image",
+      type: "direct",
+      enabled: true,
+      default: true,
       models: [
         { 
-          id: 'flux', 
-          name: 'Flux', 
-          description: 'Fast and high-quality image generation',
-          category: 'balanced', 
-          speed: 'fast',
-          pricing: { pollen: 0.00012 },
-          icon: '⚡'
+          id: "zimage", 
+          name: "Z-Image Turbo ⚡", 
+          description: "快速 6B 參數圖像生成",
+          pricing: { pollen: 0.0002 }
         },
         { 
-          id: 'kontext', 
-          name: 'Kontext', 
-          description: 'Context-aware image generation',
-          category: 'quality', 
-          speed: 'medium',
+          id: "flux", 
+          name: "Flux 標準版", 
+          description: "快速且高質量的圖像生成",
+          pricing: { pollen: 0.00012 }
+        },
+        { 
+          id: "turbo", 
+          name: "Flux Turbo ⚡", 
+          description: "超快速圖像生成",
+          pricing: { pollen: 0.0003 }
+        },
+        { 
+          id: "kontext", 
+          name: "Kontext 🎨", 
+          description: "上下文感知圖像生成（支持圖生圖）",
           pricing: { pollen: 0.04 },
-          icon: '🎨'
-        },
-        { 
-          id: 'zimage', 
-          name: 'Z-Image Turbo', 
-          description: 'Fast 6B parameter image generation (alpha)',
-          category: 'fast', 
-          speed: 'ultra-fast',
-          pricing: { pollen: 0.0002 },
-          icon: '🚀'
+          supports_reference_images: true,
+          max_reference_images: 1
         }
       ]
     }
   },
-  PRESET_SIZES: {
-    'square_1024': { name: 'Square 1:1 (1K)', width: 1024, height: 1024, icon: '⬛', category: 'standard' },
-    'portrait_768': { name: 'Portrait 3:4', width: 768, height: 1024, icon: '📱', category: 'standard' },
-    'landscape_1024': { name: 'Landscape 4:3', width: 1024, height: 768, icon: '🖥️', category: 'standard' },
-    'wide_1280': { name: 'Wide 16:9', width: 1280, height: 720, icon: '📺', category: 'standard' },
-    'square_2k': { name: 'Square 1:1 (2K)', width: 2048, height: 2048, icon: '🔲', category: '2k' },
-    'portrait_2k': { name: 'Portrait 3:4 (2K)', width: 1536, height: 2048, icon: '📲', category: '2k' },
-    'landscape_2k': { name: 'Landscape 4:3 (2K)', width: 2048, height: 1536, icon: '🖼️', category: '2k' },
-    'wide_2k': { name: 'Wide 16:9 (2K)', width: 2048, height: 1152, icon: '📽️', category: '2k' },
-    'ultrawide_2k': { name: 'Ultra Wide 21:9 (2K)', width: 2048, height: 878, icon: '🎬', category: '2k' },
-    'square_4k': { name: 'Square 1:1 (4K)', width: 2048, height: 2048, icon: '💎', category: '4k' },
-    'portrait_4k': { name: 'Portrait 9:16 (4K)', width: 1152, height: 2048, icon: '📱', category: '4k' },
-    'landscape_4k': { name: 'Landscape 16:9 (4K)', width: 2048, height: 1152, icon: '🖥️', category: '4k' },
-    'cinema_4k': { name: 'Cinema 2.39:1 (4K)', width: 2048, height: 858, icon: '🎥', category: '4k' },
-    'instagram_square': { name: 'Instagram Square', width: 1080, height: 1080, icon: '📷', category: 'social' },
-    'instagram_portrait': { name: 'Instagram Portrait', width: 1080, height: 1350, icon: '📸', category: 'social' },
-    'twitter_card': { name: 'Twitter Card', width: 1200, height: 675, icon: '🐦', category: 'social' },
-    'facebook_cover': { name: 'Facebook Cover', width: 1640, height: 924, icon: '👥', category: 'social' },
-    'youtube_thumb': { name: 'YouTube Thumbnail', width: 1280, height: 720, icon: '▶️', category: 'social' }
-  },
+  
+  DEFAULT_PROVIDER: "pollinations",
+  
   STYLE_PRESETS: {
-    'none': { name: { zh: '🔲 無風格', en: '🔲 None' }, prompt: '', negative: '' },
-    'photorealistic': { name: { zh: '📷 照片寫實', en: '📷 Photorealistic' }, prompt: 'photorealistic, 8k uhd, high detail, professional photography, sharp focus', negative: 'cartoon, anime, illustration, painting, drawing, 3d render' },
-    'hyperrealistic': { name: { zh: '🔍 超級寫實', en: '🔍 Hyperrealistic' }, prompt: 'hyperrealistic, ultra detailed, lifelike textures, sharp clarity, professional lighting', negative: 'stylized, artistic, low detail, blur' },
-    'portrait_photography': { name: { zh: '👤 人像攝影', en: '👤 Portrait Photo' }, prompt: 'portrait photography, professional studio lighting, bokeh background, 85mm lens, f/1.8', negative: 'full body, landscape, multiple people, bad lighting' },
-    'street_photography': { name: { zh: '🏙️ 街拍攝影', en: '🏙️ Street Photo' }, prompt: 'street photography, candid moment, urban environment, natural lighting, documentary style', negative: 'staged, studio, artificial, posed' },
-    'macro_photography': { name: { zh: '🔬 微距攝影', en: '🔬 Macro Photo' }, prompt: 'macro photography, extreme close-up, shallow depth of field, intricate details, 100mm macro lens', negative: 'wide angle, landscape, distant, blurry' },
-    'oil_painting': { name: { zh: '🖼️ 油畫', en: '🖼️ Oil Painting' }, prompt: 'oil painting, classical art style, rich colors, textured brush strokes, canvas texture', negative: 'digital, modern, photograph, 3d' },
-    'watercolor': { name: { zh: '💧 水彩畫', en: '💧 Watercolor' }, prompt: 'watercolor painting, soft edges, flowing colors, paper texture, transparent layers', negative: 'digital, sharp edges, photorealistic, oil painting' },
-    'acrylic_painting': { name: { zh: '🎨 丙烯畫', en: '🎨 Acrylic' }, prompt: 'acrylic painting, bold colors, thick paint texture, modern art style, vibrant', negative: 'watercolor, digital, photograph, pencil' },
-    'impressionism': { name: { zh: '🌅 印象派', en: '🌅 Impressionism' }, prompt: 'impressionist painting, visible brush strokes, light and color emphasis, Monet style', negative: 'photorealistic, sharp details, modern, digital' },
-    'expressionism': { name: { zh: '😱 表現主義', en: '😱 Expressionism' }, prompt: 'expressionist art, emotional distortion, bold colors, exaggerated forms, intense mood', negative: 'realistic, calm, balanced, traditional' },
-    'abstract': { name: { zh: '🔷 抽象藝術', en: '🔷 Abstract' }, prompt: 'abstract art, geometric shapes, bold colors, non-representational, modern composition', negative: 'realistic, detailed, figurative, portrait' },
-    'cubism': { name: { zh: '📐 立體主義', en: '📐 Cubism' }, prompt: 'cubist style, geometric shapes, multiple perspectives, fragmented forms, Picasso inspired', negative: 'realistic, smooth, traditional, photographic' },
-    'surrealism': { name: { zh: '🌀 超現實主義', en: '🌀 Surrealism' }, prompt: 'surrealist art, dreamlike imagery, impossible scenes, Salvador Dali style, symbolic', negative: 'realistic, logical, ordinary, documentary' },
-    'anime': { name: { zh: '⭐ 日本動漫', en: '⭐ Anime' }, prompt: 'anime style, manga art, cel shading, vibrant colors, expressive eyes, Japanese animation', negative: 'realistic, western cartoon, 3d, photograph' },
-    'manga': { name: { zh: '📚 日本漫畫', en: '📚 Manga' }, prompt: 'manga style, black and white, screentone, dynamic composition, Japanese comic art', negative: 'color, realistic, western comic, 3d' },
-    'cartoon': { name: { zh: '🎭 卡通風格', en: '🎭 Cartoon' }, prompt: 'cartoon style, simplified forms, bold outlines, exaggerated features, colorful', negative: 'realistic, detailed, photographic, serious' },
-    'comic_book': { name: { zh: '💥 美式漫畫', en: '💥 Comic Book' }, prompt: 'comic book style, bold inking, halftone dots, dynamic poses, superhero art', negative: 'realistic, soft, painterly, photograph' },
-    'disney': { name: { zh: '🏰 迪士尼風格', en: '🏰 Disney Style' }, prompt: 'Disney animation style, magical atmosphere, rounded features, expressive characters, colorful', negative: 'realistic, dark, gritty, anime' },
-    'pixar': { name: { zh: '🎬 皮克斯 3D', en: '🎬 Pixar 3D' }, prompt: 'Pixar style 3D render, smooth surfaces, vibrant colors, appealing characters, cinematic lighting', negative: 'realistic, 2d, flat, low quality' },
-    'studio_ghibli': { name: { zh: '🌿 吉卜力工作室', en: '🌿 Studio Ghibli' }, prompt: 'Studio Ghibli style, hand-drawn animation, soft colors, nature themes, whimsical atmosphere', negative: 'realistic, 3d, dark, modern digital' },
-    'art_nouveau': { name: { zh: '🌺 新藝術運動', en: '🌺 Art Nouveau' }, prompt: 'Art Nouveau style, flowing organic lines, floral motifs, decorative borders, elegant curves', negative: 'geometric, minimalist, modern, industrial' },
-    'art_deco': { name: { zh: '💎 裝飾藝術', en: '💎 Art Deco' }, prompt: 'Art Deco style, geometric patterns, luxury aesthetic, gold accents, 1920s glamour', negative: 'organic, messy, rustic, modern minimalism' },
-    'pop_art': { name: { zh: '🎨 普普藝術', en: '🎨 Pop Art' }, prompt: 'pop art style, bold colors, halftone dots, Roy Lichtenstein inspired, commercial aesthetic', negative: 'realistic, muted colors, classical, subtle' },
-    'minimalist': { name: { zh: '⬜ 極簡主義', en: '⬜ Minimalist' }, prompt: 'minimalist art, simple shapes, clean lines, negative space, limited color palette', negative: 'detailed, complex, ornate, busy' },
-    'graffiti': { name: { zh: '🎨 塗鴉藝術', en: '🎨 Graffiti' }, prompt: 'graffiti art, urban street style, spray paint effect, bold letters, vibrant colors', negative: 'clean, traditional, formal, classical' },
-    'digital_art': { name: { zh: '💻 數位藝術', en: '💻 Digital Art' }, prompt: 'digital art, modern illustration, clean lines, vibrant colors, trending on ArtStation', negative: 'traditional media, messy, low resolution, amateur' },
-    'concept_art': { name: { zh: '🎮 概念設計', en: '🎮 Concept Art' }, prompt: 'concept art, game design, detailed environment, professional illustration, cinematic composition', negative: 'final render, photograph, simple, minimal' },
-    'cyberpunk': { name: { zh: '🌃 賽博朋克', en: '🌃 Cyberpunk' }, prompt: 'cyberpunk style, neon lights, futuristic city, dark atmosphere, high-tech dystopia', negative: 'nature, traditional, bright daylight, rustic' },
-    'vaporwave': { name: { zh: '🌸 蒸氣波', en: '🌸 Vaporwave' }, prompt: 'vaporwave aesthetic, retro 80s-90s, pastel colors, glitch effects, nostalgic technology', negative: 'modern, realistic, dark, muted' },
-    'synthwave': { name: { zh: '🌆 合成波', en: '🌆 Synthwave' }, prompt: 'synthwave style, neon grids, sunset gradients, 80s retro futurism, glowing outlines', negative: 'realistic, modern, muted colors, daylight' },
-    'low_poly': { name: { zh: '🔺 低多邊形', en: '🔺 Low Poly' }, prompt: 'low poly 3D art, geometric facets, flat shading, minimalist 3D, angular shapes', negative: 'high detail, smooth, realistic, organic' },
-    'isometric': { name: { zh: '📦 等距視角', en: '📦 Isometric' }, prompt: 'isometric view, architectural style, clean lines, game asset style, balanced perspective', negative: 'perspective view, realistic, distorted, messy' },
-    'cinematic': { name: { zh: '🎬 電影感', en: '🎬 Cinematic' }, prompt: 'cinematic lighting, film grain, movie still, dramatic atmosphere, anamorphic lens, color grading', negative: 'amateur, flat lighting, snapshot, low quality' },
-    'film_noir': { name: { zh: '🎞️ 黑色電影', en: '🎞️ Film Noir' }, prompt: 'film noir style, high contrast black and white, dramatic shadows, 1940s aesthetic, moody', negative: 'color, bright, cheerful, modern' },
-    'sci_fi': { name: { zh: '🚀 科幻風格', en: '🚀 Sci-Fi' }, prompt: 'science fiction, futuristic technology, space age, high-tech environment, cinematic sci-fi', negative: 'historical, natural, low-tech, medieval' },
-    'fantasy': { name: { zh: '🧙 奇幻風格', en: '🧙 Fantasy' }, prompt: 'fantasy art, magical atmosphere, epic scenery, mystical creatures, enchanted environment', negative: 'modern, realistic, urban, technological' },
-    'horror': { name: { zh: '👻 恐怖風格', en: '👻 Horror' }, prompt: 'horror atmosphere, dark and eerie, ominous lighting, disturbing imagery, suspenseful mood', negative: 'bright, cheerful, cute, calming' },
-    'renaissance': { name: { zh: '🖼️ 文藝復興', en: '🖼️ Renaissance' }, prompt: 'Renaissance art, classical painting, realistic proportions, chiaroscuro lighting, masterful technique', negative: 'modern, abstract, digital, simplified' },
-    'baroque': { name: { zh: '👑 巴洛克風格', en: '👑 Baroque' }, prompt: 'Baroque style, dramatic lighting, rich colors, ornate details, grandeur and drama', negative: 'minimalist, modern, simple, flat' },
-    'ukiyo_e': { name: { zh: '🗾 浮世繪', en: '🗾 Ukiyo-e' }, prompt: 'Japanese ukiyo-e woodblock print, flat colors, bold outlines, traditional Japanese art', negative: 'realistic, 3d, western, photographic' },
-    'neon': { name: { zh: '💡 霓虹發光', en: '💡 Neon Glow' }, prompt: 'neon glow effect, vibrant fluorescent colors, glowing edges, dark background, electric aesthetic', negative: 'muted, natural, daylight, realistic' },
-    'glitch_art': { name: { zh: '📺 故障藝術', en: '📺 Glitch Art' }, prompt: 'glitch art, digital corruption, RGB shift, pixelated distortion, cybernetic aesthetic', negative: 'clean, perfect, traditional, analog' },
-    'holographic': { name: { zh: '✨ 全息投影', en: '✨ Holographic' }, prompt: 'holographic effect, iridescent colors, rainbow shimmer, futuristic display, transparent glow', negative: 'matte, flat, opaque, dull' },
-    'psychedelic': { name: { zh: '🌀 迷幻藝術', en: '🌀 Psychedelic' }, prompt: 'psychedelic art, swirling patterns, vibrant colors, hallucinatory imagery, trippy visuals', negative: 'realistic, muted, orderly, conservative' },
-    'steampunk': { name: { zh: '⚙️ 蒸汽朋克', en: '⚙️ Steampunk' }, prompt: 'steampunk style, Victorian era, brass and copper, mechanical gears, industrial revolution aesthetic', negative: 'modern, digital, clean, minimalist' }
+    none: { name: "無風格", prompt: "", negative: "", category: "basic", icon: "⚡", description: "使用原始提示詞" },
+    anime: { name: "動漫風格", prompt: "anime style, anime art, vibrant colors, cel shading, detailed anime", negative: "realistic, photograph, 3d, ugly", category: "illustration", icon: "🎭", description: "日系動漫風格" },
+    ghibli: { name: "吉卜力", prompt: "Studio Ghibli style, Hayao Miyazaki, anime, soft colors, whimsical, detailed background, hand-drawn", negative: "realistic, dark, 3D, western animation", category: "illustration", icon: "🍃", description: "宮崎駿動畫風格" },
+    manga: { name: "日本漫畫", prompt: "manga style, japanese comic art, black and white, screentones, halftone patterns, dynamic poses, detailed linework", negative: "color, colorful, realistic, photo, western comic", category: "manga", icon: "📖", description: "經典日本漫畫黑白網點" },
+    "manga-color": { name: "彩色日漫", prompt: "colored manga style, japanese comic art, vibrant colors, cel shading, clean linework, digital coloring", negative: "realistic, photo, western style, messy", category: "manga", icon: "🎨", description: "彩色日本漫畫風格" },
+    "american-comic": { name: "美式漫畫", prompt: "american comic book style, bold lines, vibrant colors, superhero art, dynamic action, dramatic shading", negative: "anime, manga, realistic photo, soft", category: "manga", icon: "💥", description: "美國超級英雄漫畫" },
+    "korean-webtoon": { name: "韓國網漫", prompt: "korean webtoon style, manhwa art, detailed linework, soft colors, romantic, vertical scroll format", negative: "american comic, rough sketch, dark", category: "manga", icon: "📱", description: "韓國網路漫畫風格" },
+    chibi: { name: "Q版漫畫", prompt: "chibi style, super deformed, cute, kawaii, big head small body, simple features, adorable", negative: "realistic proportions, serious, dark", category: "manga", icon: "🥰", description: "Q版可愛漫畫風格" },
+    "black-white": { name: "黑白", prompt: "black and white, monochrome, high contrast, dramatic lighting, grayscale", negative: "color, colorful, vibrant, saturated", category: "monochrome", icon: "⚫⚪", description: "純黑白高對比效果" },
+    sketch: { name: "素描", prompt: "pencil sketch, hand drawn, graphite drawing, detailed shading, artistic sketch, loose lines", negative: "color, digital, polished, photo", category: "monochrome", icon: "✏️", description: "鉛筆素描手繪質感" },
+    "ink-drawing": { name: "水墨畫", prompt: "traditional chinese ink painting, sumi-e, brush strokes, minimalist, zen aesthetic, black ink on white paper", negative: "color, western style, detailed, cluttered", category: "monochrome", icon: "🖌️", description: "中國傳統水墨畫" },
+    silhouette: { name: "剪影", prompt: "silhouette art, stark contrast, black shapes, minimalist, dramatic, shadow play, clean edges", negative: "detailed, realistic, colorful, textured", category: "monochrome", icon: "👤", description: "剪影藝術極簡構圖" },
+    charcoal: { name: "炭筆畫", prompt: "charcoal drawing, rough texture, dramatic shading, expressive, smudged, artistic, monochrome", negative: "clean, digital, colorful, precise", category: "monochrome", icon: "🖤", description: "炭筆繪畫粗糙質感" },
+    photorealistic: { name: "寫實照片", prompt: "photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus", negative: "anime, cartoon, illustration, painting, drawing, art", category: "realistic", icon: "📷", description: "攝影級寫實效果" },
+    "oil-painting": { name: "油畫", prompt: "oil painting, canvas texture, visible brushstrokes, rich colors, artistic, masterpiece", negative: "photograph, digital art, anime, flat", category: "painting", icon: "🖼️", description: "經典油畫質感" },
+    watercolor: { name: "水彩畫", prompt: "watercolor painting, soft colors, watercolor texture, artistic, hand-painted, paper texture, flowing colors", negative: "photograph, digital, sharp edges, 3d", category: "painting", icon: "💧", description: "清新水彩風格" },
+    impressionism: { name: "印象派", prompt: "impressionist painting, soft brushstrokes, light and color focus, Monet style, outdoor scene, visible brush marks", negative: "sharp, detailed, photorealistic, dark", category: "art-movement", icon: "🌅", description: "印象派繪畫光影捕捉" },
+    abstract: { name: "抽象派", prompt: "abstract art, non-representational, geometric shapes, bold colors, modern art, expressive", negative: "realistic, figurative, detailed, representational", category: "art-movement", icon: "🎭", description: "抽象藝術幾何圖形" },
+    cubism: { name: "立體主義", prompt: "cubist style, geometric shapes, multiple perspectives, fragmented, Picasso inspired, angular forms", negative: "realistic, smooth, traditional, single perspective", category: "art-movement", icon: "🔷", description: "立體主義多視角解構" },
+    surrealism: { name: "超現實主義", prompt: "surrealist art, dreamlike, bizarre, impossible scenes, Salvador Dali style, imaginative, symbolic", negative: "realistic, mundane, ordinary, logical", category: "art-movement", icon: "🌀", description: "超現實主義夢幻場景" },
+    "pop-art": { name: "普普藝術", prompt: "pop art style, bold colors, comic book elements, Andy Warhol inspired, retro, screen print effect", negative: "subtle, muted, traditional, realistic", category: "art-movement", icon: "🎪", description: "普普藝術大膽色彩" },
+    neon: { name: "霓虹燈", prompt: "neon lights, glowing, vibrant neon colors, night scene, electric, luminous, dark background", negative: "daylight, muted, natural, dull", category: "visual", icon: "💡", description: "霓虹燈發光效果" },
+    vintage: { name: "復古", prompt: "vintage style, retro, aged, nostalgic, warm tones, classic, faded colors, old photograph", negative: "modern, futuristic, clean, vibrant", category: "visual", icon: "📻", description: "復古懷舊褪色效果" },
+    steampunk: { name: "蒸汽朋克", prompt: "steampunk style, Victorian era, brass and copper, gears and mechanisms, mechanical, industrial", negative: "modern, minimalist, clean, futuristic", category: "visual", icon: "⚙️", description: "蒸汽朋克機械美學" },
+    minimalist: { name: "極簡主義", prompt: "minimalist design, clean, simple, geometric, negative space, modern, uncluttered", negative: "detailed, complex, ornate, busy", category: "visual", icon: "◽", description: "極簡設計留白美學" },
+    vaporwave: { name: "蒸氣波", prompt: "vaporwave aesthetic, retro futuristic, pastel colors, glitch art, 80s 90s nostalgia, neon pink and blue", negative: "realistic, natural, muted, traditional", category: "visual", icon: "🌴", description: "蒸氣波復古未來" },
+    "pixel-art": { name: "像素藝術", prompt: "pixel art, 8-bit, 16-bit, retro gaming style, pixelated, nostalgic, limited color palette", negative: "high resolution, smooth, realistic, detailed", category: "digital", icon: "🎮", description: "像素藝術復古遊戲" },
+    "low-poly": { name: "低多邊形", prompt: "low poly 3d, geometric, faceted, minimalist 3d art, polygonal, angular shapes", negative: "high poly, detailed, realistic, organic", category: "digital", icon: "🔺", description: "低多邊形3D幾何" },
+    "3d-render": { name: "3D渲染", prompt: "3d render, cinema 4d, octane render, detailed, professional lighting, ray tracing, photorealistic 3d", negative: "2d, flat, hand drawn, sketchy", category: "digital", icon: "🎬", description: "專業3D渲染寫實光影" },
+    gradient: { name: "漸變", prompt: "gradient art, smooth color transitions, modern, vibrant gradients, soft blending, colorful", negative: "solid colors, flat, harsh edges, traditional", category: "digital", icon: "🌈", description: "漸變藝術柔和過渡" },
+    glitch: { name: "故障藝術", prompt: "glitch art, digital corruption, RGB shift, distorted, cyberpunk, data moshing, scanlines", negative: "clean, perfect, traditional, smooth", category: "digital", icon: "📺", description: "故障美學數位崩壞" },
+    "ukiyo-e": { name: "浮世繪", prompt: "ukiyo-e style, japanese woodblock print, Hokusai inspired, traditional japanese art, flat colors, bold outlines", negative: "modern, western, photographic, 3d", category: "traditional", icon: "🗾", description: "日本浮世繪木刻版畫" },
+    "stained-glass": { name: "彩繪玻璃", prompt: "stained glass art, colorful, leaded glass, church window style, luminous, geometric patterns, light through glass", negative: "realistic, photographic, modern, opaque", category: "traditional", icon: "🪟", description: "彩繪玻璃透光效果" },
+    "paper-cut": { name: "剪紙藝術", prompt: "paper cut art, layered paper, shadow box effect, intricate patterns, handcrafted, silhouette", negative: "painted, digital, realistic, photographic", category: "traditional", icon: "✂️", description: "剪紙藝術層次堆疊" },
+    gothic: { name: "哥特風格", prompt: "gothic style, dark, ornate, Victorian gothic, mysterious, dramatic, baroque elements, elegant darkness", negative: "bright, cheerful, minimalist, modern", category: "aesthetic", icon: "🦇", description: "哥特美學黑暗華麗" },
+    "art-nouveau": { name: "新藝術", prompt: "art nouveau style, organic forms, flowing lines, decorative, elegant, floral motifs, Alphonse Mucha inspired", negative: "geometric, minimalist, modern, rigid", category: "aesthetic", icon: "🌺", description: "新藝術流動線條" },
+    cyberpunk: { name: "賽博朋克", prompt: "cyberpunk style, neon lights, futuristic, sci-fi, dystopian, high-tech low-life, blade runner style", negative: "natural, rustic, medieval, fantasy", category: "scifi", icon: "🌃", description: "賽博朋克未來科幻" },
+    fantasy: { name: "奇幻風格", prompt: "fantasy art, magical, epic fantasy, detailed fantasy illustration, mystical, enchanted", negative: "modern, realistic, mundane, contemporary", category: "fantasy", icon: "🐉", description: "奇幻魔法世界" }
   },
-  FETCH_TIMEOUT: 120000
-};
-
-const LANG = {
-  'zh': {
-    title: 'Flux AI Pro', version: '版本', history: '歷史', records: '條記錄', settings: '生成參數', model: '模型選擇', size: '尺寸預設', style: '藝術風格', quality: '質量模式',
-    qEconomy: '⚡ 經濟模式', qStandard: '⚖️ 標準模式', qUltra: '💎 超高清模式', qDescEco: '快速生成', qDescStd: '平衡質量與速度', qDescUlt: '極致質量',
-    advanced: '進階選項', seed: '隨機種子', seedPh: '-1 為隨機', autoOpt: '⚡ 參數自動優化', autoHD: '🔍 HD 自動增強', generate: '開始生成',
-    results: '生成結果', empty: '尚未生成任何圖像', emptyDesc: '填寫左側參數並輸入提示詞後點擊生成按鈕', loading: 'AI 正在創作中', loadDesc: '這可能需要幾秒鐘到一分鐘',
-    elapsed: '已用時', sec: '秒', success: '生成成功！', generated: '已生成', images: '張圖片', modelLabel: '模型', sizeLabel: '尺寸', timeLabel: '耗時',
-    download: '下載圖像', regenerate: '再次生成', reuse: '重用參數', failed: '生成失敗', error: '發生未知錯誤', retry: '重試', copyUrl: '複製永久連接',
-    prompt: '提示詞', positive: '正面提示詞', posPh: '描述你想生成的圖像...', negative: '負面提示詞', negOpt: '（可選）', negPh: '描述不想要的元素...',
-    tips: '風格提示', tip1: '詳細的描述可以獲得更好的效果', tip2: '使用藝術風格可以增強視覺效果', tip3: '中文提示詞會自動翻譯為英文', tip4: '負面提示詞幫助排除不想要的元素',
-    examples: '快速範例', ex1: '🐱 可愛貓咪', ex1p: '一隻可愛的橘色貓咪坐在窗邊，陽光灑在它身上，柔和的光影效果，高清攝影',
-    ex2: '🌃 賽博朋克城市', ex2p: '賽博朋克城市夜景，霓虹燈光，未來感建築，下雨的街道，高細節，8k',
-    ex3: '🧚 奇幻森林', ex3p: '奇幻森林，魔法光芒，精靈，蘑菇，夢幻色彩，高清細節',
-    ex4: '🚀 太空站', ex4p: '太空站內部，科幻風格，宇航員，地球窗外，高科技設備，電影級光效',
-    histTitle: '生成歷史', total: '總共', clear: '清空歷史', histEmpty: '你生成的圖像將會顯示在這裡', reuseBtn: '♻️ 重用', deleteBtn: '🗑️',
-    confirmClear: '確定要清空所有歷史記錄嗎？', confirmDel: '確定要刪除這個歷史記錄嗎？', loaded: '✅ 參數已載入！', reused: '✅ 參數已重用，您可以修改提示詞後再次生成！', needPrompt: '請輸入提示詞',
-    urlCopied: '✅ 永久連接已複製！', permanentUrl: '永久連接',
-    sizeStandard: '📐 標準尺寸 (1K)', size2k: '🔥 2K 高清', size4k: '💎 4K 超高清', sizeSocial: '🌐 社交媒體', highRes: '高分辨率圖像生成時間較長（約 30-60 秒）'
-  },
-  'en': {
-    title: 'Flux AI Pro', version: 'Version', history: 'History', records: 'Records', settings: 'Settings', model: 'Model', size: 'Size', style: 'Style', quality: 'Quality',
-    qEconomy: '⚡ Economy', qStandard: '⚖️ Standard', qUltra: '💎 Ultra HD', qDescEco: 'Fast generation', qDescStd: 'Balanced', qDescUlt: 'Ultimate quality',
-    advanced: 'Advanced', seed: 'Seed', seedPh: '-1 for random', autoOpt: '⚡ Auto Optimize', autoHD: '🔍 Auto HD', generate: 'Generate',
-    results: 'Results', empty: 'No images yet', emptyDesc: 'Fill in parameters and prompt, then generate', loading: 'AI Creating', loadDesc: 'This may take a few seconds',
-    elapsed: 'Elapsed', sec: 'sec', success: 'Success!', generated: 'Generated', images: 'image(s)', modelLabel: 'Model', sizeLabel: 'Size', timeLabel: 'Time',
-    download: 'Download', regenerate: 'Regenerate', reuse: 'Reuse', failed: 'Failed', error: 'Unknown error', retry: 'Retry', copyUrl: 'Copy Permanent URL',
-    prompt: 'Prompt', positive: 'Positive', posPh: 'Describe the image...', negative: 'Negative', negOpt: '(Optional)', negPh: 'Unwanted elements...',
-    tips: 'Tips', tip1: 'Detailed descriptions yield better results', tip2: 'Art styles enhance visual effects', tip3: 'Chinese prompts auto-translated', tip4: 'Negative prompts exclude unwanted elements',
-    examples: 'Examples', ex1: '🐱 Cute Cat', ex1p: 'A cute orange cat sitting by window, sunlight, soft lighting, HD photography',
-    ex2: '🌃 Cyberpunk', ex2p: 'Cyberpunk city night, neon lights, futuristic buildings, rain, 8k',
-    ex3: '🧚 Fantasy Forest', ex3p: 'Fantasy forest, magical glow, elves, mushrooms, dreamy colors, HD',
-    ex4: '🚀 Space Station', ex4p: 'Space station interior, sci-fi, astronaut, Earth view, cinematic',
-    histTitle: 'History', total: 'Total', clear: 'Clear', histEmpty: 'Your images will appear here', reuseBtn: '♻️ Reuse', deleteBtn: '🗑️',
-    confirmClear: 'Clear all history?', confirmDel: 'Delete this record?', loaded: '✅ Loaded!', reused: '✅ Reused! Modify prompt and generate.', needPrompt: 'Please enter prompt',
-    urlCopied: '✅ Permanent URL copied!', permanentUrl: 'Permanent URL',
-    sizeStandard: '📐 Standard (1K)', size2k: '🔥 2K HD', size4k: '💎 4K Ultra HD', sizeSocial: '🌐 Social Media', highRes: 'High resolution takes longer (30-60s)'
+  
+  STYLE_CATEGORIES: {
+    'basic': { name: '基礎', icon: '⚡', order: 1 },
+    'illustration': { name: '插畫動畫', icon: '🎨', order: 2 },
+    'manga': { name: '漫畫風格', icon: '📖', order: 3 },
+    'monochrome': { name: '黑白單色', icon: '⚫', order: 4 },
+    'realistic': { name: '寫實照片', icon: '📷', order: 5 },
+    'painting': { name: '繪畫風格', icon: '🖼️', order: 6 },
+    'art-movement': { name: '藝術流派', icon: '🎭', order: 7 },
+    'visual': { name: '視覺風格', icon: '✨', order: 8 },
+    'digital': { name: '數位風格', icon: '💻', order: 9 },
+    'traditional': { name: '傳統藝術', icon: '🏛️', order: 10 },
+    'aesthetic': { name: '美學風格', icon: '🌟', order: 11 },
+    'scifi': { name: '科幻', icon: '🚀', order: 12 },
+    'fantasy': { name: '奇幻', icon: '🐉', order: 13 }
   }
 };
 
-function corsHeaders(add = {}) {
-  return { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', ...add };
+class Logger {
+  constructor() {
+    this.logs = [];
+  }
+  add(title, data) {
+    this.logs.push({ title, data, timestamp: new Date().toISOString() });
+  }
+  get() {
+    return this.logs;
+  }
 }
 
-function errorResponse(msg, status = 400) {
-  return new Response(JSON.stringify({ error: { message: msg, status: status } }), { status: status, headers: corsHeaders({ 'Content-Type': 'application/json' }) });
+function getClientIP(request) {
+  return request.headers.get('cf-connecting-ip') || 
+         request.headers.get('x-forwarded-for') || 
+         request.headers.get('x-real-ip') || 
+         'unknown';
 }
 
-function detectLang(request) {
-  const accept = request.headers.get('Accept-Language') || '';
-  return accept.includes('zh') ? 'zh' : 'en';
-}
-
-function containsChinese(text) {
-  return /[\u4e00-\u9fa5]/.test(text);
-}
-
-async function translateText(text) {
-  if (!text || !text.trim()) return text;
-  if (!containsChinese(text)) return text;
-  
+async function translateToEnglish(text, env) {
   try {
-    const encodedText = encodeURIComponent(text);
-    const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=en&dt=t&q=' + encodedText;
+    const hasChinese = /[\u4e00-\u9fa5]/.test(text);
+    if (!hasChinese) return { text: text, translated: false, reason: "No Chinese detected" };
     
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-      }
-    });
-    
-    if (!response.ok) {
-      console.error('Translation failed:', response.status);
-      return text;
+    if (!env || !env.AI) {
+      console.warn("⚠️ Workers AI not configured");
+      return { text: text, translated: false, reason: "AI not configured" };
     }
     
-    const data = await response.json();
+    try {
+      const response = await env.AI.run("@cf/meta/m2m100-1.2b", { 
+        text: text, 
+        source_lang: "chinese", 
+        target_lang: "english" 
+      });
+      
+      if (response && response.translated_text) {
+        console.log("✅ Translation:", text, "→", response.translated_text);
+        return { 
+          text: response.translated_text, 
+          translated: true, 
+          original: text, 
+          model: "m2m100-1.2b" 
+        };
+      }
+    } catch (error) {
+      console.error("❌ Translation failed:", error.message);
+    }
     
-    if (data && data[0] && Array.isArray(data[0])) {
-      let translated = '';
-      for (let i = 0; i < data[0].length; i++) {
-        if (data[0][i][0]) {
-          translated += data[0][i][0];
+    return { text: text, translated: false };
+  } catch (error) {
+    console.error("❌ translateToEnglish error:", error);
+    return { text: text, translated: false, error: error.message };
+  }
+}
+
+class StyleProcessor {
+  static applyStyle(prompt, style, negativePrompt) {
+    try {
+      if (!style || style === 'none' || style === '') {
+        return { 
+          enhancedPrompt: prompt, 
+          enhancedNegative: negativePrompt || "" 
+        };
+      }
+      
+      const styleConfig = CONFIG.STYLE_PRESETS[style];
+      if (!styleConfig) {
+        console.warn("⚠️ Style '" + style + "' not found");
+        return { 
+          enhancedPrompt: prompt, 
+          enhancedNegative: negativePrompt || "" 
+        };
+      }
+      
+      let enhancedPrompt = prompt;
+      if (styleConfig.prompt && styleConfig.prompt.trim()) {
+        enhancedPrompt = prompt + ", " + styleConfig.prompt;
+      }
+      
+      let enhancedNegative = negativePrompt || "";
+      if (styleConfig.negative && styleConfig.negative.trim()) {
+        if (enhancedNegative && enhancedNegative.trim()) {
+          enhancedNegative = enhancedNegative + ", " + styleConfig.negative;
+        } else {
+          enhancedNegative = styleConfig.negative;
         }
       }
-      return translated.trim() || text;
+      
+      console.log("✅ Style applied:", style, "-", styleConfig.name);
+      return { 
+        enhancedPrompt: enhancedPrompt, 
+        enhancedNegative: enhancedNegative 
+      };
+    } catch (error) {
+      console.error("❌ StyleProcessor error:", error.message);
+      return { 
+        enhancedPrompt: prompt, 
+        enhancedNegative: negativePrompt || "" 
+      };
     }
-    
-    return text;
-  } catch (error) {
-    console.error('Translation error:', error);
-    return text;
   }
 }
 
-async function smartTranslate(text) {
-  if (!text || !text.trim()) return text;
-  if (!containsChinese(text)) return text;
+async function fetchWithTimeout(url, options = {}, timeout = CONFIG.FETCH_TIMEOUT) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
   
-  const segments = text.split(/([a-zA-Z0-9\s,.:;!?'"()-]+)/);
-  const translatedSegments = [];
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error("Request timeout after " + timeout + "ms");
+    }
+    throw error;
+  }
+}
+
+function corsHeaders(additionalHeaders = {}) {
+  return { 
+    'Access-Control-Allow-Origin': '*', 
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With', 
+    'Access-Control-Max-Age': '86400', 
+    ...additionalHeaders 
+  };
+}
+// =================================================================================
+// PollinationsProvider：核心圖像生成類（使用永久 URL）
+// =================================================================================
+
+class PollinationsProvider {
+  constructor(config, env) {
+    this.config = config;
+    this.name = config.name;
+    this.env = env;
+  }
   
-  for (const segment of segments) {
-    if (containsChinese(segment)) {
-      const translated = await translateText(segment);
-      translatedSegments.push(translated);
-    } else {
-      translatedSegments.push(segment);
+  // 🔑 構建永久 URL
+  buildPermanentURL(prompt, options) {
+    const { 
+      model = "zimage", 
+      width = 1024, 
+      height = 1024, 
+      seed,
+      negativePrompt = "",
+      enhance = false, 
+      nologo = true, 
+      privateMode = true
+    } = options;
+    
+    let fullPrompt = prompt;
+    if (negativePrompt && negativePrompt.trim()) {
+      fullPrompt = prompt + " [negative: " + negativePrompt + "]";
+    }
+    
+    const encodedPrompt = encodeURIComponent(fullPrompt);
+    const pathPrefix = this.config.pathPrefix || "";
+    let baseUrl = this.config.endpoint + pathPrefix + "/" + encodedPrompt;
+    
+    const params = new URLSearchParams();
+    params.append('model', model);
+    params.append('width', width.toString());
+    params.append('height', height.toString());
+    params.append('seed', seed.toString());
+    params.append('nologo', nologo.toString());
+    params.append('enhance', enhance.toString());
+    params.append('private', privateMode.toString());
+    
+    return baseUrl + '?' + params.toString();
+  }
+  
+  async generate(prompt, options, logger) {
+    const { 
+      model = "zimage", 
+      width = 1024, 
+      height = 1024, 
+      seed = -1, 
+      negativePrompt = "", 
+      enhance = false, 
+      nologo = true, 
+      privateMode = true, 
+      style = "none",
+      referenceImages = []
+    } = options;
+    
+    const modelConfig = this.config.models.find(m => m.id === model);
+    const supportsRefImages = modelConfig?.supports_reference_images || false;
+    
+    let validReferenceImages = [];
+    if (referenceImages && referenceImages.length > 0 && supportsRefImages) {
+      const maxRefImages = modelConfig?.max_reference_images || 0;
+      validReferenceImages = referenceImages.slice(0, maxRefImages);
+      logger.add("🖼️ Reference Images", { 
+        model: model, 
+        count: validReferenceImages.length,
+        mode: "圖生圖"
+      });
+    }
+    
+    const { enhancedPrompt, enhancedNegative } = StyleProcessor.applyStyle(
+      prompt, 
+      style, 
+      negativePrompt
+    );
+    
+    logger.add("🎨 Style Processing", { 
+      selected_style: style,
+      style_name: CONFIG.STYLE_PRESETS[style]?.name || style,
+      style_applied: style !== 'none'
+    });
+    
+    const translation = await translateToEnglish(enhancedPrompt, this.env);
+    const finalPromptForAPI = translation.text;
+    
+    if (translation.translated) {
+      logger.add("🌐 Auto Translation", { 
+        original_zh: translation.original,
+        translated_en: finalPromptForAPI.substring(0, 100) + '...',
+        success: true
+      });
+    }
+    
+    const currentSeed = seed === -1 ? Math.floor(Math.random() * 1000000) : seed;
+    
+    // 🌟 構建永久 URL
+    const permanentURL = this.buildPermanentURL(finalPromptForAPI, {
+      model,
+      width,
+      height,
+      seed: currentSeed,
+      negativePrompt: enhancedNegative,
+      enhance,
+      nologo,
+      privateMode
+    });
+    
+    logger.add("🔗 Permanent URL", { 
+      url: permanentURL,
+      note: "此 URL 永久有效，可直接分享"
+    });
+    
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept': 'image/*',
+      'Referer': 'https://pollinations.ai/'
+    };
+    
+    const authConfig = CONFIG.POLLINATIONS_AUTH;
+    if (authConfig.enabled && authConfig.token) {
+      headers['Authorization'] = `Bearer ${authConfig.token}`;
+      logger.add("🔐 API Authentication", { 
+        method: "Bearer Token",
+        enabled: true
+      });
+    }
+    
+    logger.add("📡 API Request", { 
+      endpoint: this.config.endpoint,
+      model: model,
+      authenticated: authConfig.enabled && !!authConfig.token
+    });
+    
+    for (let retry = 0; retry < CONFIG.MAX_RETRIES; retry++) {
+      try {
+        const response = await fetchWithTimeout(permanentURL, { 
+          method: 'GET', 
+          headers: headers
+        }, 120000);
+        
+        if (response.ok) {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.startsWith('image/')) {
+            logger.add("✅ Success", { 
+              permanent_url: permanentURL,
+              model: model, 
+              size: width + "x" + height,
+              style: style,
+              seed: currentSeed,
+              url_is_permanent: true
+            });
+            
+            // ✅ 關鍵修改：返回永久 URL 而不是 blob
+            return { 
+              permanentURL: permanentURL,  // 永久 URL
+              url: permanentURL,            // 兼容舊代碼
+              provider: this.name, 
+              model: model, 
+              seed: currentSeed, 
+              style: style, 
+              style_name: CONFIG.STYLE_PRESETS[style]?.name || style,
+              width: width, 
+              height: height,
+              authenticated: authConfig.enabled && !!authConfig.token,
+              is_permanent: true
+            };
+          } else {
+            throw new Error("Invalid content type: " + contentType);
+          }
+        } else if (response.status === 401) {
+          throw new Error("Authentication failed: Invalid or missing API key");
+        } else if (response.status === 403) {
+          throw new Error("Access forbidden: API key may lack permissions");
+        } else {
+          throw new Error("HTTP " + response.status);
+        }
+      } catch (e) {
+        logger.add("❌ Request Failed", { 
+          error: e.message, 
+          retry: retry + 1
+        });
+        
+        if (retry < CONFIG.MAX_RETRIES - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * (retry + 1)));
+        } else {
+          throw new Error("Generation failed: " + e.message);
+        }
+      }
+    }
+    throw new Error("Failed after " + CONFIG.MAX_RETRIES + " retries");
+  }
+}
+
+class MultiProviderRouter {
+  constructor(apiKeys = {}, env = null) {
+    this.providers = {};
+    this.env = env;
+    
+    for (const [key, config] of Object.entries(CONFIG.PROVIDERS)) {
+      if (config.enabled) {
+        if (key === 'pollinations') {
+          this.providers[key] = new PollinationsProvider(config, env);
+        }
+      }
     }
   }
   
-  return translatedSegments.join(' ').replace(/\s+/g, ' ').trim();
+  getProvider(providerName = null) {
+    if (providerName && this.providers[providerName]) {
+      return { name: providerName, instance: this.providers[providerName] };
+    }
+    const defaultName = CONFIG.DEFAULT_PROVIDER;
+    if (this.providers[defaultName]) {
+      return { name: defaultName, instance: this.providers[defaultName] };
+    }
+    throw new Error('No available provider');
+  }
+  
+  async generate(prompt, options, logger) {
+    const { numOutputs = 1 } = options;
+    const { instance: provider } = this.getProvider(options.provider);
+    const results = [];
+    
+    for (let i = 0; i < numOutputs; i++) {
+      const currentOptions = { 
+        ...options, 
+        seed: options.seed === -1 ? -1 : options.seed + i 
+      };
+      const result = await provider.generate(prompt, currentOptions, logger);
+      results.push(result);
+    }
+    
+    return results;
+  }
 }
+
+// =================================================================================
+// 主入口：Worker Fetch Handler
+// =================================================================================
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const startTime = Date.now();
+    const clientIP = getClientIP(request);
+    
+    if (env.POLLINATIONS_API_KEY) {
+      CONFIG.POLLINATIONS_AUTH.enabled = true;
+      CONFIG.POLLINATIONS_AUTH.token = env.POLLINATIONS_API_KEY;
+    } else {
+      CONFIG.POLLINATIONS_AUTH.enabled = false;
+      CONFIG.POLLINATIONS_AUTH.token = "";
+    }
+    
+    console.log("=== Request Info ===");
+    console.log("IP:", clientIP);
+    console.log("Path:", url.pathname);
+    console.log("API Auth:", CONFIG.POLLINATIONS_AUTH.enabled ? "✅" : "❌");
+    console.log("API Endpoint:", CONFIG.PROVIDERS.pollinations.endpoint);
+    console.log("===================");
     
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders() });
     }
     
     try {
-      const path = url.pathname;
+      let response;
       
-      if (path === '/' || path === '') {
-        const lang = url.searchParams.get('lang') || detectLang(request);
-        return new Response(buildHTML(lang), {
-          status: 200,
-          headers: corsHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+      if (url.pathname === '/' || url.pathname === '') {
+        response = handleUI(request);
+      } else if (url.pathname === '/_internal/generate') {
+        response = await handleInternalGenerate(request, env, ctx);
+      } else if (url.pathname === '/health') {
+        response = new Response(JSON.stringify({
+          status: 'ok',
+          version: CONFIG.PROJECT_VERSION,
+          timestamp: new Date().toISOString(),
+          api_endpoint: CONFIG.PROVIDERS.pollinations.endpoint,
+          permanent_url_storage: true,
+          styles_count: Object.keys(CONFIG.STYLE_PRESETS).length
+        }), { 
+          headers: corsHeaders({ 'Content-Type': 'application/json' }) 
+        });
+      } else {
+        response = new Response(JSON.stringify({
+          error: 'Not Found',
+          available_paths: ['/', '/health', '/_internal/generate']
+        }), { 
+          status: 404,
+          headers: corsHeaders({ 'Content-Type': 'application/json' }) 
         });
       }
       
-      if (path === '/_internal/generate') {
-        if (request.method !== 'POST') return errorResponse('Method not allowed', 405);
-        return await handleGen(request);
-      }
+      const duration = Date.now() - startTime;
+      const headers = new Headers(response.headers);
+      headers.set('X-Response-Time', duration + 'ms');
+      headers.set('X-Worker-Version', CONFIG.PROJECT_VERSION);
+      headers.set('X-API-Endpoint', CONFIG.PROVIDERS.pollinations.endpoint);
       
-      return errorResponse('Not Found', 404);
-    } catch (e) {
-      console.error('Server error:', e);
-      return errorResponse('Server error: ' + e.message, 500);
+      return new Response(response.body, { 
+        status: response.status, 
+        headers: headers 
+      });
+    } catch (error) {
+      console.error('Worker error:', error);
+      return new Response(JSON.stringify({
+        error: {
+          message: error.message,
+          type: 'worker_error'
+        }
+      }), {
+        status: 500,
+        headers: corsHeaders({ 'Content-Type': 'application/json' })
+      });
     }
   }
 };
 
-async function handleGen(request) {
-  const start = Date.now();
+// =================================================================================
+// 內部生成處理函數（✅ 返回永久 URL）
+// =================================================================================
+
+async function handleInternalGenerate(request, env, ctx) {
+  const logger = new Logger();
+  const startTime = Date.now();
+  
   try {
     const body = await request.json();
-    if (!body.prompt?.trim()) return errorResponse('Prompt required', 400);
-    
-    let prompt = body.prompt.trim();
-    let negativePrompt = body.negative_prompt?.trim() || '';
-    
-    let wasTranslated = false;
-    let originalPrompt = prompt;
-    
-    if (containsChinese(prompt)) {
-      console.log('🔤 Original prompt:', prompt);
-      const translatedPrompt = await smartTranslate(prompt);
-      console.log('✅ Translated prompt:', translatedPrompt);
-      prompt = translatedPrompt;
-      wasTranslated = true;
+    const prompt = body.prompt;
+    if (!prompt || !prompt.trim()) {
+      throw new Error("Prompt is required");
     }
     
-    if (containsChinese(negativePrompt)) {
-      console.log('🔤 Original negative:', negativePrompt);
-      const translatedNeg = await smartTranslate(negativePrompt);
-      console.log('✅ Translated negative:', translatedNeg);
-      negativePrompt = translatedNeg;
-      wasTranslated = true;
+    let width = 1024, height = 1024;
+    if (body.width) width = body.width;
+    if (body.height) height = body.height;
+    
+    let referenceImages = [];
+    if (body.reference_images && Array.isArray(body.reference_images)) {
+      referenceImages = body.reference_images.filter(url => {
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return false;
+        }
+      });
     }
     
-    const p = {
-      prompt: prompt,
-      model: body.model || 'zimage',
-      width: body.width || 1024,
-      height: body.height || 1024,
-      seed: body.seed !== undefined ? parseInt(body.seed) : -1,
-      style: body.style || 'none',
-      quality_mode: body.quality_mode || 'standard',
-      negative_prompt: negativePrompt
+    const seedInput = body.seed !== undefined ? body.seed : -1;
+    let seedValue = -1;
+    if (seedInput !== -1) {
+      const parsedSeed = parseInt(seedInput);
+      if (!isNaN(parsedSeed) && parsedSeed >= 0 && parsedSeed <= 999999) {
+        seedValue = parsedSeed;
+      }
+    }
+    
+    const options = { 
+      provider: body.provider || null, 
+      model: body.model || "zimage", 
+      width: Math.min(Math.max(width, 256), 2048), 
+      height: Math.min(Math.max(height, 256), 2048), 
+      numOutputs: Math.min(Math.max(body.n || 1, 1), 4), 
+      seed: seedValue,
+      negativePrompt: body.negative_prompt || "", 
+      enhance: body.enhance === true, 
+      nologo: body.nologo !== false, 
+      privateMode: body.private !== false, 
+      style: body.style || "none",
+      referenceImages: referenceImages
     };
     
-    const seed = p.seed === -1 ? Math.floor(Math.random() * 1000000) : p.seed;
-    let finalPrompt = p.prompt;
-    let finalNeg = p.negative_prompt;
+    const router = new MultiProviderRouter({}, env);
+    const results = await router.generate(prompt, options, logger);
     
-    if (p.style !== 'none' && CONFIG.STYLE_PRESETS[p.style]) {
-      const s = CONFIG.STYLE_PRESETS[p.style];
-      if (s.prompt) finalPrompt = p.prompt + ', ' + s.prompt;
-      if (s.negative) finalNeg = finalNeg ? finalNeg + ', ' + s.negative : s.negative;
-    }
+    const duration = Date.now() - startTime;
     
-    if (p.quality_mode === 'ultra') {
-      finalPrompt += ', ultra high quality, 8k uhd, detailed';
-      finalNeg += ', low quality, blurry';
-    }
+    // ✅ 返回永久 URL（JSON 格式）
+    const imagesData = results.map(r => ({
+      url: r.permanentURL,           // 永久 URL
+      permanent_url: r.permanentURL, // 明確標註
+      model: r.model,
+      seed: r.seed,
+      width: r.width,
+      height: r.height,
+      style: r.style,
+      style_name: r.style_name || r.style,
+      is_permanent: true
+    }));
     
-    console.log('🎨 Final prompt:', finalPrompt);
-    if (finalNeg) console.log('🚫 Final negative:', finalNeg);
-    
-    // 構建永久 URL
-    const enc = encodeURIComponent(finalPrompt);
-    const permanentUrl = CONFIG.PROVIDERS.pollinations.endpoint + 
-                   '/prompt/' + enc + 
-                   '?model=' + p.model + 
-                   '&width=' + p.width + 
-                   '&height=' + p.height + 
-                   '&seed=' + seed + 
-                   '&nologo=true&enhance=true';
-    
-    console.log('🌐 Permanent URL:', permanentUrl);
-    
-    // 驗證圖片是否可訪問
-    const testRes = await fetch(permanentUrl, {
-      method: 'HEAD',
-      headers: { 'User-Agent': 'Mozilla/5.0' }
+    return new Response(JSON.stringify({ 
+      created: Math.floor(Date.now() / 1000), 
+      data: imagesData,
+      generation_time_ms: duration,
+      api_endpoint: CONFIG.PROVIDERS.pollinations.endpoint,
+      permanent_urls: true,
+      note: "所有 URL 均為永久連接，可直接分享"
+    }), { 
+      headers: corsHeaders({ 
+        'Content-Type': 'application/json',
+        'X-Generation-Time': duration + 'ms',
+        'X-Permanent-URLs': 'true'
+      }) 
     });
     
-    if (!testRes.ok) throw new Error('Image generation failed');
-    
-    const time = ((Date.now() - start) / 1000).toFixed(2);
-    
-    // 返回 JSON 響應，包含永久 URL
-    return new Response(JSON.stringify({
-      success: true,
-      url: permanentUrl,
-      model: p.model,
-      seed: seed,
-      width: p.width,
-      height: p.height,
-      time: time,
-      translated: wasTranslated,
-      originalPrompt: wasTranslated ? originalPrompt : '',
-      translatedPrompt: wasTranslated ? prompt : ''
-    }), {
-      status: 200,
-      headers: corsHeaders({ 'Content-Type': 'application/json' })
-    });
   } catch (e) {
-    console.error('❌ Generation error:', e);
-    return errorResponse('Generation failed: ' + e.message, 500);
+    logger.add("❌ Error", e.message);
+    return new Response(JSON.stringify({ 
+      error: { 
+        message: e.message, 
+        debug_logs: logger.get()
+      } 
+    }), { 
+      status: 400, 
+      headers: corsHeaders({ 'Content-Type': 'application/json' }) 
+    });
+  }
+}
+// =================================================================================
+// Web UI 界面處理函數（✅ 永久 URL 存儲版本）
+// =================================================================================
+
+function handleUI() {
+  const authStatus = CONFIG.POLLINATIONS_AUTH.enabled ? 
+    '<span style="color:#22c55e;font-weight:600;font-size:12px">🔐 已認證</span>' : 
+    '<span style="color:#f59e0b;font-weight:600;font-size:12px">⚠️ 需要 API Key</span>';
+    
+  const apiEndpoint = CONFIG.PROVIDERS.pollinations.endpoint;
+  const stylesCount = Object.keys(CONFIG.STYLE_PRESETS).length;
+  
+  const styleCategories = CONFIG.STYLE_CATEGORIES;
+  const stylePresets = CONFIG.STYLE_PRESETS;
+  
+  let styleOptionsHTML = '';
+  const sortedCategories = Object.entries(styleCategories)
+    .sort((a, b) => a[1].order - b[1].order);
+  
+  for (const [categoryKey, categoryInfo] of sortedCategories) {
+    const stylesInCategory = Object.entries(stylePresets)
+      .filter(([key, style]) => style.category === categoryKey);
+    
+    if (stylesInCategory.length > 0) {
+      styleOptionsHTML += `<optgroup label="${categoryInfo.icon} ${categoryInfo.name}">`;
+      for (const [styleKey, styleConfig] of stylesInCategory) {
+        const selected = styleKey === 'none' ? ' selected' : '';
+        styleOptionsHTML += `<option value="${styleKey}"${selected}>${styleConfig.icon} ${styleConfig.name}</option>`;
+      }
+      styleOptionsHTML += '</optgroup>';
+    }
+  }
+  
+  const html = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flux AI Pro v${CONFIG.PROJECT_VERSION} - 永久 URL 存儲</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 100%);color:#fff;min-height:100vh}
+.container{max-width:100%;margin:0;padding:0;height:100vh;display:flex;flex-direction:column}
+.top-nav{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.1);padding:15px 25px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.nav-left{display:flex;align-items:center;gap:20px}
+.logo{color:#f59e0b;font-size:24px;font-weight:800;text-shadow:0 0 20px rgba(245,158,11,0.6);display:flex;align-items:center;gap:10px}
+.badge{background:linear-gradient(135deg,#10b981 0%,#059669 100%);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-new{background:linear-gradient(135deg,#ec4899 0%,#db2777 100%);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-permanent{background:linear-gradient(135deg,#3b82f6 0%,#2563eb 100%);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700}
+.nav-menu{display:flex;gap:10px}
+.nav-btn{padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#9ca3af;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.3s;display:flex;align-items:center;gap:6px}
+.nav-btn:hover{border-color:#f59e0b;color:#fff}
+.nav-btn.active{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;border-color:#f59e0b}
+.api-status{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;background:rgba(16,185,129,0.1);border:1px solid #10b981}
+.api-endpoint{font-size:10px;color:#6b7280;margin-top:4px}
+.main-content{flex:1;display:flex;overflow:hidden}
+.left-panel{width:320px;background:rgba(255,255,255,0.03);border-right:1px solid rgba(255,255,255,0.1);overflow-y:auto;padding:20px;flex-shrink:0}
+.center-panel{flex:1;padding:20px;overflow-y:auto}
+.right-panel{width:380px;background:rgba(255,255,255,0.03);border-left:1px solid rgba(255,255,255,0.1);overflow-y:auto;padding:20px;flex-shrink:0}
+@media(max-width:1400px){.left-panel{width:280px}.right-panel{width:320px}}
+@media(max-width:1024px){.main-content{flex-direction:column}.left-panel,.right-panel{width:100%;border:none;border-bottom:1px solid rgba(255,255,255,0.1)}}
+.page{display:none}
+.page.active{display:block}
+.page.active .main-content{display:flex}
+.section-title{font-size:16px;font-weight:700;color:#f59e0b;margin-bottom:15px;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:16px}
+label{display:block;margin-bottom:6px;font-weight:600;font-size:13px;color:#e5e7eb}
+input,select,textarea{width:100%;padding:10px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:13px;transition:all 0.3s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.1)}
+textarea{min-height:120px;resize:vertical;font-family:inherit;line-height:1.6}
+select{cursor:pointer}
+.input-hint{font-size:11px;color:#6b7280;margin-top:4px}
+.btn{padding:12px 24px;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;justify-content:center;width:100%}
+.btn-primary{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff;box-shadow:0 4px 15px rgba(245,158,11,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,158,11,0.4)}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-secondary{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2)}
+.btn-secondary:hover{background:rgba(255,255,255,0.15)}
+.btn-danger{background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.gallery-item{background:rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);transition:all 0.3s}
+.gallery-item:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(245,158,11,0.3)}
+.gallery-item img{width:100%;height:280px;object-fit:cover;display:block;cursor:pointer}
+.gallery-info{padding:15px}
+.gallery-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:5px}
+.model-badge{background:rgba(245,158,11,0.2);color:#f59e0b;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.seed-badge{background:rgba(16,185,129,0.2);color:#10b981;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.style-badge{background:rgba(139,92,246,0.2);color:#8b5cf6;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.permanent-badge{background:rgba(59,130,246,0.2);color:#3b82f6;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.gallery-actions{display:flex;gap:8px;margin-top:10px}
+.action-btn{padding:6px 12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;font-size:12px;color:#fff;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:5px;flex:1;justify-content:center}
+.action-btn:hover{background:rgba(255,255,255,0.2);border-color:#f59e0b}
+.action-btn.delete{border-color:rgba(239,68,68,0.5)}
+.action-btn.delete:hover{background:rgba(239,68,68,0.2);border-color:#ef4444}
+.prompt-display{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:15px;margin-bottom:20px}
+.prompt-display .label{font-size:12px;color:#9ca3af;margin-bottom:6px;font-weight:600}
+.prompt-display .content{color:#e5e7eb;font-size:13px;line-height:1.6;word-break:break-word}
+.loading{text-align:center;padding:60px 20px;color:#9ca3af}
+.spinner{border:3px solid rgba(255,255,255,0.1);border-top:3px solid #f59e0b;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:0 auto 15px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:60px 20px;color:#9ca3af}
+.alert{padding:12px 15px;border-radius:8px;margin-bottom:15px;border-left:4px solid;font-size:13px}
+.alert-success{background:rgba(16,185,129,0.1);border-color:#10b981;color:#10b981}
+.alert-error{background:rgba(239,68,68,0.1);border-color:#ef4444;color:#ef4444}
+.alert-info{background:rgba(59,130,246,0.1);border-color:#3b82f6;color:#3b82f6}
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-content{max-width:90%;max-height:90%;position:relative}
+.modal-content img{max-width:100%;max-height:90vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.modal-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border:none;color:#fff;font-size:32px;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.modal-close:hover{background:rgba(255,255,255,0.2);transform:rotate(90deg)}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding:20px;background:rgba(255,255,255,0.03);border-radius:12px}
+.history-stats{display:flex;gap:20px;font-size:14px}
+.stat-item{display:flex;flex-direction:column;gap:4px}
+.stat-item .label{color:#9ca3af;font-size:12px}
+.stat-item .value{color:#f59e0b;font-size:20px;font-weight:700}
+.history-actions{display:flex;gap:10px}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.05)}
+::-webkit-scrollbar-thumb{background:rgba(245,158,11,0.3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(245,158,11,0.5)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="top-nav">
+<div class="nav-left">
+<div class="logo">
+🎨 Flux AI Pro
+<span class="badge">v${CONFIG.PROJECT_VERSION}</span>
+<span class="badge-permanent">🔗 永久 URL</span>
+</div>
+<div>
+<div class="api-status">${authStatus}</div>
+<div class="api-endpoint">📡 ${apiEndpoint}</div>
+</div>
+</div>
+<div class="nav-menu">
+<button class="nav-btn active" data-page="generate"><span>🎨</span> 生成圖像</button>
+<button class="nav-btn" data-page="history"><span>📚</span> 歷史記錄 <span id="historyCount" style="background:rgba(245,158,11,0.2);padding:2px 8px;border-radius:10px;font-size:11px">0</span></button>
+</div>
+</div>
+
+<div id="generatePage" class="page active">
+<div class="main-content">
+<div class="left-panel">
+<div class="section-title">⚙️ 生成參數</div>
+<form id="generateForm">
+<div class="form-group">
+<label>模型選擇</label>
+<select id="model">
+<option value="zimage" selected>Z-Image Turbo ⚡</option>
+<option value="flux">Flux 標準版</option>
+<option value="turbo">Flux Turbo ⚡</option>
+<option value="kontext">Kontext 🎨 (圖生圖)</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>尺寸預設</label>
+<select id="size">
+<option value="square-1k" selected>方形 1024x1024</option>
+<option value="square-1.5k">方形 1536x1536</option>
+<option value="square-2k">方形 2048x2048</option>
+<option value="portrait-9-16-hd">豎屏 1080x1920</option>
+<option value="landscape-16-9-hd">橫屏 1920x1080</option>
+<option value="instagram-square">Instagram 方形</option>
+<option value="wallpaper-fhd">桌布 Full HD</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>藝術風格 🎨</label>
+<select id="style">
+${styleOptionsHTML}
+</select>
+<div class="input-hint">✨ ${stylesCount} 種風格可選</div>
+</div>
+
+<div class="form-group">
+<label>Seed (-1 = 隨機)</label>
+<input type="number" id="seed" value="-1" min="-1" max="999999">
+</div>
+
+<button type="submit" class="btn btn-primary" id="generateBtn">🎨 開始生成</button>
+</form>
+</div>
+
+<div class="center-panel">
+<div class="section-title">🖼️ 生成結果</div>
+<div id="results">
+<div class="empty-state">
+<p style="font-size:16px;margin-bottom:10px">尚未生成任何圖像</p>
+<p style="font-size:14px">填寫左側參數並輸入提示詞後點擊生成</p>
+</div>
+</div>
+</div>
+
+<div class="right-panel">
+<div class="section-title">💬 提示詞</div>
+<div class="form-group">
+<label>正面提示詞</label>
+<textarea id="prompt" placeholder="描述你想生成的圖像...
+
+例如：
+• A beautiful sunset over mountains
+• 一隻可愛的貓咪在花園裡玩耍
+• Cyberpunk city at night, neon lights" required></textarea>
+<div class="input-hint">✅ 支持中文自動翻譯</div>
+</div>
+
+<div class="form-group">
+<label>負面提示詞 (可選)</label>
+<textarea id="negativePrompt" placeholder="描述不想要的內容..." rows="4"></textarea>
+</div>
+
+<div class="alert alert-info" style="margin-top:20px">
+<strong>🔗 永久 URL 存儲</strong><br>
+所有生成的圖片使用永久連接存儲<br>
+可直接分享，永久有效！
+</div>
+
+<div class="section-title" style="margin-top:25px">📋 當前配置</div>
+<div class="prompt-display">
+<div class="label">API 端點</div>
+<div class="content" style="font-size:11px">${apiEndpoint}</div>
+</div>
+<div class="prompt-display">
+<div class="label">存儲方式</div>
+<div class="content" style="color:#3b82f6">🔗 永久 URL（不使用 Base64）</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="historyPage" class="page">
+<div class="main-content" style="flex-direction:column;padding:20px">
+<div class="history-header">
+<div class="history-stats">
+<div class="stat-item">
+<div class="label">📊 總記錄數</div>
+<div class="value" id="historyTotal">0</div>
+</div>
+<div class="stat-item">
+<div class="label">💾 存儲方式</div>
+<div class="value" style="font-size:14px;color:#3b82f6">永久 URL</div>
+</div>
+</div>
+<div class="history-actions">
+<button class="btn btn-secondary" id="exportBtn" style="width:auto;padding:10px 20px">📥 導出</button>
+<button class="btn btn-danger" id="clearBtn" style="width:auto;padding:10px 20px">🗑️ 清空</button>
+</div>
+</div>
+<div id="historyList" style="padding:0 20px">
+<div class="empty-state">
+<p style="font-size:16px;margin-bottom:10px">暫無歷史記錄</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="imageModal" class="modal">
+<button class="modal-close" id="modalCloseBtn">×</button>
+<div class="modal-content">
+<img id="modalImage" src="" alt="Preview">
+</div>
+</div>
+
+<script>
+const STYLE_PRESETS = ${JSON.stringify(CONFIG.STYLE_PRESETS)};
+const PRESET_SIZES = ${JSON.stringify(CONFIG.PRESET_SIZES)};
+const STORAGE_KEY = 'flux_ai_history_permanent';
+const MAX_HISTORY = 100;
+
+// 導航切換
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    const pageName=this.dataset.page;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById(pageName+'Page').classList.add('active');
+    this.classList.add('active');
+    if(pageName==='history')updateHistoryDisplay();
+  });
+});
+
+// 歷史記錄管理（✅ 永久 URL 版本）
+function getHistory(){
+  try{
+    const data=localStorage.getItem(STORAGE_KEY);
+    return data?JSON.parse(data):[];
+  }catch(e){
+    return[];
   }
 }
 
-function buildHTML(lang) {
-  const t = LANG[lang] || LANG['zh'];
+function saveHistory(history){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(history));
+    updateHistoryStats();
+  }catch(e){
+    console.error('Save failed:',e);
+  }
+}
+
+function addToHistory(item){
+  let history=getHistory();
+  history.unshift({
+    ...item,
+    id:Date.now()+Math.random(),
+    timestamp:new Date().toISOString(),
+    is_permanent:true
+  });
+  if(history.length>MAX_HISTORY)history=history.slice(0,MAX_HISTORY);
+  saveHistory(history);
+}
+
+function deleteFromHistory(id){
+  if(!confirm('確定要刪除這條記錄嗎？'))return;
+  let history=getHistory();
+  history=history.filter(item=>item.id!==id);
+  saveHistory(history);
+  updateHistoryDisplay();
+}
+
+function clearHistory(){
+  if(!confirm('確定要清空所有歷史記錄嗎？'))return;
+  localStorage.removeItem(STORAGE_KEY);
+  updateHistoryDisplay();
+  updateHistoryStats();
+}
+
+function exportHistory(){
+  const history=getHistory();
+  const dataStr=JSON.stringify(history,null,2);
+  const blob=new Blob([dataStr],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download='flux-ai-history-'+new Date().toISOString().split('T')[0]+'.json';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function updateHistoryStats(){
+  const history=getHistory();
+  document.getElementById('historyCount').textContent=history.length;
+  document.getElementById('historyTotal').textContent=history.length;
+}
+
+function updateHistoryDisplay(){
+  const history=getHistory();
+  const historyList=document.getElementById('historyList');
   
-  const models = CONFIG.PROVIDERS.pollinations.models.map(m => {
-    const selected = m.id === 'zimage' ? ' selected' : '';
-    return '<option value="' + m.id + '"' + selected + '>' + m.icon + ' ' + m.name + ' - ' + m.description + '</option>';
-  }).join('');
+  if(history.length===0){
+    historyList.innerHTML='<div class="empty-state"><p>暫無歷史記錄</p></div>';
+    updateHistoryStats();
+    return;
+  }
   
-  const sizeGroups = {
-    standard: { zh: '📐 標準尺寸 (1K)', en: '📐 Standard (1K)' },
-    '2k': { zh: '🔥 2K 高清', en: '🔥 2K HD' },
-    '4k': { zh: '💎 4K 超高清', en: '💎 4K Ultra HD' },
-    social: { zh: '🌐 社交媒體', en: '🌐 Social Media' }
-  };
+  const galleryDiv=document.createElement('div');
+  galleryDiv.className='gallery';
   
-  let sizes = '';
-  Object.entries(sizeGroups).forEach(([category, labels]) => {
-    const groupLabel = labels[lang] || labels.zh;
-    sizes += '<optgroup label="' + groupLabel + '">';
+  history.forEach(item=>{
+    const styleConfig=STYLE_PRESETS[item.style];
+    const styleName=styleConfig ? styleConfig.icon+' '+styleConfig.name : item.style;
     
-    Object.entries(CONFIG.PRESET_SIZES).forEach(([k, s]) => {
-      if (s.category === category) {
-        sizes += '<option value="' + k + '">' + s.icon + ' ' + s.name + ' (' + s.width + '×' + s.height + ')</option>';
+    const itemDiv=document.createElement('div');
+    itemDiv.className='gallery-item';
+    itemDiv.innerHTML=\`
+      <img src="\${item.url}" alt="Generated" loading="lazy">
+      <div class="gallery-info">
+        <div class="gallery-meta">
+          <span class="model-badge">\${item.model}</span>
+          <span class="permanent-badge">🔗 永久</span>
+        </div>
+        <div class="gallery-meta" style="margin-top:5px">
+          <span class="seed-badge">Seed: \${item.seed}</span>
+          <span class="style-badge">\${styleName}</span>
+        </div>
+        <div class="gallery-actions">
+          <button class="action-btn share-btn">📤 分享</button>
+          <button class="action-btn delete delete-btn">🗑️ 刪除</button>
+        </div>
+      </div>
+    \`;
+    
+    const img=itemDiv.querySelector('img');
+    img.addEventListener('click',()=>{
+      document.getElementById('modalImage').src=item.url;
+      document.getElementById('imageModal').classList.add('show');
+    });
+    
+    const shareBtn=itemDiv.querySelector('.share-btn');
+    shareBtn.addEventListener('click',async()=>{
+      try{
+        await navigator.clipboard.writeText(item.url);
+        alert('✅ 永久連接已複製到剪貼板！\\n\\n'+item.url);
+      }catch(e){
+        prompt('永久連接（Ctrl+C 複製）:',item.url);
       }
     });
     
-    sizes += '</optgroup>';
+    const deleteBtn=itemDiv.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click',()=>deleteFromHistory(item.id));
+    
+    galleryDiv.appendChild(itemDiv);
   });
   
-  const styleGroups = {
-    zh: {
-      none: '基本',
-      realistic: '📸 寫實風格',
-      painting: '🎨 繪畫風格',
-      illustration: '🖌️ 插畫風格',
-      stylized: '🎭 風格化藝術',
-      digital: '🌃 數位藝術',
-      cinematic: '🎬 電影風格',
-      classical: '🏛️ 古典藝術',
-      effects: '🌈 特殊效果'
-    },
-    en: {
-      none: 'Basic',
-      realistic: '📸 Realistic',
-      painting: '🎨 Painting',
-      illustration: '🖌️ Illustration',
-      stylized: '🎭 Stylized',
-      digital: '🌃 Digital',
-      cinematic: '🎬 Cinematic',
-      classical: '🏛️ Classical',
-      effects: '🌈 Effects'
-    }
-  };
-
-  const styleCategories = {
-    none: ['none'],
-    realistic: ['photorealistic', 'hyperrealistic', 'portrait_photography', 'street_photography', 'macro_photography'],
-    painting: ['oil_painting', 'watercolor', 'acrylic_painting', 'impressionism', 'expressionism', 'abstract', 'cubism', 'surrealism'],
-    illustration: ['anime', 'manga', 'cartoon', 'comic_book', 'disney', 'pixar', 'studio_ghibli'],
-    stylized: ['art_nouveau', 'art_deco', 'pop_art', 'minimalist', 'graffiti'],
-    digital: ['digital_art', 'concept_art', 'cyberpunk', 'vaporwave', 'synthwave', 'low_poly', 'isometric'],
-    cinematic: ['cinematic', 'film_noir', 'sci_fi', 'fantasy', 'horror'],
-    classical: ['renaissance', 'baroque', 'ukiyo_e'],
-    effects: ['neon', 'glitch_art', 'holographic', 'psychedelic', 'steampunk']
-  };
-
-  let styles = '';
-  Object.entries(styleCategories).forEach(([category, styleKeys]) => {
-    const groupLabel = styleGroups[lang][category];
-    styles += '<optgroup label="' + groupLabel + '">';
-    styleKeys.forEach(key => {
-      const s = CONFIG.STYLE_PRESETS[key];
-      const styleName = typeof s.name === 'object' ? s.name[lang] : s.name;
-      styles += '<option value="' + key + '">' + styleName + '</option>';
-    });
-    styles += '</optgroup>';
-  });
-  
-  let h = '<!DOCTYPE html><html lang="' + lang + '" class="dark"><head>';
-  h += '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">';
-  h += '<title>' + t.title + ' v' + CONFIG.PROJECT_VERSION + '</title>';
-  h += '<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">';
-  h += '<script src="https://cdn.tailwindcss.com"></script>';
-  h += '<style>';
-  h += '*{box-sizing:border-box;margin:0;padding:0}';
-  h += 'body{background:linear-gradient(135deg,#0a0f1e 0%,#1a1f3a 50%,#0f1419 100%);background-attachment:fixed;color:#fff;font-family:system-ui,sans-serif;overflow-x:hidden}';
-  h += '.glass-card{background:rgba(17,24,39,0.7);backdrop-filter:blur(12px);border:1px solid rgba(75,85,99,0.3)}';
-  h += '.btn-primary{background:linear-gradient(135deg,#10b981 0%,#059669 100%);box-shadow:0 4px 12px rgba(16,185,129,0.3)}';
-  h += '.btn-primary:hover{background:linear-gradient(135deg,#059669 0%,#047857 100%);box-shadow:0 6px 16px rgba(16,185,129,0.4)}';
-  h += '.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:1rem}';
-  h += '.modal.show{display:flex}';
-  h += '.modal-content{background:linear-gradient(135deg,#1f2937 0%,#111827 100%);border:1px solid rgba(75,85,99,0.5);border-radius:1rem;max-width:90vw;max-height:90vh;overflow:auto;box-shadow:0 25px 50px rgba(0,0,0,0.5)}';
-  h += '.spinner{border:3px solid rgba(255,255,255,0.1);border-top-color:#10b981;border-radius:50%;width:40px;height:40px;animation:spin 0.8s linear infinite}';
-  h += '@keyframes spin{to{transform:rotate(360deg)}}';
-  h += '.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}';
-  h += '.history-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}';
-  h += '@media(max-width:1024px){.history-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}';
-  h += 'select,input,textarea{background:rgba(31,41,55,0.8);border:1px solid rgba(75,85,99,0.5);color:#fff;border-radius:0.5rem;padding:0.5rem;width:100%}';
-  h += 'select:focus,input:focus,textarea:focus{outline:none;border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,0.1)}';
-  h += 'optgroup{background:rgba(17,24,39,0.95);color:#10b981;font-weight:bold;font-size:0.85em;padding:0.5rem 0}';
-  h += 'option{background:rgba(31,41,55,0.9);color:#fff;padding:0.4rem 0.5rem}';
-  h += 'button{cursor:pointer;transition:all 0.2s}';
-  h += 'img{max-width:100%;height:auto;display:block}';
-  h += '</style></head><body>';
-  
-  h += '<header class="glass-card border-b border-gray-800 sticky top-0 z-50">';
-  h += '<div class="px-4 py-3 flex items-center justify-between max-w-screen-2xl mx-auto">';
-  h += '<div class="flex items-center gap-3">';
-  h += '<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-2xl shadow-lg">🎨</div>';
-  h += '<div><h1 class="text-xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">' + t.title + '</h1>';
-  h += '<p class="text-xs text-gray-400">' + t.version + ' ' + CONFIG.PROJECT_VERSION + '</p></div></div>';
-  h += '<div class="flex items-center gap-2">';
-  h += '<div class="flex items-center gap-1 bg-gray-800 rounded-lg p-1 border border-gray-700">';
-  h += '<button onclick="changeLang(\'zh\')" class="lang-btn px-3 py-1 rounded text-xs transition ' + (lang === 'zh' ? 'bg-green-600 text-white' : 'text-gray-400 hover:text-white') + '">中文</button>';
-  h += '<button onclick="changeLang(\'en\')" class="lang-btn px-3 py-1 rounded text-xs transition ' + (lang === 'en' ? 'bg-green-600 text-white' : 'text-gray-400 hover:text-white') + '">EN</button>';
-  h += '</div>';
-  h += '<button onclick="showHist()" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition text-sm flex items-center gap-2 border border-gray-700">';
-  h += '<span>📚</span><span class="hidden sm:inline">' + t.history + '</span>';
-  h += '<span id="histCount" class="px-2 py-0.5 rounded-full bg-green-500 text-white text-xs font-bold min-w-[20px] text-center">0</span>';
-  h += '</button></div></div></header>';
-  
-  h += '<div class="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] max-w-screen-2xl mx-auto">';
-  
-  h += '<aside class="w-full lg:w-80 xl:w-96 glass-card border-r border-gray-800 overflow-y-auto">';
-  h += '<div class="p-4 space-y-4">';
-  h += '<div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-700">';
-  h += '<span class="text-2xl">⚙️</span><h2 class="text-lg font-bold">' + t.settings + '</h2></div>';
-  h += '<form id="genForm" class="space-y-4">';
-  h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
-  h += '<span>🤖</span><span>' + t.model + '</span></label>';
-  h += '<select id="model" name="model" class="w-full">' + models + '</select></div>';
-  h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
-  h += '<span>📐</span><span>' + t.size + '</span></label>';
-  h += '<select id="sizePreset" class="w-full">' + sizes + '</select>';
-  h += '<p class="text-xs text-yellow-400 mt-1">⚡ ' + t.highRes + '</p></div>';
-  h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
-  h += '<span>🎨</span><span>' + t.style + '</span></label>';
-  h += '<select id="style" name="style" class="w-full">' + styles + '</select></div>';
-  h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
-  h += '<span>💎</span><span>' + t.quality + '</span></label>';
-  h += '<div class="grid grid-cols-3 gap-2">';
-  h += '<button type="button" onclick="setQuality(\'economy\')" id="qEco" class="quality-btn px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition text-xs text-center border border-gray-600">';
-  h += '<div class="font-bold">' + t.qEconomy + '</div><div class="text-gray-400 text-[10px]">' + t.qDescEco + '</div></button>';
-  h += '<button type="button" onclick="setQuality(\'standard\')" id="qStd" class="quality-btn px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition text-xs text-center border-2 border-green-400">';
-  h += '<div class="font-bold">' + t.qStandard + '</div><div class="text-gray-200 text-[10px]">' + t.qDescStd + '</div></button>';
-  h += '<button type="button" onclick="setQuality(\'ultra\')" id="qUlt" class="quality-btn px-3 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition text-xs text-center border border-gray-600">';
-  h += '<div class="font-bold">' + t.qUltra + '</div><div class="text-gray-400 text-[10px]">' + t.qDescUlt + '</div></button>';
-  h += '</div><input type="hidden" id="qualityMode" name="quality_mode" value="standard"></div>';
-  h += '<details class="glass-card p-3 rounded-lg border border-gray-700"><summary class="cursor-pointer font-medium text-sm flex items-center gap-2">';
-  h += '<span>🔧</span><span>' + t.advanced + '</span></summary>';
-  h += '<div class="mt-3 space-y-3"><div><label class="block text-xs text-gray-400 mb-1">' + t.seed + '</label>';
-  h += '<input type="number" id="seed" name="seed" value="-1" placeholder="' + t.seedPh + '" class="w-full text-sm"></div>';
-  h += '<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="autoOpt" checked class="w-4 h-4">';
-  h += '<span class="text-xs">' + t.autoOpt + '</span></label>';
-  h += '<label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="autoHD" checked class="w-4 h-4">';
-  h += '<span class="text-xs">' + t.autoHD + '</span></label></div></details>';
-  h += '<button type="submit" class="btn-primary w-full py-3 rounded-lg font-bold text-white flex items-center justify-center gap-2 text-base">';
-  h += '<span>✨</span><span>' + t.generate + '</span></button>';
-  h += '</form></div></aside>';
-  
-  h += '<main class="flex-1 overflow-y-auto"><div class="p-4 lg:p-6 space-y-6">';
-  h += '<div class="flex items-center gap-2 pb-3 border-b border-gray-700">';
-  h += '<span class="text-2xl">🖼️</span><h2 class="text-lg font-bold">' + t.results + '</h2></div>';
-  h += '<div id="resultArea">';
-  h += '<div id="emptyState" class="text-center py-16">';
-  h += '<div class="text-6xl mb-4">🎨</div>';
-  h += '<h3 class="text-xl font-bold mb-2">' + t.empty + '</h3>';
-  h += '<p class="text-gray-400 text-sm">' + t.emptyDesc + '</p></div>';
-  h += '<div id="loadingState" class="hidden text-center py-16">';
-  h += '<div class="spinner mx-auto mb-4"></div>';
-  h += '<h3 class="text-xl font-bold mb-2">' + t.loading + '</h3>';
-  h += '<p class="text-gray-400 text-sm mb-4">' + t.loadDesc + '</p>';
-  h += '<p class="text-green-400 text-sm">' + t.elapsed + ': <span id="elapsedTime">0</span>' + t.sec + '</p></div>';
-  h += '<div id="successState" class="hidden"><div class="glass-card p-4 rounded-xl border border-green-500/30 bg-green-500/5 mb-4">';
-  h += '<div class="flex items-center gap-2 mb-2"><span class="text-2xl">✅</span><h3 class="text-lg font-bold text-green-400">' + t.success + '</h3></div>';
-  h += '<p class="text-sm text-gray-300 mb-2"><span id="resultSummary"></span></p>';
-  h += '<div class="flex flex-wrap gap-2 text-xs"><span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">🤖 ' + t.modelLabel + ': <span id="resultModel"></span></span>';
-  h += '<span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">📐 ' + t.sizeLabel + ': <span id="resultSize"></span></span>';
-  h += '<span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">🎲 Seed: <span id="resultSeed"></span></span>';
-  h += '<span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">⏱️ ' + t.timeLabel + ': <span id="resultTime"></span>s</span></div>';
-  h += '<div id="translationInfo"></div>';
-  h += '<div id="permanentUrlInfo" class="mt-3"></div></div>';
-  h += '<div id="resultGrid" class="result-grid"></div>';
-  h += '<div class="flex gap-3 mt-4">';
-  h += '<button onclick="copyPermanentUrl()" class="flex-1 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition font-medium">🔗 ' + t.copyUrl + '</button>';
-  h += '<button onclick="downloadImg()" class="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition font-medium">📥 ' + t.download + '</button>';
-  h += '<button onclick="regenerate()" class="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition font-medium">🔄 ' + t.regenerate + '</button></div></div>';
-  h += '<div id="errorState" class="hidden glass-card p-6 rounded-xl border border-red-500/30 bg-red-500/5 text-center">';
-  h += '<div class="text-4xl mb-3">❌</div><h3 class="text-xl font-bold text-red-400 mb-2">' + t.failed + '</h3>';
-  h += '<p id="errorMsg" class="text-gray-300 text-sm mb-4">' + t.error + '</p>';
-  h += '<button onclick="retry()" class="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-500 transition font-medium">🔄 ' + t.retry + '</button></div>';
-  h += '</div></div></main>';
-  
-  h += '<aside class="w-full lg:w-80 xl:w-96 glass-card border-l border-gray-800 overflow-y-auto">';
-  h += '<div class="p-4 space-y-4">';
-  h += '<div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-700">';
-  h += '<span class="text-2xl">✍️</span><h2 class="text-lg font-bold">' + t.prompt + '</h2></div>';
-  h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
-  h += '<span>✨</span><span>' + t.positive + '</span></label>';
-  h += '<textarea id="prompt" rows="4" placeholder="' + t.posPh + '" class="w-full resize-none"></textarea></div>';
-  h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
-  h += '<span>🚫</span><span>' + t.negative + '</span><span class="text-xs text-gray-500">' + t.negOpt + '</span></label>';
-  h += '<textarea id="negPrompt" rows="3" placeholder="' + t.negPh + '" class="w-full resize-none"></textarea></div>';
-  h += '<div class="glass-card p-3 rounded-lg border border-gray-700"><div class="flex items-center gap-2 mb-2">';
-  h += '<span>💡</span><span class="text-sm font-medium">' + t.tips + '</span></div>';
-  h += '<ul class="text-xs text-gray-400 space-y-1">';
-  h += '<li>• ' + t.tip1 + '</li><li>• ' + t.tip2 + '</li><li>• ' + t.tip3 + '</li><li>• ' + t.tip4 + '</li></ul></div>';
-  h += '<div class="glass-card p-3 rounded-lg border border-gray-700"><div class="flex items-center gap-2 mb-3">';
-  h += '<span>🎯</span><span class="text-sm font-medium">' + t.examples + '</span></div>';
-  h += '<div class="space-y-2">';
-  h += '<button onclick="useEx(1)" class="w-full text-left px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition text-xs border border-gray-700">' + t.ex1 + '</button>';
-  h += '<button onclick="useEx(2)" class="w-full text-left px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition text-xs border border-gray-700">' + t.ex2 + '</button>';
-  h += '<button onclick="useEx(3)" class="w-full text-left px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition text-xs border border-gray-700">' + t.ex3 + '</button>';
-  h += '<button onclick="useEx(4)" class="w-full text-left px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition text-xs border border-gray-700">' + t.ex4 + '</button>';
-  h += '</div></div></div></aside></div>';
-  
-  return h + getScripts(t, lang);
+  historyList.innerHTML='';
+  historyList.appendChild(galleryDiv);
+  updateHistoryStats();
 }
 
-function getScripts(t, lang) {
-  let s = '<div id="histModal" class="modal"><div class="modal-content w-full max-w-6xl">';
-  s += '<div class="p-6"><div class="flex items-center justify-between mb-6">';
-  s += '<div class="flex items-center gap-3"><span class="text-3xl">📚</span>';
-  s += '<div><h2 class="text-2xl font-bold">' + t.histTitle + '</h2>';
-  s += '<p class="text-sm text-gray-400">' + t.total + ' <span id="modalHistCount">0</span> ' + t.records + '</p></div></div>';
-  s += '<div class="flex gap-2"><button onclick="clearHist()" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 transition text-sm">🗑️ ' + t.clear + '</button>';
-  s += '<button onclick="hideHist()" class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition text-sm">✕</button></div></div>';
-  s += '<div id="histEmpty" class="text-center py-16 text-gray-400"><div class="text-6xl mb-4">📚</div>';
-  s += '<p>' + t.histEmpty + '</p></div>';
-  s += '<div id="histGrid" class="history-grid hidden"></div></div></div></div>';
+document.getElementById('exportBtn').addEventListener('click',exportHistory);
+document.getElementById('clearBtn').addEventListener('click',clearHistory);
+document.getElementById('modalCloseBtn').addEventListener('click',()=>{
+  document.getElementById('imageModal').classList.remove('show');
+});
+
+// 表單提交
+const form=document.getElementById('generateForm');
+const resultsDiv=document.getElementById('results');
+const generateBtn=document.getElementById('generateBtn');
+
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
   
-  s += '<div id="imgModal" class="modal" onclick="hideImg()"><div class="modal-content" onclick="event.stopPropagation()">';
-  s += '<div id="viewerContent"></div></div></div>';
+  const prompt=document.getElementById('prompt').value.trim();
+  if(!prompt){
+    alert('請輸入提示詞');
+    return;
+  }
   
-  s += '<script>';
+  const model=document.getElementById('model').value;
+  const sizePreset=document.getElementById('size').value;
+  const style=document.getElementById('style').value;
+  const seed=parseInt(document.getElementById('seed').value);
+  const negativePrompt=document.getElementById('negativePrompt').value;
   
-  s += 'const EX={1:"' + t.ex1p + '",2:"' + t.ex2p + '",3:"' + t.ex3p + '",4:"' + t.ex4p + '"};';
-  s += 'const T={loaded:"' + t.loaded + '",reused:"' + t.reused + '",needPrompt:"' + t.needPrompt + '",';
-  s += 'confirmClear:"' + t.confirmClear + '",confirmDel:"' + t.confirmDel + '",';
-  s += 'generated:"' + t.generated + '",images:"' + t.images + '",urlCopied:"' + t.urlCopied + '",permanentUrl:"' + t.permanentUrl + '"};';
-  s += 'const LANG="' + lang + '";';
-  s += 'let hist=[],curParams={},curUrl="",timer=null;';
+  const sizeConfig=PRESET_SIZES[sizePreset];
   
-  s += 'window.onload=function(){';
-  s += 'loadHist();updateHistCount();';
-  s += 'document.getElementById("genForm").onsubmit=function(e){e.preventDefault();gen();};';
-  s += '};';
+  generateBtn.disabled=true;
+  generateBtn.innerHTML='<div class="spinner"></div>生成中...';
+  resultsDiv.innerHTML='<div class="loading"><div class="spinner"></div><p>正在生成圖像...</p></div>';
   
-  s += 'function changeLang(l){window.location.href="/?lang="+l;}';
+  try{
+    const response=await fetch('/_internal/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        prompt,
+        model,
+        width:sizeConfig.width,
+        height:sizeConfig.height,
+        style,
+        seed,
+        negative_prompt:negativePrompt
+      })
+    });
+    
+    if(!response.ok){
+      const error=await response.json();
+      throw new Error(error.error?.message||'生成失敗');
+    }
+    
+    const data=await response.json();
+    
+    if(data.data && data.data.length>0){
+      resultsDiv.innerHTML='';
+      
+      const successDiv=document.createElement('div');
+      successDiv.className='alert alert-success';
+      successDiv.innerHTML='<strong>✅ 生成成功！</strong> 使用永久 URL 存儲，可直接分享';
+      resultsDiv.appendChild(successDiv);
+      
+      const galleryDiv=document.createElement('div');
+      galleryDiv.className='gallery';
+      
+      data.data.forEach(img=>{
+        addToHistory({
+          url:img.url,
+          permanent_url:img.permanent_url,
+          prompt,
+          model:img.model,
+          seed:img.seed,
+          width:img.width,
+          height:img.height,
+          style:img.style
+        });
+        
+        const styleConfig=STYLE_PRESETS[img.style];
+        const styleName=styleConfig ? styleConfig.icon+' '+styleConfig.name : img.style;
+        
+        const itemDiv=document.createElement('div');
+        itemDiv.className='gallery-item';
+        itemDiv.innerHTML=\`
+          <img src="\${img.url}" alt="Generated">
+          <div class="gallery-info">
+            <div style="background:#10b981;color:#fff;padding:4px 8px;border-radius:6px;font-size:10px;margin-bottom:8px;text-align:center">
+              ✅ 剛剛生成 | 🔗 永久連接
+            </div>
+            <div class="gallery-meta">
+              <span class="model-badge">\${img.model}</span>
+              <span class="seed-badge">Seed: \${img.seed}</span>
+            </div>
+            <div class="gallery-meta" style="margin-top:5px">
+              <span class="style-badge">\${styleName}</span>
+              <span class="permanent-badge">🔗 永久</span>
+            </div>
+            <div class="gallery-actions">
+              <button class="action-btn share-new-btn">📤 分享連接</button>
+              <button class="action-btn view-history-btn">📚 查看歷史</button>
+            </div>
+          </div>
+        \`;
+        
+        const imgEl=itemDiv.querySelector('img');
+        imgEl.addEventListener('click',()=>{
+          document.getElementById('modalImage').src=img.url;
+          document.getElementById('imageModal').classList.add('show');
+        });
+        
+        const shareBtn=itemDiv.querySelector('.share-new-btn');
+        shareBtn.addEventListener('click',async()=>{
+          try{
+            await navigator.clipboard.writeText(img.url);
+            alert('✅ 永久連接已複製！\\n\\n'+img.url);
+          }catch(e){
+            prompt('永久連接:',img.url);
+          }
+        });
+        
+        const viewBtn=itemDiv.querySelector('.view-history-btn');
+        viewBtn.addEventListener('click',()=>{
+          document.querySelector('[data-page="history"]').click();
+        });
+        
+        galleryDiv.appendChild(itemDiv);
+      });
+      
+      resultsDiv.appendChild(galleryDiv);
+    }
+  }catch(error){
+    resultsDiv.innerHTML='<div class="alert alert-error"><strong>錯誤:</strong> '+error.message+'</div>';
+  }finally{
+    generateBtn.disabled=false;
+    generateBtn.innerHTML='🎨 開始生成';
+  }
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  updateHistoryStats();
+});
+</script>
+</body>
+</html>`;
   
-  s += 'function setQuality(m){';
-  s += 'document.getElementById("qualityMode").value=m;';
-  s += 'document.querySelectorAll(".quality-btn").forEach(b=>{';
-  s += 'b.classList.remove("bg-green-600","border-green-400","border-2");';
-  s += 'b.classList.add("bg-gray-700","border-gray-600","border");});';
-  s += 'const btn=document.getElementById("q"+m.charAt(0).toUpperCase()+m.slice(1,3));';
-  s += 'btn.classList.remove("bg-gray-700","border-gray-600","border");';
-  s += 'btn.classList.add("bg-green-600","border-green-400","border-2");}';
-  
-  s += 'function useEx(n){document.getElementById("prompt").value=EX[n];}';
-  
-  s += 'async function gen(){';
-  s += 'const p=document.getElementById("prompt").value.trim();';
-  s += 'if(!p){alert(T.needPrompt);return;}';
-  s += 'const m=document.getElementById("model").value;';
-  s += 'const sp=document.getElementById("sizePreset").value;';
-  s += 'const sizes=' + JSON.stringify(CONFIG.PRESET_SIZES) + ';';
-  s += 'const sz=sizes[sp];';
-  s += 'const st=document.getElementById("style").value;';
-  s += 'const qm=document.getElementById("qualityMode").value;';
-  s += 'const sd=parseInt(document.getElementById("seed").value);';
-  s += 'const np=document.getElementById("negPrompt").value.trim();';
-  s += 'curParams={prompt:p,model:m,width:sz.width,height:sz.height,style:st,quality_mode:qm,seed:sd,negative_prompt:np};';
-  s += 'showState("loading");';
-  s += 'let elapsed=0;';
-  s += 'timer=setInterval(()=>{elapsed++;document.getElementById("elapsedTime").textContent=elapsed;},1000);';
-  s += 'try{';
-  s += 'const res=await fetch("/_internal/generate",{method:"POST",headers:{"Content-Type":"application/json"},';
-  s += 'body:JSON.stringify(curParams)});';
-  s += 'clearInterval(timer);';
-  s += 'if(!res.ok)throw new Error("HTTP "+res.status);';
-  s += 'const data=await res.json();';
-  s += 'curUrl=data.url;';
-  s += 'showResults(data);';
-  s += 'saveHist({prompt:p,params:curParams,result:data,timestamp:Date.now()});';
-  s += '}catch(e){clearInterval(timer);showError(e.message);}}';
-  
-  s += 'function showState(s){';
-  s += 'document.getElementById("emptyState").classList.toggle("hidden",s!=="empty");';
-  s += 'document.getElementById("loadingState").classList.toggle("hidden",s!=="loading");';
-  s += 'document.getElementById("successState").classList.toggle("hidden",s!=="success");';
-  s += 'document.getElementById("errorState").classList.toggle("hidden",s!=="error");}';
-  
-  s += 'function showResults(data){';
-  s += 'showState("success");';
-  s += 'document.getElementById("resultSummary").textContent=T.generated+" 1 "+T.images;';
-  s += 'document.getElementById("resultModel").textContent=data.model;';
-  s += 'document.getElementById("resultSize").textContent=data.width+"×"+data.height;';
-  s += 'document.getElementById("resultSeed").textContent=data.seed;';
-  s += 'document.getElementById("resultTime").textContent=data.time;';
-  
-  s += 'const transInfo=document.getElementById("translationInfo");';
-  s += 'if(data.translated){';
-  s += 'transInfo.innerHTML=\'<div class="mt-3 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-sm">\';';
-  s += 'transInfo.innerHTML+=\'<div class="flex items-center gap-2 mb-1"><span>🌐</span><span class="text-blue-400 font-medium">\';';
-  s += 'transInfo.innerHTML+=(LANG==="zh"?"已自動翻譯":"Auto-translated")+\'</span></div>\';';
-  s += 'transInfo.innerHTML+=\'<div class="text-gray-400 text-xs"><span class="font-medium">\';';
-  s += 'transInfo.innerHTML+=(LANG==="zh"?"原文: ":"Original: ")+\'</span>\'+data.originalPrompt+\'</div>\';';
-  s += 'transInfo.innerHTML+=\'<div class="text-gray-400 text-xs"><span class="font-medium">\';';
-  s += 'transInfo.innerHTML+=(LANG==="zh"?"翻譯: ":"Translation: ")+\'</span>\'+data.translatedPrompt+\'</div></div>\';';
-  s += '}else{transInfo.innerHTML="";}';
-  
-  s += 'const urlInfo=document.getElementById("permanentUrlInfo");';
-  s += 'urlInfo.innerHTML=\'<div class="px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-sm">\';';
-  s += 'urlInfo.innerHTML+=\'<div class="flex items-center gap-2 mb-1"><span>🔗</span><span class="text-purple-400 font-medium">' + t.permanentUrl + '</span></div>\';';
-  s += 'urlInfo.innerHTML+=\'<div class="text-gray-400 text-xs break-all">\'+data.url+\'</div></div>\';';
-  
-  s += 'const grid=document.getElementById("resultGrid");';
-  s += 'grid.innerHTML="";';
-  s += 'const card=document.createElement("div");';
-  s += 'card.className="glass-card rounded-xl overflow-hidden hover:scale-105 transition cursor-pointer border border-gray-700";';
-  s += 'card.innerHTML=\'<img src="\'+data.url+\'" class="w-full aspect-square object-cover">\';';
-  s += 'card.onclick=()=>showImg(data.url);';
-  s += 'grid.appendChild(card);}';
-  
-  s += 'function showError(msg){showState("error");document.getElementById("errorMsg").textContent=msg;}';
-  
-  s += 'function regenerate(){gen();}';
-  
-  s += 'function retry(){gen();}';
-  
-  s += 'function copyPermanentUrl(){';
-  s += 'if(!curUrl){alert("No image generated yet");return;}';
-  s += 'navigator.clipboard.writeText(curUrl).then(()=>alert(T.urlCopied)).catch(err=>alert("Failed to copy: "+err));}';
-  
-  s += 'function downloadImg(){';
-  s += 'if(!curUrl){alert("No image to download");return;}';
-  s += 'const a=document.createElement("a");a.href=curUrl;';
-  s += 'a.download="flux-"+Date.now()+".png";a.click();}';
-  
-  s += 'function loadHist(){try{';
-  s += 'const saved=localStorage.getItem("flux_hist");';
-  s += 'hist=saved?JSON.parse(saved):[];}catch(e){hist=[];}}';
-  
-  s += 'function saveHist(item){hist.unshift(item);';
-  s += 'if(hist.length>100)hist=hist.slice(0,100);';
-  s += 'try{localStorage.setItem("flux_hist",JSON.stringify(hist));updateHistCount();}catch(e){console.error("Storage error:",e);}}';
-  
-  s += 'function updateHistCount(){const c=hist.length;';
-  s += 'document.getElementById("histCount").textContent=c;';
-  s += 'document.getElementById("modalHistCount").textContent=c;}';
-  
-  s += 'function showHist(){document.getElementById("histModal").classList.add("show");renderHist();}';
-  
-  s += 'function hideHist(){document.getElementById("histModal").classList.remove("show");}';
-  
-  s += 'function renderHist(){';
-  s += 'const grid=document.getElementById("histGrid");';
-  s += 'const empty=document.getElementById("histEmpty");';
-  s += 'if(hist.length===0){grid.classList.add("hidden");empty.classList.remove("hidden");return;}';
-  s += 'empty.classList.add("hidden");grid.classList.remove("hidden");';
-  s += 'grid.innerHTML="";';
-  s += 'hist.forEach((item,idx)=>{';
-  s += 'const card=document.createElement("div");';
-  s += 'card.className="glass-card p-3 rounded-xl hover:scale-105 transition border border-gray-700";';
-  s += 'card.innerHTML=\'<div class="aspect-square rounded-lg overflow-hidden mb-2 bg-gray-900 cursor-pointer">\';';
-  s += 'card.innerHTML+=\'<img src="\'+item.result.url+\'" class="w-full h-full object-cover"></div>\';';
-  s += 'card.innerHTML+=\'<div class="text-xs space-y-1"><p class="text-gray-400 truncate">\'+item.prompt+\'</p>\';';
-  s += 'card.innerHTML+=\'<div class="flex items-center justify-between text-gray-500">\';';
-  s += 'card.innerHTML+=\'<span>🤖 \'+item.result.model+\'</span><span>📐 \'+item.result.width+\'×\'+item.result.height+\'</span></div>\';';
-  s += 'card.innerHTML+=\'<div class="flex items-center justify-between text-gray-500">\';';
-  s += 'card.innerHTML+=\'<span>⏱️ \'+item.result.time+\'s</span>\';';
-  s += 'card.innerHTML+=\'<span>\'+new Date(item.timestamp).toLocaleDateString()+\'</span></div></div>\';';
-  s += 'card.innerHTML+=\'<div class="mt-2 flex gap-2">\';';
-  s += 'card.innerHTML+=\'<button class="reuse-hist flex-1 px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 rounded text-xs transition">' + t.reuseBtn + '</button>\';';
-  s += 'card.innerHTML+=\'<button class="del-hist px-2 py-1 bg-red-600/20 hover:bg-red-600/40 rounded text-xs transition">' + t.deleteBtn + '</button></div>\';';
-  s += 'card.querySelector("img").onclick=()=>showImg(item.result.url);';
-  s += 'card.querySelector(".reuse-hist").onclick=(e)=>{e.stopPropagation();reuseHist(idx);};';
-  s += 'card.querySelector(".del-hist").onclick=(e)=>{e.stopPropagation();delHist(idx);};';
-  s += 'grid.appendChild(card);});}';
-  
-  s += 'function reuseHist(idx){const item=hist[idx];';
-  s += 'if(!item)return;';
-  s += 'document.getElementById("prompt").value=item.prompt;';
-  s += 'if(item.params.negative_prompt)document.getElementById("negPrompt").value=item.params.negative_prompt;';
-  s += 'if(item.params.seed!==-1)document.getElementById("seed").value=item.params.seed;';
-  s += 'if(item.params.style)document.getElementById("style").value=item.params.style;';
-  s += 'hideHist();alert(T.loaded);}';
-  
-  s += 'function delHist(idx){if(!confirm(T.confirmDel))return;';
-  s += 'hist.splice(idx,1);localStorage.setItem("flux_hist",JSON.stringify(hist));';
-  s += 'updateHistCount();renderHist();}';
-  
-  s += 'function clearHist(){if(!confirm(T.confirmClear))return;';
-  s += 'hist=[];localStorage.removeItem("flux_hist");updateHistCount();renderHist();}';
-  
-  s += 'function showImg(url){const modal=document.getElementById("imgModal");';
-  s += 'const content=document.getElementById("viewerContent");';
-  s += 'content.innerHTML=\'<img src="\'+url+\'" class="w-full h-auto max-h-[85vh] object-contain">\';';
-  s += 'modal.classList.add("show");}';
-  
-  s += 'function hideImg(){document.getElementById("imgModal").classList.remove("show");}';
-  
-  s += '</script></body></html>';
-  
-  return s;
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      ...corsHeaders()
+    }
+  });
 }
