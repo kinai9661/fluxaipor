@@ -13,7 +13,7 @@ bucket_name = "flux-ai-images"
 
 [[kv_namespaces]]
 binding = "IMAGE_METADATA"
-id = "YOUR_KV_ID"
+id = "b6ace939ffbc4bcbbde6ddf02a67a4d7"
 
 [ai]
 binding = "AI"
