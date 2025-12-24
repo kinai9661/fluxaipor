@@ -794,3 +794,4 @@ function getScripts(t, lang) {
   
   return s;
 }
+ 
