@@ -1,223 +1,758 @@
 // =================================================================================
-//  項目: Flux AI Pro - Extended Styles Edition
-//  版本: 9.6.1-extended-styles-shadcn (✅ 45+ 種藝術風格)
-//  作者: Enhanced by AI Assistant  
-//  日期: 2025-12-24
-//  更新: ✅ 45+ 種藝術風格 | ✅ Shadcn UI | ✅ 新 API 端點
-//  模型: zimage, flux, turbo, kontext (4個模型)
+// Flux-AI-Pro Worker - 完整版
+// Version: 9.6.1-extended-styles-shadcn-complete
+// =================================================================================
+
+// =================================================================================
+// 配置常量
 // =================================================================================
 
 const CONFIG = {
   PROJECT_NAME: "Flux-AI-Pro",
-  PROJECT_VERSION: "9.6.1-extended-styles-shadcn",
+  PROJECT_VERSION: "9.6.1-extended-styles-shadcn-complete",
   API_MASTER_KEY: "1",
   FETCH_TIMEOUT: 120000,
   MAX_RETRIES: 3,
   
+  // 🌐 語言配置
+  LANGUAGES: {
+    'zh-TW': {
+      name: '繁體中文',
+      flag: '🇹🇼',
+      code: 'zh-TW'
+    },
+    'en': {
+      name: 'English',
+      flag: '🇺🇸',
+      code: 'en'
+    }
+  },
+  
+  // 🌐 多語言文本
+  I18N: {
+    'zh-TW': {
+      header: {
+        title: 'Flux AI Pro',
+        apiAuth: '已認證',
+        needApiKey: '需要 API Key',
+        styles: '風格',
+        generate: '生成圖像',
+        history: '歷史'
+      },
+      sidebar: {
+        parameters: '生成參數',
+        modelSelect: '模型選擇',
+        sizePreset: '尺寸預設',
+        artStyle: '藝術風格',
+        qualityMode: '質量模式',
+        advancedOptions: '進階選項',
+        seed: 'Seed',
+        randomSeed: '隨機',
+        numOutputs: '生成數量',
+        autoOptimize: '自動優化參數',
+        autoHD: '自動HD增強',
+        startGenerate: '開始生成',
+        economyMode: '經濟模式 (快速)',
+        standardMode: '標準模式 (平衡)',
+        ultraMode: '超高清模式 (極致)'
+      },
+      prompts: {
+        title: '提示詞',
+        positive: '正面提示詞',
+        negative: '負面提示詞 (可選)',
+        referenceImages: '參考圖像 URL (可選)',
+        supportsChinese: '支持中文自動翻譯',
+        supportsImageToImage: '支持圖生圖的模型：Kontext',
+        positivePlaceholder: '描述你想生成的圖像...\n\n例如：\n• A beautiful sunset over mountains\n• 一隻可愛的貓咪在花園裡玩耍\n• Cyberpunk city at night, neon lights\n• Anime girl with blue hair',
+        negativePlaceholder: '描述不想要的內容...\n\n例如：\n• blurry, low quality, distorted\n• ugly, deformed, bad anatomy',
+        referencePlaceholder: '多張圖片用逗號分隔\n\n例如：\nhttps://example.com/image1.jpg,\nhttps://example.com/image2.jpg'
+      },
+      results: {
+        title: '生成結果',
+        noImages: '尚未生成任何圖像',
+        noImagesDesc: '填寫左側參數並輸入提示詞後點擊生成按鈕',
+        generating: '正在生成圖像，請稍候...',
+        generatingDesc: '這可能需要幾秒鐘到一分鐘',
+        success: '生成成功！',
+        successDesc: '已生成 {count} 張圖片並保存到歷史記錄',
+        failed: '生成失敗',
+        authError: '認證問題',
+        authErrorDesc: '請確保已設置有效的 POLLINATIONS_API_KEY 環境變量',
+        networkError: '網路錯誤',
+        justGenerated: '剛剛生成',
+        reuse: '重用',
+        download: '下載',
+        viewHistory: '歷史'
+      },
+      history: {
+        title: '歷史記錄',
+        totalRecords: '總記錄數',
+        storageSize: '存儲空間',
+        recentStyle: '最近風格',
+        export: '導出',
+        clear: '清空',
+        noHistory: '暫無歷史記錄',
+        noHistoryDesc: '生成的圖像會自動保存在這裡',
+        delete: '刪除',
+        confirmDelete: '確定要刪除這條記錄嗎？',
+        confirmClear: '確定要清空所有歷史記錄嗎？此操作不可恢復！'
+      },
+      styleHint: {
+        title: '風格提示',
+        current: '當前已選',
+        noStyle: '無風格',
+        useOriginal: '使用原始提示詞'
+      },
+      config: {
+        title: '當前配置',
+        model: '模型',
+        size: '尺寸',
+        style: '風格',
+        apiEndpoint: 'API 端點'
+      }
+    },
+    'en': {
+      header: {
+        title: 'Flux AI Pro',
+        apiAuth: 'Authenticated',
+        needApiKey: 'API Key Required',
+        styles: 'Styles',
+        generate: 'Generate',
+        history: 'History'
+      },
+      sidebar: {
+        parameters: 'Generation Parameters',
+        modelSelect: 'Model Selection',
+        sizePreset: 'Size Preset',
+        artStyle: 'Art Style',
+        qualityMode: 'Quality Mode',
+        advancedOptions: 'Advanced Options',
+        seed: 'Seed',
+        randomSeed: 'Random',
+        numOutputs: 'Number of Outputs',
+        autoOptimize: 'Auto Optimize Parameters',
+        autoHD: 'Auto HD Enhancement',
+        startGenerate: 'Start Generation',
+        economyMode: 'Economy (Fast)',
+        standardMode: 'Standard (Balanced)',
+        ultraMode: 'Ultra HD (Best)'
+      },
+      prompts: {
+        title: 'Prompts',
+        positive: 'Positive Prompt',
+        negative: 'Negative Prompt (Optional)',
+        referenceImages: 'Reference Image URLs (Optional)',
+        supportsChinese: 'Supports Auto Translation',
+        supportsImageToImage: 'Image-to-Image Support: Kontext',
+        positivePlaceholder: 'Describe the image you want to generate...\n\nExamples:\n• A beautiful sunset over mountains\n• Cute cat playing in the garden\n• Cyberpunk city at night, neon lights\n• Anime girl with blue hair',
+        negativePlaceholder: 'Describe what you don\'t want...\n\nExamples:\n• blurry, low quality, distorted\n• ugly, deformed, bad anatomy',
+        referencePlaceholder: 'Separate multiple images with commas\n\nExample:\nhttps://example.com/image1.jpg,\nhttps://example.com/image2.jpg'
+      },
+      results: {
+        title: 'Generation Results',
+        noImages: 'No images generated yet',
+        noImagesDesc: 'Fill in the parameters and click generate',
+        generating: 'Generating images, please wait...',
+        generatingDesc: 'This may take several seconds to a minute',
+        success: 'Generation Successful!',
+        successDesc: 'Generated {count} images and saved to history',
+        failed: 'Generation Failed',
+        authError: 'Authentication Issue',
+        authErrorDesc: 'Please ensure POLLINATIONS_API_KEY is set',
+        networkError: 'Network Error',
+        justGenerated: 'Just Generated',
+        reuse: 'Reuse',
+        download: 'Download',
+        viewHistory: 'History'
+      },
+      history: {
+        title: 'History',
+        totalRecords: 'Total Records',
+        storageSize: 'Storage Size',
+        recentStyle: 'Recent Style',
+        export: 'Export',
+        clear: 'Clear',
+        noHistory: 'No history yet',
+        noHistoryDesc: 'Generated images will be saved here',
+        delete: 'Delete',
+        confirmDelete: 'Are you sure you want to delete this record?',
+        confirmClear: 'Are you sure you want to clear all history? This cannot be undone!'
+      },
+      styleHint: {
+        title: 'Style Hint',
+        current: 'Current',
+        noStyle: 'No Style',
+        useOriginal: 'Use original prompt'
+      },
+      config: {
+        title: 'Current Configuration',
+        model: 'Model',
+        size: 'Size',
+        style: 'Style',
+        apiEndpoint: 'API Endpoint'
+      }
+    }
+  },
+  
+  // API 認證配置
   POLLINATIONS_AUTH: {
-    enabled: true,
+    enabled: false,
     token: "",
-    method: "header"
+    method: "Bearer"
   },
   
-  PRESET_SIZES: {
-    "square-1k": { name: "方形 1024x1024", width: 1024, height: 1024 },
-    "square-1.5k": { name: "方形 1536x1536", width: 1536, height: 1536 },
-    "square-2k": { name: "方形 2048x2048", width: 2048, height: 2048 },
-    "portrait-9-16-hd": { name: "豎屏 9:16 HD", width: 1080, height: 1920 },
-    "landscape-16-9-hd": { name: "橫屏 16:9 HD", width: 1920, height: 1080 },
-    "instagram-square": { name: "Instagram 方形", width: 1080, height: 1080 },
-    "wallpaper-fhd": { name: "桌布 Full HD", width: 1920, height: 1080 }
-  },
-  
+  // Provider 配置
   PROVIDERS: {
     pollinations: {
-      name: "Pollinations.ai",
-      endpoint: "https://gen.pollinations.ai",
-      pathPrefix: "/image",
-      type: "direct",
-      auth_mode: "required",
-      requires_key: true,
+      name: "Pollinations.AI",
       enabled: true,
-      default: true,
-      description: "官方 AI 圖像生成服務（需要 API Key）",
-      features: {
-        private_mode: true,
-        custom_size: true,
-        seed_control: true,
-        negative_prompt: true,
-        enhance: true,
-        nologo: true,
-        style_presets: true,
-        auto_hd: true,
-        quality_modes: true,
-        auto_translate: true,
-        reference_images: true,
-        image_to_image: true,
-        batch_generation: true,
-        api_key_auth: true
-      },
+      endpoint: "https://image.pollinations.ai",
+      pathPrefix: "/prompt",
       models: [
-        { 
-          id: "zimage", 
-          name: "Z-Image Turbo ⚡", 
-          confirmed: true, 
-          category: "zimage", 
-          description: "快速 6B 參數圖像生成 (Alpha)", 
-          max_size: 2048,
-          pricing: { image_price: 0.0002, currency: "pollen" },
-          input_modalities: ["text"],
-          output_modalities: ["image"]
+        {
+          id: "zimage",
+          name: "Z-Image Turbo",
+          category: "fast",
+          description: "6B parameters, ultra-fast generation",
+          supports_reference_images: false,
+          max_reference_images: 0
         },
-        { 
-          id: "flux", 
-          name: "Flux 標準版", 
-          confirmed: true, 
-          category: "flux", 
-          description: "快速且高質量的圖像生成", 
-          max_size: 2048,
-          pricing: { image_price: 0.00012, currency: "pollen" },
-          input_modalities: ["text"],
-          output_modalities: ["image"]
+        {
+          id: "flux",
+          name: "Flux Standard",
+          category: "balanced",
+          description: "Balanced speed and quality",
+          supports_reference_images: false,
+          max_reference_images: 0
         },
-        { 
-          id: "turbo", 
-          name: "Flux Turbo ⚡", 
-          confirmed: true, 
-          category: "flux", 
-          description: "超快速圖像生成", 
-          max_size: 2048,
-          pricing: { image_price: 0.0003, currency: "pollen" },
-          input_modalities: ["text"],
-          output_modalities: ["image"]
+        {
+          id: "turbo",
+          name: "Flux Turbo",
+          category: "fast",
+          description: "Super fast generation",
+          supports_reference_images: false,
+          max_reference_images: 0
         },
-        { 
-          id: "kontext", 
-          name: "Kontext 🎨", 
-          confirmed: true, 
-          category: "kontext", 
-          description: "上下文感知圖像生成（支持圖生圖）", 
-          max_size: 2048,
-          pricing: { image_price: 0.04, currency: "pollen" },
+        {
+          id: "kontext",
+          name: "Kontext",
+          category: "image-to-image",
+          description: "Supports reference images",
           supports_reference_images: true,
-          max_reference_images: 1,
-          input_modalities: ["text", "image"],
-          output_modalities: ["image"]
+          max_reference_images: 3
         }
-      ],
-      rate_limit: null,
-      max_size: { width: 2048, height: 2048 }
+      ]
     }
   },
   
   DEFAULT_PROVIDER: "pollinations",
   
-  STYLE_PRESETS: {
-    none: { name: "無風格", prompt: "", negative: "", category: "basic", icon: "⚡", description: "使用原始提示詞" },
-    anime: { name: "動漫風格", prompt: "anime style, anime art, vibrant colors, cel shading, detailed anime", negative: "realistic, photograph, 3d, ugly", category: "illustration", icon: "🎭", description: "日系動漫風格" },
-    ghibli: { name: "吉卜力", prompt: "Studio Ghibli style, Hayao Miyazaki, anime, soft colors, whimsical, detailed background, hand-drawn", negative: "realistic, dark, 3D, western animation", category: "illustration", icon: "🍃", description: "宮崎駿動畫風格" },
-    manga: { name: "日本漫畫", prompt: "manga style, japanese comic art, black and white, screentones, halftone patterns, dynamic poses, detailed linework", negative: "color, colorful, realistic, photo, western comic", category: "manga", icon: "📖", description: "經典日本漫畫黑白網點" },
-    "manga-color": { name: "彩色日漫", prompt: "colored manga style, japanese comic art, vibrant colors, cel shading, clean linework, digital coloring", negative: "realistic, photo, western style, messy", category: "manga", icon: "🎨", description: "彩色日本漫畫風格" },
-    "american-comic": { name: "美式漫畫", prompt: "american comic book style, bold lines, vibrant colors, superhero art, dynamic action, dramatic shading", negative: "anime, manga, realistic photo, soft", category: "manga", icon: "💥", description: "美國超級英雄漫畫" },
-    "korean-webtoon": { name: "韓國網漫", prompt: "korean webtoon style, manhwa art, detailed linework, soft colors, romantic, vertical scroll format", negative: "american comic, rough sketch, dark", category: "manga", icon: "📱", description: "韓國網路漫畫風格" },
-    chibi: { name: "Q版漫畫", prompt: "chibi style, super deformed, cute, kawaii, big head small body, simple features, adorable", negative: "realistic proportions, serious, dark", category: "manga", icon: "🥰", description: "Q版可愛漫畫風格" },
-    "black-white": { name: "黑白", prompt: "black and white, monochrome, high contrast, dramatic lighting, grayscale", negative: "color, colorful, vibrant, saturated", category: "monochrome", icon: "⚫⚪", description: "純黑白高對比效果" },
-    sketch: { name: "素描", prompt: "pencil sketch, hand drawn, graphite drawing, detailed shading, artistic sketch, loose lines", negative: "color, digital, polished, photo", category: "monochrome", icon: "✏️", description: "鉛筆素描手繪質感" },
-    "ink-drawing": { name: "水墨畫", prompt: "traditional chinese ink painting, sumi-e, brush strokes, minimalist, zen aesthetic, black ink on white paper", negative: "color, western style, detailed, cluttered", category: "monochrome", icon: "🖌️", description: "中國傳統水墨畫" },
-    silhouette: { name: "剪影", prompt: "silhouette art, stark contrast, black shapes, minimalist, dramatic, shadow play, clean edges", negative: "detailed, realistic, colorful, textured", category: "monochrome", icon: "👤", description: "剪影藝術極簡構圖" },
-    charcoal: { name: "炭筆畫", prompt: "charcoal drawing, rough texture, dramatic shading, expressive, smudged, artistic, monochrome", negative: "clean, digital, colorful, precise", category: "monochrome", icon: "🖤", description: "炭筆繪畫粗糙質感" },
-    photorealistic: { name: "寫實照片", prompt: "photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus", negative: "anime, cartoon, illustration, painting, drawing, art", category: "realistic", icon: "📷", description: "攝影級寫實效果" },
-    "oil-painting": { name: "油畫", prompt: "oil painting, canvas texture, visible brushstrokes, rich colors, artistic, masterpiece", negative: "photograph, digital art, anime, flat", category: "painting", icon: "🖼️", description: "經典油畫質感" },
-    watercolor: { name: "水彩畫", prompt: "watercolor painting, soft colors, watercolor texture, artistic, hand-painted, paper texture, flowing colors", negative: "photograph, digital, sharp edges, 3d", category: "painting", icon: "💧", description: "清新水彩風格" },
-    impressionism: { name: "印象派", prompt: "impressionist painting, soft brushstrokes, light and color focus, Monet style, outdoor scene, visible brush marks", negative: "sharp, detailed, photorealistic, dark", category: "art-movement", icon: "🌅", description: "印象派繪畫光影捕捉" },
-    abstract: { name: "抽象派", prompt: "abstract art, non-representational, geometric shapes, bold colors, modern art, expressive", negative: "realistic, figurative, detailed, representational", category: "art-movement", icon: "🎭", description: "抽象藝術幾何圖形" },
-    cubism: { name: "立體主義", prompt: "cubist style, geometric shapes, multiple perspectives, fragmented, Picasso inspired, angular forms", negative: "realistic, smooth, traditional, single perspective", category: "art-movement", icon: "🔷", description: "立體主義多視角解構" },
-    surrealism: { name: "超現實主義", prompt: "surrealist art, dreamlike, bizarre, impossible scenes, Salvador Dali style, imaginative, symbolic", negative: "realistic, mundane, ordinary, logical", category: "art-movement", icon: "🌀", description: "超現實主義夢幻場景" },
-    "pop-art": { name: "普普藝術", prompt: "pop art style, bold colors, comic book elements, Andy Warhol inspired, retro, screen print effect", negative: "subtle, muted, traditional, realistic", category: "art-movement", icon: "🎪", description: "普普藝術大膽色彩" },
-    neon: { name: "霓虹燈", prompt: "neon lights, glowing, vibrant neon colors, night scene, electric, luminous, dark background", negative: "daylight, muted, natural, dull", category: "visual", icon: "💡", description: "霓虹燈發光效果" },
-    vintage: { name: "復古", prompt: "vintage style, retro, aged, nostalgic, warm tones, classic, faded colors, old photograph", negative: "modern, futuristic, clean, vibrant", category: "visual", icon: "📻", description: "復古懷舊褪色效果" },
-    steampunk: { name: "蒸汽朋克", prompt: "steampunk style, Victorian era, brass and copper, gears and mechanisms, mechanical, industrial", negative: "modern, minimalist, clean, futuristic", category: "visual", icon: "⚙️", description: "蒸汽朋克機械美學" },
-    minimalist: { name: "極簡主義", prompt: "minimalist design, clean, simple, geometric, negative space, modern, uncluttered", negative: "detailed, complex, ornate, busy", category: "visual", icon: "◽", description: "極簡設計留白美學" },
-    vaporwave: { name: "蒸氣波", prompt: "vaporwave aesthetic, retro futuristic, pastel colors, glitch art, 80s 90s nostalgia, neon pink and blue", negative: "realistic, natural, muted, traditional", category: "visual", icon: "🌴", description: "蒸氣波復古未來" },
-    "pixel-art": { name: "像素藝術", prompt: "pixel art, 8-bit, 16-bit, retro gaming style, pixelated, nostalgic, limited color palette", negative: "high resolution, smooth, realistic, detailed", category: "digital", icon: "🎮", description: "像素藝術復古遊戲" },
-    "low-poly": { name: "低多邊形", prompt: "low poly 3d, geometric, faceted, minimalist 3d art, polygonal, angular shapes", negative: "high poly, detailed, realistic, organic", category: "digital", icon: "🔺", description: "低多邊形3D幾何" },
-    "3d-render": { name: "3D渲染", prompt: "3d render, cinema 4d, octane render, detailed, professional lighting, ray tracing, photorealistic 3d", negative: "2d, flat, hand drawn, sketchy", category: "digital", icon: "🎬", description: "專業3D渲染寫實光影" },
-    gradient: { name: "漸變", prompt: "gradient art, smooth color transitions, modern, vibrant gradients, soft blending, colorful", negative: "solid colors, flat, harsh edges, traditional", category: "digital", icon: "🌈", description: "漸變藝術柔和過渡" },
-    glitch: { name: "故障藝術", prompt: "glitch art, digital corruption, RGB shift, distorted, cyberpunk, data moshing, scanlines", negative: "clean, perfect, traditional, smooth", category: "digital", icon: "📺", description: "故障美學數位崩壞" },
-    "ukiyo-e": { name: "浮世繪", prompt: "ukiyo-e style, japanese woodblock print, Hokusai inspired, traditional japanese art, flat colors, bold outlines", negative: "modern, western, photographic, 3d", category: "traditional", icon: "🗾", description: "日本浮世繪木刻版畫" },
-    "stained-glass": { name: "彩繪玻璃", prompt: "stained glass art, colorful, leaded glass, church window style, luminous, geometric patterns, light through glass", negative: "realistic, photographic, modern, opaque", category: "traditional", icon: "🪟", description: "彩繪玻璃透光效果" },
-    "paper-cut": { name: "剪紙藝術", prompt: "paper cut art, layered paper, shadow box effect, intricate patterns, handcrafted, silhouette", negative: "painted, digital, realistic, photographic", category: "traditional", icon: "✂️", description: "剪紙藝術層次堆疊" },
-    gothic: { name: "哥特風格", prompt: "gothic style, dark, ornate, Victorian gothic, mysterious, dramatic, baroque elements, elegant darkness", negative: "bright, cheerful, minimalist, modern", category: "aesthetic", icon: "🦇", description: "哥特美學黑暗華麗" },
-    "art-nouveau": { name: "新藝術", prompt: "art nouveau style, organic forms, flowing lines, decorative, elegant, floral motifs, Alphonse Mucha inspired", negative: "geometric, minimalist, modern, rigid", category: "aesthetic", icon: "🌺", description: "新藝術流動線條" },
-    cyberpunk: { name: "賽博朋克", prompt: "cyberpunk style, neon lights, futuristic, sci-fi, dystopian, high-tech low-life, blade runner style", negative: "natural, rustic, medieval, fantasy", category: "scifi", icon: "🌃", description: "賽博朋克未來科幻" },
-    fantasy: { name: "奇幻風格", prompt: "fantasy art, magical, epic fantasy, detailed fantasy illustration, mystical, enchanted", negative: "modern, realistic, mundane, contemporary", category: "fantasy", icon: "🐉", description: "奇幻魔法世界" }
+  // 尺寸預設
+  PRESET_SIZES: {
+    "square-1k": { name: "方形 1K", width: 1024, height: 1024 },
+    "square-1.5k": { name: "方形 1.5K", width: 1536, height: 1536 },
+    "square-2k": { name: "方形 2K", width: 2048, height: 2048 },
+    "portrait-9-16": { name: "豎屏 9:16", width: 768, height: 1344 },
+    "portrait-9-16-hd": { name: "豎屏 9:16 HD", width: 1080, height: 1920 },
+    "landscape-16-9": { name: "橫屏 16:9", width: 1344, height: 768 },
+    "landscape-16-9-hd": { name: "橫屏 16:9 HD", width: 1920, height: 1080 },
+    "instagram-square": { name: "Instagram 方形", width: 1080, height: 1080 },
+    "instagram-portrait": { name: "Instagram 豎屏", width: 1080, height: 1350 },
+    "wallpaper-fhd": { name: "桌布 Full HD", width: 1920, height: 1080 },
+    "wallpaper-qhd": { name: "桌布 QHD", width: 2560, height: 1440 },
+    "mobile-wallpaper": { name: "手機桌布", width: 1170, height: 2532 }
   },
   
-  STYLE_CATEGORIES: {
-    'basic': { name: '基礎', icon: '⚡', order: 1 },
-    'illustration': { name: '插畫動畫', icon: '🎨', order: 2 },
-    'manga': { name: '漫畫風格', icon: '📖', order: 3 },
-    'monochrome': { name: '黑白單色', icon: '⚫', order: 4 },
-    'realistic': { name: '寫實照片', icon: '📷', order: 5 },
-    'painting': { name: '繪畫風格', icon: '🖼️', order: 6 },
-    'art-movement': { name: '藝術流派', icon: '🎭', order: 7 },
-    'visual': { name: '視覺風格', icon: '✨', order: 8 },
-    'digital': { name: '數位風格', icon: '💻', order: 9 },
-    'traditional': { name: '傳統藝術', icon: '🏛️', order: 10 },
-    'aesthetic': { name: '美學風格', icon: '🌟', order: 11 },
-    'scifi': { name: '科幻', icon: '🚀', order: 12 },
-    'fantasy': { name: '奇幻', icon: '🐉', order: 13 }
+  // HD 優化配置
+  HD_OPTIMIZATION: {
+    enabled: true,
+    QUALITY_MODES: {
+      economy: {
+        name: "經濟模式",
+        hd_level: "basic",
+        min_resolution: 512,
+        steps_multiplier: 0.8,
+        guidance_multiplier: 0.9,
+        force_upscale: false
+      },
+      standard: {
+        name: "標準模式",
+        hd_level: "standard",
+        min_resolution: 1024,
+        steps_multiplier: 1.0,
+        guidance_multiplier: 1.0,
+        force_upscale: false
+      },
+      ultra: {
+        name: "超高清模式",
+        hd_level: "ultra",
+        min_resolution: 1536,
+        steps_multiplier: 1.3,
+        guidance_multiplier: 1.1,
+        force_upscale: true
+      }
+    },
+    HD_PROMPTS: {
+      basic: "sharp focus, clear details",
+      standard: "highly detailed, sharp focus, professional quality, 8k uhd",
+      ultra: "masterpiece, best quality, highly detailed, ultra-detailed, 8k uhd, professional, sharp focus, crystal clear, photorealistic"
+    },
+    HD_NEGATIVE: "blurry, low quality, low resolution, pixelated, jpeg artifacts, worst quality, bad quality",
+    MODEL_QUALITY_PROFILES: {
+      "zimage": {
+        max_resolution: 2048,
+        min_resolution: 1024,
+        optimal_steps_boost: 1.0,
+        guidance_boost: 1.0,
+        recommended_quality: "standard"
+      },
+      "flux": {
+        max_resolution: 2048,
+        min_resolution: 1024,
+        optimal_steps_boost: 1.1,
+        guidance_boost: 1.0,
+        recommended_quality: "standard"
+      },
+      "turbo": {
+        max_resolution: 1536,
+        min_resolution: 512,
+        optimal_steps_boost: 0.8,
+        guidance_boost: 0.9,
+        recommended_quality: "economy"
+      },
+      "kontext": {
+        max_resolution: 2048,
+        min_resolution: 1024,
+        optimal_steps_boost: 1.2,
+        guidance_boost: 1.1,
+        recommended_quality: "ultra"
+      }
+    }
   },
   
+  // 參數優化規則
   OPTIMIZATION_RULES: {
     MODEL_STEPS: {
-      "zimage": { min: 8, optimal: 15, max: 25 },
-      "flux": { min: 15, optimal: 20, max: 30 },
-      "turbo": { min: 4, optimal: 8, max: 12 },
-      "kontext": { min: 18, optimal: 25, max: 35 }
+      zimage: { min: 15, optimal: 20, max: 50 },
+      flux: { min: 20, optimal: 28, max: 60 },
+      turbo: { min: 4, optimal: 8, max: 15 },
+      kontext: { min: 25, optimal: 35, max: 70 }
     },
     SIZE_MULTIPLIER: {
       small: { threshold: 512 * 512, multiplier: 0.8 },
       medium: { threshold: 1024 * 1024, multiplier: 1.0 },
-      large: { threshold: 1536 * 1536, multiplier: 1.15 },
-      xlarge: { threshold: 2048 * 2048, multiplier: 1.3 }
+      large: { threshold: 1536 * 1536, multiplier: 1.2 },
+      xlarge: { threshold: 2048 * 2048, multiplier: 1.4 }
     },
     STYLE_ADJUSTMENT: {
-      "photorealistic": 1.1,
-      "oil-painting": 1.05,
-      "watercolor": 0.95,
-      "sketch": 0.9,
-      "manga": 1.0,
-      "pixel-art": 0.85,
-      "3d-render": 1.15,
-      "default": 1.0
+      photorealistic: 1.2,
+      "oil-painting": 1.1,
+      anime: 1.0,
+      sketch: 0.9,
+      default: 1.0
     }
   },
   
-  HD_OPTIMIZATION: {
-    enabled: true,
-    QUALITY_MODES: {
-      economy: { name: "經濟模式", description: "快速出圖", min_resolution: 1024, max_resolution: 2048, steps_multiplier: 0.85, guidance_multiplier: 0.9, hd_level: "basic" },
-      standard: { name: "標準模式", description: "平衡質量與速度", min_resolution: 1280, max_resolution: 2048, steps_multiplier: 1.0, guidance_multiplier: 1.0, hd_level: "enhanced" },
-      ultra: { name: "超高清模式", description: "極致質量", min_resolution: 1536, max_resolution: 2048, steps_multiplier: 1.35, guidance_multiplier: 1.15, hd_level: "maximum", force_upscale: true }
+  // 風格類別
+  STYLE_CATEGORIES: {
+    none: { name: "無風格", icon: "⚪", order: 0 },
+    realistic: { name: "寫實風格", icon: "📷", order: 1 },
+    anime: { name: "動漫風格", icon: "🎌", order: 2 },
+    artistic: { name: "藝術風格", icon: "🎨", order: 3 },
+    digital: { name: "數位藝術", icon: "💻", order: 4 },
+    cinematic: { name: "電影風格", icon: "🎬", order: 5 },
+    fantasy: { name: "奇幻風格", icon: "🔮", order: 6 },
+    abstract: { name: "抽象風格", icon: "🌀", order: 7 },
+    traditional: { name: "傳統藝術", icon: "🖼️", order: 8 },
+    modern: { name: "現代風格", icon: "✨", order: 9 },
+    vintage: { name: "復古風格", icon: "📻", order: 10 },
+    sci_fi: { name: "科幻風格", icon: "🚀", order: 11 },
+    minimalist: { name: "極簡風格", icon: "⬜", order: 12 },
+    other: { name: "其他風格", icon: "🎭", order: 13 }
+  },
+  
+  // 風格預設（45+ 種風格）
+  STYLE_PRESETS: {
+    none: {
+      name: "無風格",
+      icon: "⚪",
+      category: "none",
+      description: "不套用任何風格，使用原始提示詞",
+      prompt: "",
+      negative: ""
     },
-    HD_PROMPTS: {
-      basic: "high quality, detailed, sharp",
-      enhanced: "high quality, highly detailed, sharp focus, professional, 8k uhd",
-      maximum: "masterpiece, best quality, ultra detailed, 8k uhd, high resolution, professional photography, sharp focus, HDR"
+    photorealistic: {
+      name: "攝影級寫實",
+      icon: "📸",
+      category: "realistic",
+      description: "專業攝影風格，超高細節",
+      prompt: "photorealistic, photography, ultra realistic, 8k uhd, dslr, high quality, film grain, Fujifilm XT3",
+      negative: "painting, drawing, illustration, cartoon, anime, render, 3d"
     },
-    HD_NEGATIVE: "blurry, low quality, distorted, ugly, bad anatomy, low resolution, pixelated, artifacts, noise",
-    MODEL_QUALITY_PROFILES: {
-      "zimage": { min_resolution: 1024, max_resolution: 2048, optimal_steps_boost: 1.0, guidance_boost: 1.0, recommended_quality: "economy" },
-      "flux": { min_resolution: 1024, max_resolution: 2048, optimal_steps_boost: 1.1, guidance_boost: 1.0, recommended_quality: "standard" },
-      "turbo": { min_resolution: 1024, max_resolution: 2048, optimal_steps_boost: 0.9, guidance_boost: 0.95, recommended_quality: "economy" },
-      "kontext": { min_resolution: 1280, max_resolution: 2048, optimal_steps_boost: 1.2, guidance_boost: 1.1, recommended_quality: "ultra" }
+    portrait: {
+      name: "人像攝影",
+      icon: "👤",
+      category: "realistic",
+      description: "專業人像攝影",
+      prompt: "portrait photography, professional lighting, bokeh, shallow depth of field, 85mm lens, high quality",
+      negative: "full body, wide angle, distorted face"
+    },
+    cinematic: {
+      name: "電影級質感",
+      icon: "🎬",
+      category: "cinematic",
+      description: "電影般的光影和構圖",
+      prompt: "cinematic lighting, movie still, film grain, dramatic lighting, anamorphic lens flare, 35mm film",
+      negative: "amateur, snapshot, phone photo"
+    },
+    anime: {
+      name: "動漫風格",
+      icon: "🎌",
+      category: "anime",
+      description: "日式動漫畫風",
+      prompt: "anime style, manga, cel shaded, vibrant colors, by makoto shinkai",
+      negative: "realistic, photograph, 3d render"
+    },
+    manga: {
+      name: "漫畫風格",
+      icon: "📚",
+      category: "anime",
+      description: "黑白漫畫線條",
+      prompt: "manga style, black and white, ink drawing, screentone, japanese comic book",
+      negative: "color, realistic, photograph"
+    },
+    chibi: {
+      name: "Q版可愛",
+      icon: "🧸",
+      category: "anime",
+      description: "可愛 Q 版角色",
+      prompt: "chibi style, cute, kawaii, super deformed, big eyes, small body",
+      negative: "realistic proportions, detailed"
+    },
+    "oil-painting": {
+      name: "油畫",
+      icon: "🖌️",
+      category: "artistic",
+      description: "古典油畫質感",
+      prompt: "oil painting, canvas texture, brush strokes, classical art, renaissance style",
+      negative: "photograph, digital art, anime"
+    },
+    watercolor: {
+      name: "水彩畫",
+      icon: "💧",
+      category: "artistic",
+      description: "水彩暈染效果",
+      prompt: "watercolor painting, soft edges, color bleeding, artistic, hand painted",
+      negative: "digital, sharp edges, photograph"
+    },
+    sketch: {
+      name: "素描",
+      icon: "✏️",
+      category: "artistic",
+      description: "鉛筆素描線條",
+      prompt: "pencil sketch, graphite drawing, hand drawn, artistic, detailed line work",
+      negative: "color, painting, photograph"
+    },
+    "ink-wash": {
+      name: "水墨畫",
+      icon: "🖋️",
+      category: "traditional",
+      description: "中國水墨畫風",
+      prompt: "chinese ink wash painting, sumi-e, traditional asian art, minimalist, flowing brush strokes",
+      negative: "color, western style, photograph"
+    },
+    "digital-art": {
+      name: "數位藝術",
+      icon: "💻",
+      category: "digital",
+      description: "現代數位繪畫",
+      prompt: "digital art, concept art, highly detailed, artstation, trending on artstation, sharp focus",
+      negative: "photograph, traditional media, sketch"
+    },
+    "3d-render": {
+      name: "3D 渲染",
+      icon: "🎲",
+      category: "digital",
+      description: "三維渲染效果",
+      prompt: "3d render, octane render, unreal engine, high quality render, realistic lighting, raytracing",
+      negative: "2d, flat, painting, drawing"
+    },
+    "pixel-art": {
+      name: "像素藝術",
+      icon: "👾",
+      category: "digital",
+      description: "復古像素風格",
+      prompt: "pixel art, 8-bit, 16-bit, retro game style, pixelated",
+      negative: "realistic, high resolution, smooth"
+    },
+    "low-poly": {
+      name: "低多邊形",
+      icon: "🔷",
+      category: "digital",
+      description: "低面數幾何風格",
+      prompt: "low poly, geometric, polygonal art, faceted, minimalist 3d",
+      negative: "realistic, high poly, detailed"
+    },
+    cyberpunk: {
+      name: "賽博朋克",
+      icon: "🌃",
+      category: "sci_fi",
+      description: "霓虹科幻都市",
+      prompt: "cyberpunk, neon lights, futuristic city, sci-fi, dystopian, holographic",
+      negative: "natural, organic, traditional"
+    },
+    steampunk: {
+      name: "蒸汽朋克",
+      icon: "⚙️",
+      category: "sci_fi",
+      description: "維多利亞科幻風",
+      prompt: "steampunk, victorian era, brass and copper, gears, mechanical, retro-futuristic",
+      negative: "modern, digital, clean"
+    },
+    "sci-fi": {
+      name: "科幻風格",
+      icon: "🚀",
+      category: "sci_fi",
+      description: "未來科技感",
+      prompt: "sci-fi, science fiction, futuristic, high-tech, space age, advanced technology",
+      negative: "historical, medieval, traditional"
+    },
+    fantasy: {
+      name: "奇幻風格",
+      icon: "🔮",
+      category: "fantasy",
+      description: "魔法與幻想世界",
+      prompt: "fantasy art, magical, ethereal, epic fantasy, dungeons and dragons style",
+      negative: "realistic, modern, sci-fi"
+    },
+    "dark-fantasy": {
+      name: "黑暗奇幻",
+      icon: "🌑",
+      category: "fantasy",
+      description: "黑暗魔幻風格",
+      prompt: "dark fantasy, gothic, ominous, dark atmosphere, dramatic shadows",
+      negative: "bright, cheerful, colorful"
+    },
+    surrealism: {
+      name: "超現實主義",
+      icon: "🌀",
+      category: "abstract",
+      description: "超現實夢境",
+      prompt: "surrealism, surreal art, dreamlike, bizarre, by salvador dali, impossible geometry",
+      negative: "realistic, normal, ordinary"
+    },
+    abstract: {
+      name: "抽象藝術",
+      icon: "🎨",
+      category: "abstract",
+      description: "抽象表現主義",
+      prompt: "abstract art, non-representational, bold colors, expressive, contemporary art",
+      negative: "realistic, figurative, detailed"
+    },
+    "pop-art": {
+      name: "普普藝術",
+      icon: "🎪",
+      category: "modern",
+      description: "波普藝術風格",
+      prompt: "pop art, bold colors, comic book style, roy lichtenstein, andy warhol, halftone dots",
+      negative: "realistic, muted colors, classical"
+    },
+    minimalist: {
+      name: "極簡主義",
+      icon: "⬜",
+      category: "minimalist",
+      description: "簡約設計風格",
+      prompt: "minimalist, simple, clean lines, negative space, minimal color palette",
+      negative: "detailed, complex, ornate, busy"
+    },
+    "line-art": {
+      name: "線條藝術",
+      icon: "➰",
+      category: "minimalist",
+      description: "純線條繪圖",
+      prompt: "line art, continuous line drawing, clean lines, outline, vector style",
+      negative: "shading, color, realistic"
+    },
+    vintage: {
+      name: "復古風格",
+      icon: "📻",
+      category: "vintage",
+      description: "懷舊復古感",
+      prompt: "vintage style, retro, aged, nostalgic, faded colors, old photo effect",
+      negative: "modern, sharp, new"
+    },
+    "art-deco": {
+      name: "裝飾藝術",
+      icon: "🏛️",
+      category: "vintage",
+      description: "1920年代裝飾風",
+      prompt: "art deco, geometric patterns, 1920s style, elegant, luxury, ornate",
+      negative: "modern, minimal, casual"
+    },
+    "art-nouveau": {
+      name: "新藝術風格",
+      icon: "🌺",
+      category: "traditional",
+      description: "19世紀末新藝術",
+      prompt: "art nouveau, organic forms, flowing lines, floral motifs, mucha style",
+      negative: "geometric, angular, modern"
+    },
+    impressionist: {
+      name: "印象派",
+      icon: "🌅",
+      category: "traditional",
+      description: "印象派繪畫",
+      prompt: "impressionism, loose brushwork, light and color, by claude monet, visible brush strokes",
+      negative: "detailed, sharp, photographic"
+    },
+    "stained-glass": {
+      name: "彩繪玻璃",
+      icon: "🪟",
+      category: "traditional",
+      description: "教堂彩繪玻璃",
+      prompt: "stained glass window, colorful glass panels, lead lines, backlit, gothic cathedral style",
+      negative: "realistic, photographic, modern"
+    },
+    isometric: {
+      name: "等角視圖",
+      icon: "📐",
+      category: "digital",
+      description: "等距投影圖",
+      prompt: "isometric view, isometric perspective, 3d isometric, game asset style",
+      negative: "perspective, realistic view"
+    },
+    "vaporwave": {
+      name: "蒸汽波",
+      icon: "🌊",
+      category: "modern",
+      description: "蒸汽波美學",
+      prompt: "vaporwave, aesthetic, 80s and 90s style, pastel colors, glitch art, retro futuristic",
+      negative: "realistic, natural colors"
+    },
+    "gothic": {
+      name: "哥德風格",
+      icon: "🦇",
+      category: "fantasy",
+      description: "哥德式暗黑風",
+      prompt: "gothic art, dark, ornate, victorian gothic, dramatic shadows, mysterious",
+      negative: "bright, cheerful, minimalist"
+    },
+    "comic-book": {
+      name: "美式漫畫",
+      icon: "💥",
+      category: "digital",
+      description: "美式漫畫風格",
+      prompt: "comic book style, halftone dots, bold outlines, speech bubbles, action lines, marvel comics style",
+      negative: "realistic, photograph, anime"
+    },
+    "graffiti": {
+      name: "塗鴉藝術",
+      icon: "🎨",
+      category: "modern",
+      description: "街頭塗鴉風格",
+      prompt: "graffiti art, street art, spray paint, urban art, colorful, bold style",
+      negative: "classical, refined, formal"
+    },
+    "paper-cut": {
+      name: "剪紙藝術",
+      icon: "✂️",
+      category: "traditional",
+      description: "紙雕剪紙風格",
+      prompt: "paper cut art, layered paper, shadow box, 3d paper sculpture, intricate cutting",
+      negative: "flat, painting, photograph"
+    },
+    "neon": {
+      name: "霓虹燈光",
+      icon: "💡",
+      category: "modern",
+      description: "霓虹發光效果",
+      prompt: "neon lights, glowing, vibrant colors, electric, fluorescent, cyberpunk neon",
+      negative: "natural lighting, muted colors"
+    },
+    "holographic": {
+      name: "全息投影",
+      icon: "🌈",
+      category: "sci_fi",
+      description: "全息影像效果",
+      prompt: "holographic, iridescent, rainbow colors, chromatic aberration, futuristic display",
+      negative: "matte, flat colors"
+    },
+    "psychedelic": {
+      name: "迷幻藝術",
+      icon: "🍄",
+      category: "abstract",
+      description: "迷幻風格",
+      prompt: "psychedelic art, vibrant swirling colors, trippy, kaleidoscopic, 1960s style",
+      negative: "realistic, muted, calm"
+    },
+    "ukiyo-e": {
+      name: "浮世繪",
+      icon: "🗾",
+      category: "traditional",
+      description: "日本浮世繪",
+      prompt: "ukiyo-e, japanese woodblock print, edo period, by hokusai, traditional japanese art",
+      negative: "western style, photograph, modern"
+    },
+    "film-noir": {
+      name: "黑色電影",
+      icon: "🎩",
+      category: "cinematic",
+      description: "黑白電影風格",
+      prompt: "film noir, black and white, high contrast, dramatic shadows, 1940s detective style",
+      negative: "color, bright, cheerful"
+    },
+    "baroque": {
+      name: "巴洛克風格",
+      icon: "👑",
+      category: "traditional",
+      description: "巴洛克藝術",
+      prompt: "baroque art, ornate, dramatic, golden, rich colors, by caravaggio, classical",
+      negative: "minimalist, modern, simple"
+    },
+    "biomechanical": {
+      name: "生物機械",
+      icon: "🦾",
+      category: "sci_fi",
+      description: "生物與機械融合",
+      prompt: "biomechanical, H.R. Giger style, organic and mechanical fusion, intricate details",
+      negative: "natural, simple, cute"
     }
   }
 };
+
 // =================================================================================
-// 工具類：Logger, IP獲取, 翻譯, 優化器
+// 工具函數
 // =================================================================================
+
+function corsHeaders(additionalHeaders = {}) {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
+    ...additionalHeaders
+  };
+}
+
+async function fetchWithTimeout(url, options = {}, timeout = 120000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout after ' + (timeout / 1000) + ' seconds');
+    }
+    throw error;
+  }
+}
 
 class Logger {
   constructor() {
@@ -241,39 +776,117 @@ function getClientIP(request) {
 async function translateToEnglish(text, env) {
   try {
     const hasChinese = /[\u4e00-\u9fa5]/.test(text);
-    if (!hasChinese) return { text: text, translated: false, reason: "No Chinese detected" };
-    
-    if (!env || !env.AI) {
-      console.warn("⚠️ Workers AI not configured");
-      return { text: text, translated: false, reason: "AI not configured" };
+    if (!hasChinese) {
+      return { text: text, translated: false, reason: "No Chinese detected" };
     }
     
+    // 方案 1: 使用 Google Translate 免費 API
     try {
-      const response = await env.AI.run("@cf/meta/m2m100-1.2b", { 
-        text: text, 
-        source_lang: "chinese", 
-        target_lang: "english" 
+      const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=en&dt=t&q=' + encodeURIComponent(text);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
       });
       
-      if (response && response.translated_text) {
-        console.log("✅ Translation:", text, "→", response.translated_text);
-        return { 
-          text: response.translated_text, 
-          translated: true, 
-          original: text, 
-          model: "m2m100-1.2b" 
-        };
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data[0] && data[0][0] && data[0][0][0]) {
+          const translatedText = data[0].map(item => item[0]).join('');
+          
+          console.log("✅ Google Translation:", text, "→", translatedText);
+          return { 
+            text: translatedText, 
+            translated: true, 
+            original: text, 
+            service: "Google Translate (Free)",
+            method: "googleapis" 
+          };
+        }
       }
     } catch (error) {
-      console.error("❌ Translation failed:", error.message);
+      console.error("❌ Google Translate failed:", error.message);
     }
     
-    return { text: text, translated: false };
+    // 方案 2: 備用 - MyMemory Translation API
+    try {
+      const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=zh-CN|en';
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.responseData && data.responseData.translatedText) {
+          const translatedText = data.responseData.translatedText;
+          
+          console.log("✅ MyMemory Translation:", text, "→", translatedText);
+          return { 
+            text: translatedText, 
+            translated: true, 
+            original: text, 
+            service: "MyMemory Translation API",
+            method: "mymemory" 
+          };
+        }
+      }
+    } catch (error) {
+      console.error("❌ MyMemory Translation failed:", error.message);
+    }
+    
+    // 方案 3: Workers AI（如果可用）
+    if (env && env.AI) {
+      try {
+        const response = await env.AI.run("@cf/meta/m2m100-1.2b", { 
+          text: text, 
+          source_lang: "chinese", 
+          target_lang: "english" 
+        });
+        
+        if (response && response.translated_text) {
+          console.log("✅ Cloudflare AI Translation:", text, "→", response.translated_text);
+          return { 
+            text: response.translated_text, 
+            translated: true, 
+            original: text, 
+            service: "Cloudflare Workers AI",
+            method: "workers-ai",
+            model: "m2m100-1.2b" 
+          };
+        }
+      } catch (error) {
+        console.error("❌ Workers AI Translation failed:", error.message);
+      }
+    }
+    
+    console.warn("⚠️ All translation methods failed, using original text");
+    return { 
+      text: text, 
+      translated: false, 
+      reason: "All translation services failed",
+      attempted_services: ["Google Translate", "MyMemory", "Workers AI"]
+    };
+    
   } catch (error) {
     console.error("❌ translateToEnglish error:", error);
-    return { text: text, translated: false, error: error.message };
+    return { 
+      text: text, 
+      translated: false, 
+      error: error.message 
+    };
   }
 }
+// =================================================================================
+// 參數優化器類
+// =================================================================================
 
 class PromptAnalyzer {
   static analyzeComplexity(prompt) {
@@ -516,13 +1129,13 @@ class StyleProcessor {
         }
       }
       
-      console.log("✅ Style applied:", style, "-", styleConfig.name);
       return { 
         enhancedPrompt: enhancedPrompt, 
         enhancedNegative: enhancedNegative 
       };
+      
     } catch (error) {
-      console.error("❌ StyleProcessor error:", error.message);
+      console.error("❌ StyleProcessor error:", error);
       return { 
         enhancedPrompt: prompt, 
         enhancedNegative: negativePrompt || "" 
@@ -531,32 +1144,152 @@ class StyleProcessor {
   }
 }
 
-async function fetchWithTimeout(url, options = {}, timeout = CONFIG.FETCH_TIMEOUT) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+// =================================================================================
+// 圖片永久存儲服務
+// =================================================================================
+
+class ImageStorageService {
+  constructor(r2Bucket, kvNamespace) {
+    this.r2 = r2Bucket;
+    this.kv = kvNamespace;
+  }
   
-  try {
-    const response = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(timeoutId);
-    return response;
-  } catch (error) {
-    clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
-      throw new Error("Request timeout after " + timeout + "ms");
+  generateImageId() {
+    return 'img_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+  }
+  
+  async saveImage(imageData, metadata) {
+    try {
+      const imageId = this.generateImageId();
+      const fileName = imageId + '.png';
+      
+      // 保存圖片到 R2
+      await this.r2.put(fileName, imageData, {
+        httpMetadata: {
+          contentType: metadata.contentType || 'image/png',
+          cacheControl: 'public, max-age=31536000',
+        },
+        customMetadata: {
+          prompt: metadata.prompt?.substring(0, 500) || '',
+          model: metadata.model || '',
+          seed: metadata.seed?.toString() || '',
+          style: metadata.style || '',
+          width: metadata.width?.toString() || '',
+          height: metadata.height?.toString() || '',
+          timestamp: new Date().toISOString()
+        }
+      });
+      
+      // 保存元數據到 KV
+      if (this.kv) {
+        const metadataRecord = {
+          imageId,
+          fileName,
+          ...metadata,
+          timestamp: new Date().toISOString(),
+          size: imageData.byteLength
+        };
+        
+        await this.kv.put(imageId, JSON.stringify(metadataRecord), {
+          expirationTtl: 365 * 24 * 60 * 60
+        });
+      }
+      
+      const publicUrl = '/images/' + fileName;
+      
+      console.log('✅ Image saved:', imageId, 'Size:', (imageData.byteLength / 1024).toFixed(2), 'KB');
+      
+      return {
+        imageId,
+        fileName,
+        publicUrl,
+        size: imageData.byteLength
+      };
+      
+    } catch (error) {
+      console.error('❌ Failed to save image:', error);
+      throw new Error('Failed to save image: ' + error.message);
     }
-    throw error;
+  }
+  
+  async getImage(fileName) {
+    try {
+      const object = await this.r2.get(fileName);
+      
+      if (!object) {
+        return null;
+      }
+      
+      return {
+        body: object.body,
+        contentType: object.httpMetadata.contentType,
+        metadata: object.customMetadata
+      };
+      
+    } catch (error) {
+      console.error('❌ Failed to get image:', error);
+      return null;
+    }
+  }
+  
+  async deleteImage(imageId) {
+    try {
+      const fileName = imageId + '.png';
+      
+      await this.r2.delete(fileName);
+      
+      if (this.kv) {
+        await this.kv.delete(imageId);
+      }
+      
+      console.log('✅ Image deleted:', imageId);
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Failed to delete image:', error);
+      return false;
+    }
+  }
+  
+  async deleteImages(imageIds) {
+    const results = await Promise.allSettled(
+      imageIds.map(id => this.deleteImage(id))
+    );
+    
+    const succeeded = results.filter(r => r.status === 'fulfilled' && r.value).length;
+    const failed = results.length - succeeded;
+    
+    return { succeeded, failed };
+  }
+  
+  async listImages(options = {}) {
+    try {
+      const { limit = 100, cursor } = options;
+      
+      const listed = await this.r2.list({
+        limit,
+        cursor
+      });
+      
+      return {
+        objects: listed.objects.map(obj => ({
+          key: obj.key,
+          size: obj.size,
+          uploaded: obj.uploaded,
+          httpMetadata: obj.httpMetadata,
+          customMetadata: obj.customMetadata
+        })),
+        truncated: listed.truncated,
+        cursor: listed.cursor
+      };
+      
+    } catch (error) {
+      console.error('❌ Failed to list images:', error);
+      return { objects: [], truncated: false };
+    }
   }
 }
 
-function corsHeaders(additionalHeaders = {}) {
-  return { 
-    'Access-Control-Allow-Origin': '*', 
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS', 
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With', 
-    'Access-Control-Max-Age': '86400', 
-    ...additionalHeaders 
-  };
-}
 // =================================================================================
 // PollinationsProvider：核心圖像生成類
 // =================================================================================
@@ -710,7 +1443,8 @@ class PollinationsProvider {
         original_zh: translation.original,
         translated_en: finalPromptForAPI.substring(0, 100) + (finalPromptForAPI.length > 100 ? '...' : ''),
         success: true,
-        model: translation.model || "unknown"
+        service: translation.service || "unknown",
+        method: translation.method || "unknown"
       });
     } else {
       logger.add("⚠️ Translation", { 
@@ -783,7 +1517,7 @@ class PollinationsProvider {
     } else {
       logger.add("⚠️ No API Key", { 
         authenticated: false,
-        note: "新 API 端點需要 API Key，請設置 POLLINATIONS_API_KEY 環境變量",
+        note: "新 API 端點需要 API Key",
         endpoint: this.config.endpoint,
         warning: "未認證的請求可能會失敗"
       });
@@ -858,7 +1592,7 @@ class PollinationsProvider {
             throw new Error("Invalid content type: " + contentType);
           }
         } else if (response.status === 401) {
-          throw new Error("Authentication failed: Invalid or missing API key. Please set POLLINATIONS_API_KEY");
+          throw new Error("Authentication failed: Invalid or missing API key");
         } else if (response.status === 403) {
           throw new Error("Access forbidden: API key may lack required permissions");
         } else {
@@ -941,11 +1675,17 @@ export default {
     const startTime = Date.now();
     const clientIP = getClientIP(request);
     
+    // 初始化圖片存儲服務
+    const imageStorage = env.IMAGES_BUCKET ? new ImageStorageService(
+      env.IMAGES_BUCKET,
+      env.IMAGE_METADATA
+    ) : null;
+    
     if (env.POLLINATIONS_API_KEY) {
       CONFIG.POLLINATIONS_AUTH.enabled = true;
       CONFIG.POLLINATIONS_AUTH.token = env.POLLINATIONS_API_KEY;
     } else {
-      console.warn("⚠️ POLLINATIONS_API_KEY not set - requests may fail on new API endpoint");
+      console.warn("⚠️ POLLINATIONS_API_KEY not set - requests may fail");
       CONFIG.POLLINATIONS_AUTH.enabled = false;
       CONFIG.POLLINATIONS_AUTH.token = "";
     }
@@ -955,6 +1695,8 @@ export default {
     console.log("Path:", url.pathname);
     console.log("Method:", request.method);
     console.log("Workers AI:", !!env.AI);
+    console.log("R2 Storage:", !!env.IMAGES_BUCKET);
+    console.log("KV Storage:", !!env.IMAGE_METADATA);
     console.log("API Auth:", CONFIG.POLLINATIONS_AUTH.enabled ? "✅ Enabled" : "❌ Disabled");
     console.log("API Endpoint:", CONFIG.PROVIDERS.pollinations.endpoint);
     console.log("Styles Count:", Object.keys(CONFIG.STYLE_PRESETS).length);
@@ -969,14 +1711,92 @@ export default {
       
       if (url.pathname === '/' || url.pathname === '') {
         response = handleUI(request);
-      } else if (url.pathname === '/_internal/generate') {
-        response = await handleInternalGenerate(request, env, ctx);
-      } else if (url.pathname === '/health') {
+      } 
+      // 🖼️ 圖片服務路由
+      else if (url.pathname.startsWith('/images/')) {
+        if (!imageStorage) {
+          return new Response('Image storage not configured', { 
+            status: 503,
+            headers: corsHeaders()
+          });
+        }
+        
+        const fileName = url.pathname.replace('/images/', '');
+        const imageData = await imageStorage.getImage(fileName);
+        
+        if (!imageData) {
+          return new Response('Image not found', { 
+            status: 404,
+            headers: corsHeaders()
+          });
+        }
+        
+        return new Response(imageData.body, {
+          headers: {
+            'Content-Type': imageData.contentType,
+            'Cache-Control': 'public, max-age=31536000',
+            'Access-Control-Allow-Origin': '*',
+            ...corsHeaders()
+          }
+        });
+      }
+      // 🗑️ 刪除圖片 API
+      else if (url.pathname === '/api/images/delete' && request.method === 'POST') {
+        if (!imageStorage) {
+          return new Response(JSON.stringify({ error: 'Image storage not configured' }), {
+            status: 503,
+            headers: corsHeaders({ 'Content-Type': 'application/json' })
+          });
+        }
+        
+        const body = await request.json();
+        const { imageId } = body;
+        
+        if (!imageId) {
+          return new Response(JSON.stringify({ error: 'imageId required' }), {
+            status: 400,
+            headers: corsHeaders({ 'Content-Type': 'application/json' })
+          });
+        }
+        
+        const deleted = await imageStorage.deleteImage(imageId);
+        
+        return new Response(JSON.stringify({ 
+          success: deleted,
+          imageId 
+        }), {
+          headers: corsHeaders({ 'Content-Type': 'application/json' })
+        });
+      }
+      // 📋 列出圖片 API
+      else if (url.pathname === '/api/images/list') {
+        if (!imageStorage) {
+          return new Response(JSON.stringify({ error: 'Image storage not configured' }), {
+            status: 503,
+            headers: corsHeaders({ 'Content-Type': 'application/json' })
+          });
+        }
+        
+        const cursor = url.searchParams.get('cursor');
+        const limit = parseInt(url.searchParams.get('limit') || '100');
+        
+        const result = await imageStorage.listImages({ cursor, limit });
+        
+        return new Response(JSON.stringify(result), {
+          headers: corsHeaders({ 'Content-Type': 'application/json' })
+        });
+      }
+      else if (url.pathname === '/_internal/generate') {
+        response = await handleInternalGenerate(request, env, ctx, imageStorage);
+      } 
+      else if (url.pathname === '/health') {
         response = new Response(JSON.stringify({
           status: 'ok',
           version: CONFIG.PROJECT_VERSION,
           timestamp: new Date().toISOString(),
           workers_ai: !!env.AI,
+          r2_storage: !!env.IMAGES_BUCKET,
+          kv_storage: !!env.IMAGE_METADATA,
           styles_count: Object.keys(CONFIG.STYLE_PRESETS).length,
           api_auth: {
             enabled: CONFIG.POLLINATIONS_AUTH.enabled,
@@ -999,11 +1819,12 @@ export default {
         }), { 
           headers: corsHeaders({ 'Content-Type': 'application/json' }) 
         });
-      } else {
+      } 
+      else {
         response = new Response(JSON.stringify({
           error: 'Not Found',
           message: '此 Worker 僅提供 Web UI 界面',
-          available_paths: ['/', '/health', '/_internal/generate']
+          available_paths: ['/', '/health', '/_internal/generate', '/images/:filename', '/api/images/delete', '/api/images/list']
         }), { 
           status: 404,
           headers: corsHeaders({ 'Content-Type': 'application/json' }) 
@@ -1044,7 +1865,7 @@ export default {
 // 內部生成處理函數
 // =================================================================================
 
-async function handleInternalGenerate(request, env, ctx) {
+async function handleInternalGenerate(request, env, ctx, imageStorage) {
   const logger = new Logger();
   const startTime = Date.now();
   
@@ -1060,7 +1881,7 @@ async function handleInternalGenerate(request, env, ctx) {
         status: "missing",
         message: "POLLINATIONS_API_KEY 未設置，請求可能會失敗",
         endpoint: CONFIG.PROVIDERS.pollinations.endpoint,
-        recommendation: "請使用 'wrangler secret put POLLINATIONS_API_KEY' 設置 API Key"
+        recommendation: "請使用 'wrangler secret put POLLINATIONS_API_KEY' 設置"
       });
     }
     
@@ -1117,12 +1938,35 @@ async function handleInternalGenerate(request, env, ctx) {
     if (results.length === 1 && results[0].imageData) {
       const result = results[0];
       
+      // 💾 保存圖片到 R2（如果可用）
+      let savedImage = null;
+      if (imageStorage) {
+        try {
+          savedImage = await imageStorage.saveImage(result.imageData, {
+            prompt: prompt,
+            model: result.model,
+            seed: result.seed,
+            width: result.width,
+            height: result.height,
+            style: result.style,
+            quality_mode: result.quality_mode,
+            contentType: result.contentType,
+            negative_prompt: options.negativePrompt,
+            reference_images: options.referenceImages,
+            generation_time: duration / 1000
+          });
+        } catch (e) {
+          console.error("Failed to save image to R2:", e);
+        }
+      }
+      
       return new Response(result.imageData, {
         headers: {
           'Content-Type': result.contentType || 'image/png',
-          'Content-Disposition': 'inline; filename="flux-ai-' + result.seed + '.png"',
+          'Content-Disposition': 'inline; filename="' + (savedImage?.fileName || 'flux-ai-' + result.seed + '.png') + '"',
+          'X-Image-ID': savedImage?.imageId || '',
+          'X-Image-URL': savedImage?.publicUrl || '',
           'X-Model': result.model,
-          'X-Model-Name': result.style_name || result.model,
           'X-Seed': result.seed.toString(),
           'X-Width': result.width.toString(),
           'X-Height': result.height.toString(),
@@ -1139,28 +1983,68 @@ async function handleInternalGenerate(request, env, ctx) {
       });
     }
     
-    const imagesData = await Promise.all(results.map(async (r) => {
+    // 處理多張圖片
+    const savedImages = await Promise.all(results.map(async (r) => {
       if (r.imageData) {
-        const uint8Array = new Uint8Array(r.imageData);
-        let binary = '';
-        const len = uint8Array.byteLength;
-        for (let i = 0; i < len; i++) {
-          binary += String.fromCharCode(uint8Array[i]);
+        let saved = null;
+        
+        if (imageStorage) {
+          try {
+            saved = await imageStorage.saveImage(r.imageData, {
+              prompt: prompt,
+              model: r.model,
+              seed: r.seed,
+              width: r.width,
+              height: r.height,
+              style: r.style,
+              quality_mode: r.quality_mode,
+              contentType: r.contentType,
+              negative_prompt: options.negativePrompt,
+              reference_images: options.referenceImages,
+              generation_time: duration / 1000
+            });
+          } catch (e) {
+            console.error("Failed to save image to R2:", e);
+          }
         }
-        const base64 = btoa(binary);
+        
+        // 如果 R2 保存失敗，使用 Blob URL
+        if (!saved) {
+          const uint8Array = new Uint8Array(r.imageData);
+          let binary = '';
+          const len = uint8Array.byteLength;
+          for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(uint8Array[i]);
+          }
+          const base64 = btoa(binary);
+          
+          return {
+            imageId: null,
+            imageUrl: 'data:' + r.contentType + ';base64,' + base64,
+            model: r.model,
+            seed: r.seed,
+            width: r.width,
+            height: r.height,
+            style: r.style,
+            quality_mode: r.quality_mode,
+            generation_mode: r.generation_mode,
+            generation_time: duration / 1000,
+            isPermanent: false
+          };
+        }
         
         return {
-          image: 'data:' + r.contentType + ';base64,' + base64,
+          imageId: saved.imageId,
+          imageUrl: saved.publicUrl,
           model: r.model,
           seed: r.seed,
           width: r.width,
           height: r.height,
-          quality_mode: r.quality_mode,
           style: r.style,
-          style_name: r.style_name || r.style,
-          style_category: r.style_category || 'unknown',
+          quality_mode: r.quality_mode,
           generation_mode: r.generation_mode,
-          authenticated: r.authenticated
+          generation_time: duration / 1000,
+          isPermanent: true
         };
       }
       return null;
@@ -1168,11 +2052,12 @@ async function handleInternalGenerate(request, env, ctx) {
     
     return new Response(JSON.stringify({ 
       created: Math.floor(Date.now() / 1000), 
-      data: imagesData.filter(d => d !== null),
+      data: savedImages.filter(d => d !== null),
       generation_time_ms: duration,
       api_endpoint: CONFIG.PROVIDERS.pollinations.endpoint,
       authenticated: CONFIG.POLLINATIONS_AUTH.enabled,
-      styles_available: Object.keys(CONFIG.STYLE_PRESETS).length
+      styles_available: Object.keys(CONFIG.STYLE_PRESETS).length,
+      r2_storage_enabled: !!imageStorage
     }), { 
       headers: corsHeaders({ 
         'Content-Type': 'application/json',
@@ -1197,14 +2082,30 @@ async function handleInternalGenerate(request, env, ctx) {
     });
   }
 }
+
 // =================================================================================
-// Web UI 界面處理函數（Shadcn 風格）- 修復版
+// Web UI 界面處理函數
 // =================================================================================
 
 function handleUI(request) {
+  // 🌐 檢測語言
+  const url = new URL(request.url);
+  const langParam = url.searchParams.get('lang');
+  const acceptLang = request.headers.get('accept-language') || '';
+  
+  let currentLang = 'zh-TW'; // 默認繁體中文
+  
+  if (langParam && CONFIG.I18N[langParam]) {
+    currentLang = langParam;
+  } else if (acceptLang.includes('en')) {
+    currentLang = 'en';
+  }
+  
+  const t = CONFIG.I18N[currentLang]; // 翻譯文本對象
+  
   const authStatus = CONFIG.POLLINATIONS_AUTH.enabled ? 
-    '<span class="text-green-500 font-semibold text-xs">🔐 已認證</span>' : 
-    '<span class="text-amber-500 font-semibold text-xs">⚠️ 需要 API Key</span>';
+    '<span class="text-green-500 font-semibold text-xs">🔐 ' + t.header.apiAuth + '</span>' : 
+    '<span class="text-amber-500 font-semibold text-xs">⚠️ ' + t.header.needApiKey + '</span>';
     
   const apiEndpoint = CONFIG.PROVIDERS.pollinations.endpoint;
   const stylesCount = Object.keys(CONFIG.STYLE_PRESETS).length;
@@ -1231,7 +2132,7 @@ function handleUI(request) {
   }
   
   // 構建完整 HTML
-  const html = buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTML);
+  const html = buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTML, t, currentLang);
   
   return new Response(html, {
     headers: {
@@ -1241,9 +2142,9 @@ function handleUI(request) {
   });
 }
 
-function buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTML) {
+function buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTML, t, currentLang) {
   return '<!DOCTYPE html>\n' +
-'<html lang="zh-TW" class="dark">\n' +
+'<html lang="' + currentLang + '" class="dark">\n' +
 '<head>\n' +
 '<meta charset="UTF-8">\n' +
 '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
@@ -1322,31 +2223,36 @@ function buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTM
 '  0%, 100% { opacity: 1; }\n' +
 '  50% { opacity: .8; }\n' +
 '}\n' +
+'@keyframes pulse-glow {\n' +
+'  0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }\n' +
+'  50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.6); }\n' +
+'}\n' +
+'#generateBtn { animation: pulse-glow 2s ease-in-out infinite; }\n' +
+'#generateBtn:hover { animation: none; }\n' +
 '</style>\n' +
 '</head>\n' +
 '<body class="bg-background text-foreground antialiased">\n' +
 '<div class="min-h-screen flex flex-col">\n' +
-getHeader(authStatus, apiEndpoint, stylesCount) +
+getHeader(authStatus, apiEndpoint, stylesCount, t, currentLang) +
 '<main class="flex-1">\n' +
 '  <div id="generatePage" class="page active">\n' +
 '    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">\n' +
 '      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">\n' +
-getLeftPanel(styleOptionsHTML) +
-getCenterPanel() +
-getRightPanel(apiEndpoint) +
+getLeftPanel(styleOptionsHTML, t) +
+getCenterPanel(t) +
+getRightPanel(apiEndpoint, t) +
 '      </div>\n' +
 '    </div>\n' +
 '  </div>\n' +
-getHistoryPage() +
+getHistoryPage(t) +
 '</main>\n' +
 getModal() +
 '</div>\n' +
-getJavaScript() +
+getJavaScript(t) +
 '</body>\n' +
 '</html>';
 }
-
-function getHeader(authStatus, apiEndpoint, stylesCount) {
+function getHeader(authStatus, apiEndpoint, stylesCount, t, currentLang) {
   return '<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">\n' +
 '  <div class="container flex h-16 items-center justify-between px-4 max-w-screen-2xl mx-auto">\n' +
 '    <div class="flex items-center gap-4">\n' +
@@ -1355,11 +2261,11 @@ function getHeader(authStatus, apiEndpoint, stylesCount) {
 '          <span class="text-2xl">🎨</span>\n' +
 '        </div>\n' +
 '        <div class="flex flex-col">\n' +
-'          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Flux AI Pro</h1>\n' +
+'          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">' + t.header.title + '</h1>\n' +
 '          <div class="flex items-center gap-2">\n' +
 '            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">v' + CONFIG.PROJECT_VERSION + '</span>\n' +
 '            <span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-bold text-pink-500 ring-1 ring-inset ring-pink-500/20 badge-pulse">NEW</span>\n' +
-'            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">' + stylesCount + ' 風格</span>\n' +
+'            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">' + stylesCount + ' ' + t.header.styles + '</span>\n' +
 '          </div>\n' +
 '        </div>\n' +
 '      </div>\n' +
@@ -1369,31 +2275,38 @@ function getHeader(authStatus, apiEndpoint, stylesCount) {
 '      </div>\n' +
 '    </div>\n' +
 '    <nav class="flex items-center gap-2">\n' +
+'      <div class="relative inline-block">\n' +
+'        <select id="langSwitch" class="h-10 px-3 rounded-md border border-input bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer">\n' +
+'          <option value="zh-TW"' + (currentLang === 'zh-TW' ? ' selected' : '') + '>🇹🇼 繁中</option>\n' +
+'          <option value="en"' + (currentLang === 'en' ? ' selected' : '') + '>🇺🇸 EN</option>\n' +
+'        </select>\n' +
+'      </div>\n' +
 '      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring h-10 py-2 px-4 gap-2 bg-primary text-primary-foreground shadow hover:bg-primary/90" data-page="generate">\n' +
 '        <span class="text-lg">🎨</span>\n' +
-'        <span class="hidden sm:inline">生成圖像</span>\n' +
+'        <span class="hidden sm:inline">' + t.header.generate + '</span>\n' +
 '      </button>\n' +
 '      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 gap-2" data-page="history">\n' +
 '        <span class="text-lg">📚</span>\n' +
-'        <span class="hidden sm:inline">歷史</span>\n' +
+'        <span class="hidden sm:inline">' + t.header.history + '</span>\n' +
 '        <span id="historyCount" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">0</span>\n' +
 '      </button>\n' +
 '    </nav>\n' +
 '  </div>\n' +
 '</header>\n';
 }
-function getLeftPanel(styleOptionsHTML) {
+
+function getLeftPanel(styleOptionsHTML, t) {
   return '<aside class="lg:col-span-3 space-y-4">\n' +
 '  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
 '    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
 '      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
-'        <span>⚙️</span><span>生成參數</span>\n' +
+'        <span>⚙️</span><span>' + t.sidebar.parameters + '</span>\n' +
 '      </h3>\n' +
 '    </div>\n' +
 '    <div class="p-6 pt-0 space-y-4">\n' +
 '      <form id="generateForm" class="space-y-4">\n' +
 '        <div class="space-y-2">\n' +
-'          <label class="text-sm font-medium leading-none">模型選擇</label>\n' +
+'          <label class="text-sm font-medium leading-none">' + t.sidebar.modelSelect + '</label>\n' +
 '          <select id="model" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
 '            <optgroup label="⚡ Z-Image 系列（默認）">\n' +
 '              <option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>\n' +
@@ -1409,7 +2322,7 @@ function getLeftPanel(styleOptionsHTML) {
 '          <p class="text-xs text-muted-foreground">💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003)</p>\n' +
 '        </div>\n' +
 '        <div class="space-y-2">\n' +
-'          <label class="text-sm font-medium leading-none">尺寸預設</label>\n' +
+'          <label class="text-sm font-medium leading-none">' + t.sidebar.sizePreset + '</label>\n' +
 '          <select id="size" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
 '            <option value="square-1k" selected>方形 1024x1024</option>\n' +
 '            <option value="square-1.5k">方形 1536x1536</option>\n' +
@@ -1421,60 +2334,68 @@ function getLeftPanel(styleOptionsHTML) {
 '          </select>\n' +
 '        </div>\n' +
 '        <div class="space-y-2">\n' +
-'          <label class="text-sm font-medium leading-none flex items-center gap-2"><span>🎨</span><span>藝術風格</span></label>\n' +
+'          <label class="text-sm font-medium leading-none flex items-center gap-2"><span>🎨</span><span>' + t.sidebar.artStyle + '</span></label>\n' +
 '          <select id="style" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
 styleOptionsHTML +
 '          </select>\n' +
 '          <p class="text-xs text-purple-400 font-medium">✨ 45+ 種風格可選，分 13 大類</p>\n' +
 '        </div>\n' +
 '        <div class="space-y-2">\n' +
-'          <label class="text-sm font-medium leading-none">質量模式</label>\n' +
+'          <label class="text-sm font-medium leading-none">' + t.sidebar.qualityMode + '</label>\n' +
 '          <select id="qualityMode" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
-'            <option value="economy">經濟模式 (快速)</option>\n' +
-'            <option value="standard" selected>標準模式 (平衡)</option>\n' +
-'            <option value="ultra">超高清模式 (極致)</option>\n' +
+'            <option value="economy">' + t.sidebar.economyMode + '</option>\n' +
+'            <option value="standard" selected>' + t.sidebar.standardMode + '</option>\n' +
+'            <option value="ultra">' + t.sidebar.ultraMode + '</option>\n' +
 '          </select>\n' +
 '        </div>\n' +
 '        <div class="pt-2">\n' +
 '          <button type="button" id="advancedToggle" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline cursor-pointer">\n' +
-'            <span id="advancedToggleIcon">▼</span><span>進階選項</span>\n' +
+'            <span id="advancedToggleIcon">▼</span><span>' + t.sidebar.advancedOptions + '</span>\n' +
 '          </button>\n' +
 '        </div>\n' +
 '        <div id="advancedSection" class="hidden space-y-4">\n' +
 '          <div class="space-y-2">\n' +
-'            <label class="text-sm font-medium leading-none">Seed</label>\n' +
+'            <label class="text-sm font-medium leading-none">' + t.sidebar.seed + '</label>\n' +
 '            <input type="number" id="seed" value="-1" min="-1" max="999999" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
-'            <p class="text-xs text-muted-foreground">-1 = 隨機</p>\n' +
+'            <p class="text-xs text-muted-foreground">-1 = ' + t.sidebar.randomSeed + '</p>\n' +
 '          </div>\n' +
 '          <div class="space-y-2">\n' +
-'            <label class="text-sm font-medium leading-none">生成數量</label>\n' +
+'            <label class="text-sm font-medium leading-none">' + t.sidebar.numOutputs + '</label>\n' +
 '            <input type="number" id="numOutputs" value="1" min="1" max="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
 '          </div>\n' +
 '          <div class="flex items-center space-x-2">\n' +
 '            <input type="checkbox" id="autoOptimize" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">\n' +
-'            <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">自動優化參數</label>\n' +
+'            <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">' + t.sidebar.autoOptimize + '</label>\n' +
 '          </div>\n' +
 '          <div class="flex items-center space-x-2">\n' +
 '            <input type="checkbox" id="autoHD" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">\n' +
-'            <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">自動HD增強</label>\n' +
+'            <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">' + t.sidebar.autoHD + '</label>\n' +
 '          </div>\n' +
 '        </div>\n' +
-'        <button type="submit" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full gap-2 shadow-lg shadow-primary/25 active:scale-95">\n' +
-'          <span class="text-lg">🎨</span><span class="font-bold">開始生成</span>\n' +
-'        </button>\n' +
 '      </form>\n' +
 '    </div>\n' +
 '  </div>\n' +
 '</aside>\n';
 }
 
-function getCenterPanel() {
+function getCenterPanel(t) {
   return '<section class="lg:col-span-6 space-y-4">\n' +
 '  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
 '    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
-'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
-'        <span>🖼️</span><span>生成結果</span>\n' +
-'      </h3>\n' +
+'      <div class="flex items-center justify-between">\n' +
+'        <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
+'          <span>🖼️</span><span>' + t.results.title + '</span>\n' +
+'        </h3>\n' +
+'        <div id="generationTimeDisplay" class="hidden">\n' +
+'          <div class="inline-flex items-center gap-2 rounded-md bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary ring-1 ring-inset ring-primary/20">\n' +
+'            <svg class="w-4 h-4 animate-spin" id="timeSpinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
+'              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>\n' +
+'              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>\n' +
+'            </svg>\n' +
+'            <span id="timeElapsed">0.0</span><span class="text-muted-foreground">秒</span>\n' +
+'          </div>\n' +
+'        </div>\n' +
+'      </div>\n' +
 '    </div>\n' +
 '    <div class="p-6 pt-0">\n' +
 '      <div id="results">\n' +
@@ -1486,36 +2407,52 @@ function getCenterPanel() {
 '              <polyline points="21 15 16 10 5 21" stroke-width="2"></polyline>\n' +
 '            </svg>\n' +
 '          </div>\n' +
-'          <h4 class="text-lg font-semibold mb-2">尚未生成任何圖像</h4>\n' +
-'          <p class="text-sm text-muted-foreground max-w-sm">填寫左側參數並輸入提示詞後點擊生成按鈕</p>\n' +
+'          <h4 class="text-lg font-semibold mb-2">' + t.results.noImages + '</h4>\n' +
+'          <p class="text-sm text-muted-foreground max-w-sm">' + t.results.noImagesDesc + '</p>\n' +
 '        </div>\n' +
 '      </div>\n' +
 '    </div>\n' +
 '  </div>\n' +
+'  <div class="rounded-lg border border-primary/20 bg-gradient-to-r from-primary/5 to-emerald-500/5 p-6">\n' +
+'    <div class="flex flex-col sm:flex-row items-center gap-4">\n' +
+'      <div class="flex-1 text-center sm:text-left">\n' +
+'        <h4 class="text-lg font-bold mb-1 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">準備好了嗎？</h4>\n' +
+'        <p class="text-sm text-muted-foreground">填寫右側提示詞和左側參數，點擊按鈕開始創作</p>\n' +
+'      </div>\n' +
+'      <button type="submit" form="generateForm" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-base font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-gradient-to-r from-primary to-emerald-500 text-white hover:shadow-lg hover:shadow-primary/50 hover:scale-105 h-14 px-10 gap-3 shadow-lg shadow-primary/25 active:scale-95 whitespace-nowrap">\n' +
+'        <span class="text-2xl">🎨</span>\n' +
+'        <span class="text-lg">' + t.sidebar.startGenerate + '</span>\n' +
+'        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
+'          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>\n' +
+'        </svg>\n' +
+'      </button>\n' +
+'    </div>\n' +
+'  </div>\n' +
 '</section>\n';
 }
-function getRightPanel(apiEndpoint) {
+
+function getRightPanel(apiEndpoint, t) {
   return '<aside class="lg:col-span-3 space-y-4">\n' +
 '  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
 '    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
 '      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
-'        <span>💬</span><span>提示詞</span>\n' +
+'        <span>💬</span><span>' + t.prompts.title + '</span>\n' +
 '      </h3>\n' +
 '    </div>\n' +
 '    <div class="p-6 pt-0 space-y-4">\n' +
 '      <div class="space-y-2">\n' +
-'        <label class="text-sm font-medium leading-none">正面提示詞</label>\n' +
-'        <textarea id="prompt" rows="6" placeholder="描述你想生成的圖像...\n\n例如：\n• A beautiful sunset over mountains\n• 一隻可愛的貓咪在花園裡玩耍\n• Cyberpunk city at night, neon lights\n• Anime girl with blue hair" class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y" required></textarea>\n' +
-'        <p class="text-xs text-primary font-medium">✅ 支持中文自動翻譯</p>\n' +
+'        <label class="text-sm font-medium leading-none">' + t.prompts.positive + '</label>\n' +
+'        <textarea id="prompt" rows="6" placeholder="' + t.prompts.positivePlaceholder + '" class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y" required></textarea>\n' +
+'        <p class="text-xs text-primary font-medium">✅ ' + t.prompts.supportsChinese + '</p>\n' +
 '      </div>\n' +
 '      <div class="space-y-2">\n' +
-'        <label class="text-sm font-medium leading-none">負面提示詞 (可選)</label>\n' +
-'        <textarea id="negativePrompt" rows="3" placeholder="描述不想要的內容...\n\n例如：\n• blurry, low quality, distorted\n• ugly, deformed, bad anatomy" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>\n' +
+'        <label class="text-sm font-medium leading-none">' + t.prompts.negative + '</label>\n' +
+'        <textarea id="negativePrompt" rows="3" placeholder="' + t.prompts.negativePlaceholder + '" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>\n' +
 '      </div>\n' +
 '      <div class="space-y-2">\n' +
-'        <label class="text-sm font-medium leading-none">參考圖像 URL (可選)</label>\n' +
-'        <textarea id="referenceImages" rows="3" placeholder="多張圖片用逗號分隔\n\n例如：\nhttps://example.com/image1.jpg,\nhttps://example.com/image2.jpg" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>\n' +
-'        <p class="text-xs text-muted-foreground">📌 支持圖生圖的模型：Kontext</p>\n' +
+'        <label class="text-sm font-medium leading-none">' + t.prompts.referenceImages + '</label>\n' +
+'        <textarea id="referenceImages" rows="3" placeholder="' + t.prompts.referencePlaceholder + '" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>\n' +
+'        <p class="text-xs text-muted-foreground">📌 ' + t.prompts.supportsImageToImage + '</p>\n' +
 '      </div>\n' +
 '    </div>\n' +
 '  </div>\n' +
@@ -1523,139 +2460,226 @@ function getRightPanel(apiEndpoint) {
 '    <div class="flex items-start gap-3">\n' +
 '      <div class="rounded-lg bg-purple-500/10 p-2"><span class="text-2xl">🎨</span></div>\n' +
 '      <div class="flex-1 space-y-1">\n' +
-'        <h4 class="text-sm font-semibold text-purple-400">風格提示</h4>\n' +
-'        <p class="text-xs text-muted-foreground">當前已選: <span id="currentStyleName" class="text-foreground font-medium">無風格</span></p>\n' +
-'        <p id="styleDescription" class="text-xs text-muted-foreground/80">使用原始提示詞</p>\n' +
+'        <h4 class="text-sm font-semibold text-purple-400">' + t.styleHint.title + '</h4>\n' +
+'        <p class="text-xs text-muted-foreground">' + t.styleHint.current + ': <span id="currentStyleName" class="text-foreground font-medium">' + t.styleHint.noStyle + '</span></p>\n' +
+'        <p id="styleDescription" class="text-xs text-muted-foreground/80">' + t.styleHint.useOriginal + '</p>\n' +
 '      </div>\n' +
 '    </div>\n' +
 '  </div>\n' +
 '  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
 '    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
 '      <h3 class="text-sm font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
-'        <span>📋</span><span>當前配置</span>\n' +
+'        <span>📋</span><span>' + t.config.title + '</span>\n' +
 '      </h3>\n' +
 '    </div>\n' +
 '    <div class="p-6 pt-0 space-y-3">\n' +
 '      <div class="space-y-1">\n' +
-'        <div class="text-xs font-medium text-muted-foreground">模型</div>\n' +
+'        <div class="text-xs font-medium text-muted-foreground">' + t.config.model + '</div>\n' +
 '        <div id="previewModel" class="text-sm font-medium">Z-Image Turbo</div>\n' +
 '      </div>\n' +
 '      <div class="h-px bg-border"></div>\n' +
 '      <div class="space-y-1">\n' +
-'        <div class="text-xs font-medium text-muted-foreground">尺寸</div>\n' +
+'        <div class="text-xs font-medium text-muted-foreground">' + t.config.size + '</div>\n' +
 '        <div id="previewSize" class="text-sm font-medium">1024x1024</div>\n' +
 '      </div>\n' +
 '      <div class="h-px bg-border"></div>\n' +
 '      <div class="space-y-1">\n' +
-'        <div class="text-xs font-medium text-muted-foreground">風格</div>\n' +
-'        <div id="previewStyle" class="text-sm font-medium">無風格</div>\n' +
+'        <div class="text-xs font-medium text-muted-foreground">' + t.config.style + '</div>\n' +
+'        <div id="previewStyle" class="text-sm font-medium">' + t.styleHint.noStyle + '</div>\n' +
 '      </div>\n' +
 '      <div class="h-px bg-border"></div>\n' +
 '      <div class="space-y-1">\n' +
-'        <div class="text-xs font-medium text-muted-foreground">API 端點</div>\n' +
+'        <div class="text-xs font-medium text-muted-foreground">' + t.config.apiEndpoint + '</div>\n' +
 '        <div class="text-xs font-mono text-muted-foreground/80 break-all">' + apiEndpoint + '</div>\n' +
 '      </div>\n' +
 '    </div>\n' +
 '  </div>\n' +
 '</aside>\n';
 }
-
-function getHistoryPage() {
+function getHistoryPage(t) {
   return '<div id="historyPage" class="page hidden">\n' +
-'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">\n' +
-'      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm mb-6">\n' +
-'        <div class="p-6">\n' +
+'  <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">\n' +
+'    <div class="space-y-6">\n' +
+'      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
+'        <div class="flex flex-col space-y-1.5 p-6">\n' +
 '          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">\n' +
-'            <div class="flex flex-wrap items-center gap-6">\n' +
-'              <div class="space-y-1">\n' +
-'                <div class="text-xs font-medium text-muted-foreground">📊 總記錄數</div>\n' +
-'                <div id="historyTotal" class="text-3xl font-bold text-primary">0</div>\n' +
-'              </div>\n' +
-'              <div class="hidden sm:block h-12 w-px bg-border"></div>\n' +
-'              <div class="space-y-1">\n' +
-'                <div class="text-xs font-medium text-muted-foreground">💾 存儲空間</div>\n' +
-'                <div id="storageSize" class="text-2xl font-bold">0 KB</div>\n' +
-'              </div>\n' +
-'              <div class="hidden sm:block h-12 w-px bg-border"></div>\n' +
-'              <div class="space-y-1">\n' +
-'                <div class="text-xs font-medium text-muted-foreground">🎨 最近風格</div>\n' +
-'                <div id="recentStyle" class="text-sm font-medium">-</div>\n' +
-'              </div>\n' +
+'            <div>\n' +
+'              <h3 class="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
+'                <span>📚</span><span>' + t.history.title + '</span>\n' +
+'              </h3>\n' +
+'              <p class="text-sm text-muted-foreground mt-2">總共 <span id="totalHistoryCount" class="text-primary font-semibold">0</span> 條記錄</p>\n' +
 '            </div>\n' +
-'            <div class="flex items-center gap-2">\n' +
-'              <button id="exportBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">\n' +
-'                <span>📥</span><span>導出</span>\n' +
+'            <div class="flex gap-2">\n' +
+'              <button id="exportHistory" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">\n' +
+'                <span>📥</span><span>' + t.history.export + '</span>\n' +
 '              </button>\n' +
-'              <button id="clearBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 gap-2">\n' +
-'                <span>🗑️</span><span>清空</span>\n' +
+'              <button id="clearHistory" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-destructive/50 bg-destructive/10 text-destructive hover:bg-destructive/20 h-10 px-4 gap-2">\n' +
+'                <span>🗑️</span><span>' + t.history.clear + '</span>\n' +
 '              </button>\n' +
 '            </div>\n' +
 '          </div>\n' +
 '        </div>\n' +
 '      </div>\n' +
-'      <div id="historyList">\n' +
-'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">\n' +
+'      <div id="historyContent">\n' +
+'        <div class="flex flex-col items-center justify-center py-20 px-4 text-center">\n' +
 '          <div class="rounded-full bg-muted/50 p-6 mb-4">\n' +
 '            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
-'              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n' +
+'              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>\n' +
 '            </svg>\n' +
 '          </div>\n' +
-'          <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>\n' +
-'          <p class="text-sm text-muted-foreground max-w-sm">生成的圖像會自動保存在這裡</p>\n' +
+'          <h4 class="text-lg font-semibold mb-2">' + t.history.noHistory + '</h4>\n' +
+'          <p class="text-sm text-muted-foreground max-w-sm">' + t.history.noHistoryDesc + '</p>\n' +
 '        </div>\n' +
-'      </div>\n' +
-'    </div>\n' +
-'  </div>\n';
-}
-
-function getModal() {
-  return '<div id="imageModal" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">\n' +
-'  <div class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl p-4">\n' +
-'    <div class="relative">\n' +
-'      <button id="modalCloseBtn" class="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm p-2 text-foreground transition-all hover:bg-background hover:rotate-90 focus:outline-none focus:ring-2 focus:ring-ring">\n' +
-'        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
-'          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>\n' +
-'        </svg>\n' +
-'      </button>\n' +
-'      <div class="rounded-lg overflow-hidden border border-border shadow-2xl">\n' +
-'        <img id="modalImage" src="" alt="Preview" class="w-full h-auto max-h-[85vh] object-contain bg-black">\n' +
 '      </div>\n' +
 '    </div>\n' +
 '  </div>\n' +
 '</div>\n';
 }
-function getJavaScript() {
-  // ⚠️ 關鍵修復：使用 \x3C 和 \x3E 來避免 </script> 標籤問題
-  return '\x3Cscript\x3E\n' +
+
+function getModal() {
+  return '<div id="imageModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4" style="display: none;">\n' +
+'  <div class="relative max-w-7xl max-h-[90vh] bg-background rounded-lg shadow-2xl overflow-hidden">\n' +
+'    <button id="closeModal" class="absolute top-4 right-4 z-10 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-background/80 backdrop-blur-sm hover:bg-background border border-border h-10 w-10">\n' +
+'      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
+'        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>\n' +
+'      </svg>\n' +
+'    </button>\n' +
+'    <div class="overflow-auto max-h-[90vh]">\n' +
+'      <img id="modalImage" class="w-full h-auto" src="" alt="Full size image">\n' +
+'    </div>\n' +
+'    <div id="modalInfo" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent p-6 space-y-3">\n' +
+'      <div class="flex flex-wrap gap-2">\n' +
+'        <span class="inline-flex items-center rounded-md bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">\n' +
+'          <span id="modalModel"></span>\n' +
+'        </span>\n' +
+'        <span class="inline-flex items-center rounded-md bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">\n' +
+'          <span id="modalSize"></span>\n' +
+'        </span>\n' +
+'        <span class="inline-flex items-center rounded-md bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">\n' +
+'          <span id="modalStyle"></span>\n' +
+'        </span>\n' +
+'        <span class="inline-flex items-center rounded-md bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20">\n' +
+'          Seed: <span id="modalSeed"></span>\n' +
+'        </span>\n' +
+'      </div>\n' +
+'      <div class="text-sm text-muted-foreground max-w-3xl">\n' +
+'        <p id="modalPrompt" class="line-clamp-2"></p>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</div>\n';
+}
+
+function getJavaScript(t) {
+  return '<script>\n' +
 'const STYLE_PRESETS = ' + JSON.stringify(CONFIG.STYLE_PRESETS) + ';\n' +
 'const PRESET_SIZES = ' + JSON.stringify(CONFIG.PRESET_SIZES) + ';\n' +
 'const STORAGE_KEY = "flux_ai_history";\n' +
 'const MAX_HISTORY = 100;\n' +
 '\n' +
+'// ⏱️ 計時器類\n' +
+'class GenerationTimer {\n' +
+'  constructor() {\n' +
+'    this.startTime = null;\n' +
+'    this.intervalId = null;\n' +
+'    this.isRunning = false;\n' +
+'    this.displayElement = document.getElementById("generationTimeDisplay");\n' +
+'    this.elapsedElement = document.getElementById("timeElapsed");\n' +
+'    this.spinnerElement = document.getElementById("timeSpinner");\n' +
+'  }\n' +
+'  \n' +
+'  start() {\n' +
+'    this.startTime = Date.now();\n' +
+'    this.isRunning = true;\n' +
+'    \n' +
+'    if (this.displayElement) {\n' +
+'      this.displayElement.classList.remove("hidden");\n' +
+'    }\n' +
+'    \n' +
+'    this.intervalId = setInterval(() => {\n' +
+'      if (!this.isRunning) return;\n' +
+'      const elapsed = (Date.now() - this.startTime) / 1000;\n' +
+'      if (this.elapsedElement) {\n' +
+'        this.elapsedElement.textContent = elapsed.toFixed(1);\n' +
+'      }\n' +
+'    }, 100);\n' +
+'  }\n' +
+'  \n' +
+'  stop() {\n' +
+'    this.isRunning = false;\n' +
+'    if (this.intervalId) {\n' +
+'      clearInterval(this.intervalId);\n' +
+'      this.intervalId = null;\n' +
+'    }\n' +
+'    \n' +
+'    const totalTime = this.startTime ? (Date.now() - this.startTime) / 1000 : 0;\n' +
+'    \n' +
+'    if (this.spinnerElement) {\n' +
+'      this.spinnerElement.classList.remove("animate-spin");\n' +
+'    }\n' +
+'    \n' +
+'    setTimeout(() => {\n' +
+'      if (this.displayElement) {\n' +
+'        this.displayElement.classList.add("hidden");\n' +
+'      }\n' +
+'      if (this.spinnerElement) {\n' +
+'        this.spinnerElement.classList.add("animate-spin");\n' +
+'      }\n' +
+'    }, 3000);\n' +
+'    \n' +
+'    return totalTime;\n' +
+'  }\n' +
+'  \n' +
+'  reset() {\n' +
+'    this.stop();\n' +
+'    this.startTime = null;\n' +
+'    if (this.elapsedElement) {\n' +
+'      this.elapsedElement.textContent = "0.0";\n' +
+'    }\n' +
+'    if (this.displayElement) {\n' +
+'      this.displayElement.classList.add("hidden");\n' +
+'    }\n' +
+'  }\n' +
+'  \n' +
+'  getElapsed() {\n' +
+'    if (!this.startTime) return 0;\n' +
+'    return (Date.now() - this.startTime) / 1000;\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'const timer = new GenerationTimer();\n' +
+'\n' +
 '// 頁面切換\n' +
 'document.querySelectorAll(".nav-btn").forEach(btn => {\n' +
-'  btn.addEventListener("click", function() {\n' +
-'    const pageName = this.dataset.page;\n' +
-'    document.querySelectorAll(".page").forEach(p => {\n' +
-'      p.classList.remove("active");\n' +
-'      p.classList.add("hidden");\n' +
-'    });\n' +
+'  btn.addEventListener("click", () => {\n' +
+'    const targetPage = btn.dataset.page;\n' +
+'    document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));\n' +
+'    document.querySelectorAll(".page").forEach(page => page.classList.add("hidden"));\n' +
 '    document.querySelectorAll(".nav-btn").forEach(b => {\n' +
-'      b.classList.remove("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");\n' +
-'      b.classList.add("border", "border-input", "bg-background", "hover:bg-accent");\n' +
+'      b.classList.remove("bg-primary", "text-primary-foreground", "shadow");\n' +
+'      b.classList.add("border", "border-input", "bg-background", "hover:bg-accent", "hover:text-accent-foreground");\n' +
 '    });\n' +
-'    document.getElementById(pageName + "Page").classList.remove("hidden");\n' +
-'    document.getElementById(pageName + "Page").classList.add("active");\n' +
-'    this.classList.add("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");\n' +
-'    this.classList.remove("border", "border-input", "bg-background", "hover:bg-accent");\n' +
-'    if (pageName === "history") updateHistoryDisplay();\n' +
+'    \n' +
+'    const targetPageElement = document.getElementById(targetPage + "Page");\n' +
+'    if (targetPageElement) {\n' +
+'      targetPageElement.classList.add("active");\n' +
+'      targetPageElement.classList.remove("hidden");\n' +
+'    }\n' +
+'    \n' +
+'    btn.classList.add("bg-primary", "text-primary-foreground", "shadow");\n' +
+'    btn.classList.remove("border", "border-input", "bg-background", "hover:bg-accent", "hover:text-accent-foreground");\n' +
+'    \n' +
+'    if (targetPage === "history") {\n' +
+'      loadHistory();\n' +
+'    }\n' +
 '  });\n' +
 '});\n' +
 '\n' +
 '// 進階選項切換\n' +
-'document.getElementById("advancedToggle").addEventListener("click", function() {\n' +
+'document.getElementById("advancedToggle").addEventListener("click", () => {\n' +
 '  const section = document.getElementById("advancedSection");\n' +
 '  const icon = document.getElementById("advancedToggleIcon");\n' +
+'  \n' +
 '  if (section.classList.contains("hidden")) {\n' +
 '    section.classList.remove("hidden");\n' +
 '    icon.textContent = "▲";\n' +
@@ -1665,42 +2689,42 @@ function getJavaScript() {
 '  }\n' +
 '});\n' +
 '\n' +
-'// 更新風格描述\n' +
-'function updateStyleDescription() {\n' +
-'  const styleSelect = document.getElementById("style");\n' +
-'  const selectedStyle = styleSelect.value;\n' +
+'// 風格選擇更新預覽\n' +
+'document.getElementById("style").addEventListener("change", (e) => {\n' +
+'  const selectedStyle = e.target.value;\n' +
 '  const styleConfig = STYLE_PRESETS[selectedStyle];\n' +
+'  \n' +
 '  if (styleConfig) {\n' +
 '    document.getElementById("currentStyleName").textContent = styleConfig.name;\n' +
-'    document.getElementById("styleDescription").textContent = styleConfig.description || "無描述";\n' +
+'    document.getElementById("styleDescription").textContent = styleConfig.description;\n' +
+'    document.getElementById("previewStyle").textContent = styleConfig.name;\n' +
 '  }\n' +
-'}\n' +
+'});\n' +
 '\n' +
-'// 更新預覽\n' +
-'function updatePreview() {\n' +
-'  const model = document.getElementById("model").value;\n' +
-'  const sizePreset = document.getElementById("size").value;\n' +
-'  const style = document.getElementById("style").value;\n' +
-'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];\n' +
-'  const styleConfig = STYLE_PRESETS[style];\n' +
-'  const modelNames = {\n' +
-'    "zimage": "Z-Image Turbo ⚡",\n' +
-'    "flux": "Flux 標準版",\n' +
-'    "turbo": "Flux Turbo ⚡",\n' +
-'    "kontext": "Kontext 🎨"\n' +
-'  };\n' +
-'  document.getElementById("previewModel").textContent = modelNames[model] || model;\n' +
-'  document.getElementById("previewSize").textContent = sizeConfig.name + " (" + sizeConfig.width + "x" + sizeConfig.height + ")";\n' +
-'  document.getElementById("previewStyle").textContent = styleConfig ? styleConfig.icon + " " + styleConfig.name : "無風格";\n' +
-'  updateStyleDescription();\n' +
-'}\n' +
+'// 模型選擇更新預覽\n' +
+'document.getElementById("model").addEventListener("change", (e) => {\n' +
+'  const selectedText = e.target.options[e.target.selectedIndex].text;\n' +
+'  document.getElementById("previewModel").textContent = selectedText;\n' +
+'});\n' +
 '\n' +
-'document.getElementById("model").addEventListener("change", updatePreview);\n' +
-'document.getElementById("size").addEventListener("change", updatePreview);\n' +
-'document.getElementById("style").addEventListener("change", updatePreview);\n' +
-'updatePreview();\n' +
+'// 尺寸選擇更新預覽\n' +
+'document.getElementById("size").addEventListener("change", (e) => {\n' +
+'  const sizeKey = e.target.value;\n' +
+'  const sizeConfig = PRESET_SIZES[sizeKey];\n' +
+'  if (sizeConfig) {\n' +
+'    document.getElementById("previewSize").textContent = sizeConfig.width + "x" + sizeConfig.height;\n' +
+'  }\n' +
+'});\n' +
 '\n' +
-'// 歷史記錄功能\n' +
+'// 🌐 語言切換\n' +
+'document.getElementById("langSwitch").addEventListener("change", (e) => {\n' +
+'  const newLang = e.target.value;\n' +
+'  const url = new URL(window.location);\n' +
+'  url.searchParams.set("lang", newLang);\n' +
+'  window.location.href = url.toString();\n' +
+'});\n' +
+'\n' +
+'// 歷史記錄管理\n' +
 'function getHistory() {\n' +
 '  try {\n' +
 '    const data = localStorage.getItem(STORAGE_KEY);\n' +
@@ -1713,197 +2737,456 @@ function getJavaScript() {
 '\n' +
 'function saveHistory(history) {\n' +
 '  try {\n' +
-'    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));\n' +
-'    updateHistoryStats();\n' +
+'    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)));\n' +
+'    updateHistoryCount();\n' +
 '  } catch (e) {\n' +
 '    console.error("Failed to save history:", e);\n' +
 '  }\n' +
 '}\n' +
 '\n' +
 'function addToHistory(item) {\n' +
-'  let history = getHistory();\n' +
+'  const history = getHistory();\n' +
 '  history.unshift({\n' +
 '    ...item,\n' +
-'    id: Date.now() + Math.random(),\n' +
-'    timestamp: new Date().toISOString()\n' +
+'    timestamp: Date.now(),\n' +
+'    id: Date.now() + Math.random().toString(36).substring(2, 9)\n' +
 '  });\n' +
-'  if (history.length > MAX_HISTORY) {\n' +
-'    history = history.slice(0, MAX_HISTORY);\n' +
+'  saveHistory(history);\n' +
+'}\n' +
+'\n' +
+'function deleteHistoryItem(id) {\n' +
+'  const history = getHistory();\n' +
+'  const filtered = history.filter(item => item.id !== id);\n' +
+'  saveHistory(filtered);\n' +
+'  loadHistory();\n' +
+'}\n' +
+'\n' +
+'function clearAllHistory() {\n' +
+'  if (confirm("' + t.history.confirmClear + '")) {\n' +
+'    localStorage.removeItem(STORAGE_KEY);\n' +
+'    updateHistoryCount();\n' +
+'    loadHistory();\n' +
 '  }\n' +
-'  saveHistory(history);\n' +
 '}\n' +
 '\n' +
-'function deleteFromHistory(id) {\n' +
-'  if (!confirm("確定要刪除這條記錄嗎？")) return;\n' +
-'  let history = getHistory();\n' +
-'  history = history.filter(item => item.id !== id);\n' +
-'  saveHistory(history);\n' +
-'  updateHistoryDisplay();\n' +
+'function updateHistoryCount() {\n' +
+'  const history = getHistory();\n' +
+'  const count = history.length;\n' +
+'  const countElement = document.getElementById("historyCount");\n' +
+'  const totalCountElement = document.getElementById("totalHistoryCount");\n' +
+'  \n' +
+'  if (countElement) countElement.textContent = count;\n' +
+'  if (totalCountElement) totalCountElement.textContent = count;\n' +
 '}\n' +
 '\n' +
-'function clearHistory() {\n' +
-'  if (!confirm("確定要清空所有歷史記錄嗎？此操作不可恢復！")) return;\n' +
-'  localStorage.removeItem(STORAGE_KEY);\n' +
-'  updateHistoryDisplay();\n' +
-'  updateHistoryStats();\n' +
+'function loadHistory() {\n' +
+'  const history = getHistory();\n' +
+'  const container = document.getElementById("historyContent");\n' +
+'  \n' +
+'  if (history.length === 0) {\n' +
+'    container.innerHTML = \'<div class="flex flex-col items-center justify-center py-20 px-4 text-center"><div class="rounded-full bg-muted/50 p-6 mb-4"><svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div><h4 class="text-lg font-semibold mb-2">' + t.history.noHistory + '</h4><p class="text-sm text-muted-foreground max-w-sm">' + t.history.noHistoryDesc + '</p></div>\';\n' +
+'    return;\n' +
+'  }\n' +
+'  \n' +
+'  container.innerHTML = \'<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">\' +\n' +
+'    history.map(item => {\n' +
+'      const date = new Date(item.timestamp);\n' +
+'      const timeStr = date.toLocaleString();\n' +
+'      \n' +
+'      return \'<div class="rounded-lg border border-border bg-card overflow-hidden hover:border-primary/50 transition-all group">\' +\n' +
+'        \'<div class="relative aspect-square cursor-pointer" onclick="showImageModal(\\\'\' + item.url.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + (item.prompt || "").replace(/\'/g, "\\\\\\'").substring(0, 100) + \'\\\', \\\'\' + (item.model || "") + \'\\\', \\\'\' + (item.width || "") + \'x\' + (item.height || "") + \'\\\', \\\'\' + (item.style || "none") + \'\\\', \\\'\' + (item.seed || "") + \'\\\')"><img src="\' + item.url + \'" alt="Generated image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"><div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div></div>\' +\n' +
+'        \'<div class="p-3 space-y-2"><div class="flex flex-wrap gap-1.5"><span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">\' + (item.model || "unknown") + \'</span><span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">\' + (item.style || "none") + \'</span><span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">\' + (item.width || "") + \'x\' + (item.height || "") + \'</span></div><p class="text-xs text-muted-foreground line-clamp-2" title="\' + (item.prompt || "").replace(/"/g, "&quot;") + \'">\' + (item.prompt || "No prompt") + \'</p><div class="flex items-center justify-between pt-2 border-t border-border"><span class="text-xs text-muted-foreground">\' + timeStr + \'</span><div class="flex gap-1"><button onclick="reuseParameters(\\\'\' + (item.prompt || "").replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + (item.model || "zimage") + \'\\\', \\\'\' + (item.style || "none") + \'\\\', \' + (item.seed || -1) + \', \' + (item.width || 1024) + \', \' + (item.height || 1024) + \')" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 w-7" title="' + t.results.reuse + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></button><a href="\' + item.url + \'" download="flux-ai-\' + (item.seed || Date.now()) + \'.png" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 w-7" title="' + t.results.download + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></a><button onclick="deleteHistoryItem(\\\'\' + item.id + \'\\\');" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-destructive/50 bg-destructive/10 text-destructive hover:bg-destructive/20 h-7 w-7" title="' + t.history.delete + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div></div>\' +\n' +
+'        \'</div>\';\n' +
+'    }).join("") +\n' +
+'    \'</div>\';\n' +
 '}\n' +
 '\n' +
-'function exportHistory() {\n' +
+'function reuseParameters(prompt, model, style, seed, width, height) {\n' +
+'  document.getElementById("prompt").value = prompt;\n' +
+'  document.getElementById("model").value = model;\n' +
+'  document.getElementById("style").value = style;\n' +
+'  document.getElementById("seed").value = seed;\n' +
+'  \n' +
+'  const sizeKey = Object.keys(PRESET_SIZES).find(key => {\n' +
+'    const size = PRESET_SIZES[key];\n' +
+'    return size.width === width && size.height === height;\n' +
+'  });\n' +
+'  if (sizeKey) {\n' +
+'    document.getElementById("size").value = sizeKey;\n' +
+'  }\n' +
+'  \n' +
+'  document.getElementById("style").dispatchEvent(new Event("change"));\n' +
+'  document.getElementById("model").dispatchEvent(new Event("change"));\n' +
+'  document.getElementById("size").dispatchEvent(new Event("change"));\n' +
+'  \n' +
+'  document.querySelector(\'[data-page="generate"]\').click();\n' +
+'  \n' +
+'  document.getElementById("prompt").scrollIntoView({ behavior: "smooth", block: "center" });\n' +
+'}\n' +
+'\n' +
+'document.getElementById("clearHistory").addEventListener("click", clearAllHistory);\n' +
+'\n' +
+'document.getElementById("exportHistory").addEventListener("click", () => {\n' +
 '  const history = getHistory();\n' +
 '  const dataStr = JSON.stringify(history, null, 2);\n' +
 '  const dataBlob = new Blob([dataStr], { type: "application/json" });\n' +
 '  const url = URL.createObjectURL(dataBlob);\n' +
 '  const link = document.createElement("a");\n' +
 '  link.href = url;\n' +
-'  link.download = "flux-ai-history-" + new Date().toISOString().split("T")[0] + ".json";\n' +
+'  link.download = "flux-ai-history-" + Date.now() + ".json";\n' +
 '  link.click();\n' +
 '  URL.revokeObjectURL(url);\n' +
+'});\n' +
+'\n' +
+'// 模態框\n' +
+'function showImageModal(url, prompt, model, size, style, seed) {\n' +
+'  document.getElementById("modalImage").src = url;\n' +
+'  document.getElementById("modalPrompt").textContent = prompt;\n' +
+'  document.getElementById("modalModel").textContent = model;\n' +
+'  document.getElementById("modalSize").textContent = size;\n' +
+'  document.getElementById("modalStyle").textContent = style;\n' +
+'  document.getElementById("modalSeed").textContent = seed;\n' +
+'  document.getElementById("imageModal").style.display = "flex";\n' +
 '}\n' +
 '\n' +
-'function updateHistoryStats() {\n' +
-'  const history = getHistory();\n' +
-'  document.getElementById("historyCount").textContent = history.length;\n' +
-'  document.getElementById("historyTotal").textContent = history.length;\n' +
-'  const sizeKB = new Blob([JSON.stringify(history)]).size / 1024;\n' +
-'  document.getElementById("storageSize").textContent = sizeKB.toFixed(1) + " KB";\n' +
-'  if (history.length > 0) {\n' +
-'    const styleConfig = STYLE_PRESETS[history[0].style];\n' +
-'    document.getElementById("recentStyle").textContent = styleConfig ? styleConfig.name : history[0].style;\n' +
-'  } else {\n' +
-'    document.getElementById("recentStyle").textContent = "-";\n' +
+'document.getElementById("closeModal").addEventListener("click", () => {\n' +
+'  document.getElementById("imageModal").style.display = "none";\n' +
+'});\n' +
+'\n' +
+'document.getElementById("imageModal").addEventListener("click", (e) => {\n' +
+'  if (e.target.id === "imageModal") {\n' +
+'    document.getElementById("imageModal").style.display = "none";\n' +
+'  }\n' +
+'});\n' +
+'\n' +
+'updateHistoryCount();\n';
+}
+// 將 getJavaScript 函數修改為完整版本
+function getJavaScript(t) {
+  return '<script>\n' +
+'const STYLE_PRESETS = ' + JSON.stringify(CONFIG.STYLE_PRESETS) + ';\n' +
+'const PRESET_SIZES = ' + JSON.stringify(CONFIG.PRESET_SIZES) + ';\n' +
+'const STORAGE_KEY = "flux_ai_history";\n' +
+'const MAX_HISTORY = 100;\n' +
+'\n' +
+'// ⏱️ 計時器類\n' +
+'class GenerationTimer {\n' +
+'  constructor() {\n' +
+'    this.startTime = null;\n' +
+'    this.intervalId = null;\n' +
+'    this.isRunning = false;\n' +
+'    this.displayElement = document.getElementById("generationTimeDisplay");\n' +
+'    this.elapsedElement = document.getElementById("timeElapsed");\n' +
+'    this.spinnerElement = document.getElementById("timeSpinner");\n' +
+'  }\n' +
+'  \n' +
+'  start() {\n' +
+'    this.startTime = Date.now();\n' +
+'    this.isRunning = true;\n' +
+'    \n' +
+'    if (this.displayElement) {\n' +
+'      this.displayElement.classList.remove("hidden");\n' +
+'    }\n' +
+'    \n' +
+'    this.intervalId = setInterval(() => {\n' +
+'      if (!this.isRunning) return;\n' +
+'      const elapsed = (Date.now() - this.startTime) / 1000;\n' +
+'      if (this.elapsedElement) {\n' +
+'        this.elapsedElement.textContent = elapsed.toFixed(1);\n' +
+'      }\n' +
+'    }, 100);\n' +
+'  }\n' +
+'  \n' +
+'  stop() {\n' +
+'    this.isRunning = false;\n' +
+'    if (this.intervalId) {\n' +
+'      clearInterval(this.intervalId);\n' +
+'      this.intervalId = null;\n' +
+'    }\n' +
+'    \n' +
+'    const totalTime = this.startTime ? (Date.now() - this.startTime) / 1000 : 0;\n' +
+'    \n' +
+'    if (this.spinnerElement) {\n' +
+'      this.spinnerElement.classList.remove("animate-spin");\n' +
+'    }\n' +
+'    \n' +
+'    setTimeout(() => {\n' +
+'      if (this.displayElement) {\n' +
+'        this.displayElement.classList.add("hidden");\n' +
+'      }\n' +
+'      if (this.spinnerElement) {\n' +
+'        this.spinnerElement.classList.add("animate-spin");\n' +
+'      }\n' +
+'    }, 3000);\n' +
+'    \n' +
+'    return totalTime;\n' +
+'  }\n' +
+'  \n' +
+'  reset() {\n' +
+'    this.stop();\n' +
+'    this.startTime = null;\n' +
+'    if (this.elapsedElement) {\n' +
+'      this.elapsedElement.textContent = "0.0";\n' +
+'    }\n' +
+'    if (this.displayElement) {\n' +
+'      this.displayElement.classList.add("hidden");\n' +
+'    }\n' +
+'  }\n' +
+'  \n' +
+'  getElapsed() {\n' +
+'    if (!this.startTime) return 0;\n' +
+'    return (Date.now() - this.startTime) / 1000;\n' +
 '  }\n' +
 '}\n' +
 '\n' +
-'function updateHistoryDisplay() {\n' +
+'const timer = new GenerationTimer();\n' +
+'\n' +
+getJavaScriptNavigation() +
+getJavaScriptStyleHandlers() +
+getJavaScriptHistoryManagement(t) +
+getJavaScriptFormSubmit(t) +
+'<\/script>\n';
+}
+function getJavaScriptNavigation() {
+  return '// 頁面切換\n' +
+'document.querySelectorAll(".nav-btn").forEach(btn => {\n' +
+'  btn.addEventListener("click", () => {\n' +
+'    const targetPage = btn.dataset.page;\n' +
+'    document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));\n' +
+'    document.querySelectorAll(".page").forEach(page => page.classList.add("hidden"));\n' +
+'    document.querySelectorAll(".nav-btn").forEach(b => {\n' +
+'      b.classList.remove("bg-primary", "text-primary-foreground", "shadow");\n' +
+'      b.classList.add("border", "border-input", "bg-background", "hover:bg-accent", "hover:text-accent-foreground");\n' +
+'    });\n' +
+'    \n' +
+'    const targetPageElement = document.getElementById(targetPage + "Page");\n' +
+'    if (targetPageElement) {\n' +
+'      targetPageElement.classList.add("active");\n' +
+'      targetPageElement.classList.remove("hidden");\n' +
+'    }\n' +
+'    \n' +
+'    btn.classList.add("bg-primary", "text-primary-foreground", "shadow");\n' +
+'    btn.classList.remove("border", "border-input", "bg-background", "hover:bg-accent", "hover:text-accent-foreground");\n' +
+'    \n' +
+'    if (targetPage === "history") {\n' +
+'      loadHistory();\n' +
+'    }\n' +
+'  });\n' +
+'});\n' +
+'\n' +
+'// 進階選項切換\n' +
+'document.getElementById("advancedToggle").addEventListener("click", () => {\n' +
+'  const section = document.getElementById("advancedSection");\n' +
+'  const icon = document.getElementById("advancedToggleIcon");\n' +
+'  \n' +
+'  if (section.classList.contains("hidden")) {\n' +
+'    section.classList.remove("hidden");\n' +
+'    icon.textContent = "▲";\n' +
+'  } else {\n' +
+'    section.classList.add("hidden");\n' +
+'    icon.textContent = "▼";\n' +
+'  }\n' +
+'});\n' +
+'\n' +
+'// 🌐 語言切換\n' +
+'document.getElementById("langSwitch").addEventListener("change", (e) => {\n' +
+'  const newLang = e.target.value;\n' +
+'  const url = new URL(window.location);\n' +
+'  url.searchParams.set("lang", newLang);\n' +
+'  window.location.href = url.toString();\n' +
+'});\n' +
+'\n';
+}
+
+function getJavaScriptStyleHandlers() {
+  return '// 風格選擇更新預覽\n' +
+'document.getElementById("style").addEventListener("change", (e) => {\n' +
+'  const selectedStyle = e.target.value;\n' +
+'  const styleConfig = STYLE_PRESETS[selectedStyle];\n' +
+'  \n' +
+'  if (styleConfig) {\n' +
+'    document.getElementById("currentStyleName").textContent = styleConfig.name;\n' +
+'    document.getElementById("styleDescription").textContent = styleConfig.description;\n' +
+'    document.getElementById("previewStyle").textContent = styleConfig.name;\n' +
+'  }\n' +
+'});\n' +
+'\n' +
+'// 模型選擇更新預覽\n' +
+'document.getElementById("model").addEventListener("change", (e) => {\n' +
+'  const selectedText = e.target.options[e.target.selectedIndex].text;\n' +
+'  document.getElementById("previewModel").textContent = selectedText;\n' +
+'});\n' +
+'\n' +
+'// 尺寸選擇更新預覽\n' +
+'document.getElementById("size").addEventListener("change", (e) => {\n' +
+'  const sizeKey = e.target.value;\n' +
+'  const sizeConfig = PRESET_SIZES[sizeKey];\n' +
+'  if (sizeConfig) {\n' +
+'    document.getElementById("previewSize").textContent = sizeConfig.width + "x" + sizeConfig.height;\n' +
+'  }\n' +
+'});\n' +
+'\n';
+}
+
+function getJavaScriptHistoryManagement(t) {
+  return '// 歷史記錄管理\n' +
+'function getHistory() {\n' +
+'  try {\n' +
+'    const data = localStorage.getItem(STORAGE_KEY);\n' +
+'    return data ? JSON.parse(data) : [];\n' +
+'  } catch (e) {\n' +
+'    console.error("Failed to load history:", e);\n' +
+'    return [];\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function saveHistory(history) {\n' +
+'  try {\n' +
+'    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)));\n' +
+'    updateHistoryCount();\n' +
+'  } catch (e) {\n' +
+'    console.error("Failed to save history:", e);\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function addToHistory(item) {\n' +
 '  const history = getHistory();\n' +
-'  const historyList = document.getElementById("historyList");\n' +
+'  history.unshift({\n' +
+'    ...item,\n' +
+'    timestamp: Date.now(),\n' +
+'    id: Date.now() + Math.random().toString(36).substring(2, 9)\n' +
+'  });\n' +
+'  saveHistory(history);\n' +
+'}\n' +
+'\n' +
+'function deleteHistoryItem(id) {\n' +
+'  const history = getHistory();\n' +
+'  const filtered = history.filter(item => item.id !== id);\n' +
+'  saveHistory(filtered);\n' +
+'  loadHistory();\n' +
+'}\n' +
+'\n' +
+'function clearAllHistory() {\n' +
+'  if (confirm("' + t.history.confirmClear + '")) {\n' +
+'    localStorage.removeItem(STORAGE_KEY);\n' +
+'    updateHistoryCount();\n' +
+'    loadHistory();\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function updateHistoryCount() {\n' +
+'  const history = getHistory();\n' +
+'  const count = history.length;\n' +
+'  const countElement = document.getElementById("historyCount");\n' +
+'  const totalCountElement = document.getElementById("totalHistoryCount");\n' +
+'  \n' +
+'  if (countElement) countElement.textContent = count;\n' +
+'  if (totalCountElement) totalCountElement.textContent = count;\n' +
+'}\n' +
+'\n' +
+'function loadHistory() {\n' +
+'  const history = getHistory();\n' +
+'  const container = document.getElementById("historyContent");\n' +
+'  \n' +
 '  if (history.length === 0) {\n' +
-'    historyList.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"rounded-full bg-muted/50 p-6 mb-4\\"><svg class=\\"w-16 h-16 text-muted-foreground\\" fill=\\"none\\" stroke=\\"currentColor\\" viewBox=\\"0 0 24 24\\"><path stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" stroke-width=\\"2\\" d=\\"M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z\\"></path></svg></div><h4 class=\\"text-lg font-semibold mb-2\\">暫無歷史記錄</h4><p class=\\"text-sm text-muted-foreground max-w-sm\\">生成的圖像會自動保存在這裡</p></div>";\n' +
-'    updateHistoryStats();\n' +
+'    container.innerHTML = \'<div class="flex flex-col items-center justify-center py-20 px-4 text-center"><div class="rounded-full bg-muted/50 p-6 mb-4"><svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div><h4 class="text-lg font-semibold mb-2">' + t.history.noHistory + '</h4><p class="text-sm text-muted-foreground max-w-sm">' + t.history.noHistoryDesc + '</p></div>\';\n' +
 '    return;\n' +
 '  }\n' +
-'  const galleryDiv = document.createElement("div");\n' +
-'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";\n' +
-'  history.forEach(item => {\n' +
-'    const date = new Date(item.timestamp);\n' +
-'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });\n' +
-'    const styleConfig = STYLE_PRESETS[item.style];\n' +
-'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;\n' +
-'    const itemDiv = document.createElement("div");\n' +
-'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group";\n' +
-'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"History\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300\\"></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"delete-btn inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-8 px-3\\"><span>🗑️</span></button></div></div>";\n' +
-'    const img = itemDiv.querySelector("img");\n' +
-'    img.addEventListener("click", () => openModal(item.url));\n' +
-'    const reuseBtn = itemDiv.querySelector(".reuse-btn");\n' +
-'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));\n' +
-'    const downloadBtn = itemDiv.querySelector(".download-btn");\n' +
-'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));\n' +
-'    const deleteBtn = itemDiv.querySelector(".delete-btn");\n' +
-'    deleteBtn.addEventListener("click", () => deleteFromHistory(item.id));\n' +
-'    galleryDiv.appendChild(itemDiv);\n' +
+'  \n' +
+'  container.innerHTML = \'<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">\' +\n' +
+'    history.map(item => {\n' +
+'      const date = new Date(item.timestamp);\n' +
+'      const timeStr = date.toLocaleString();\n' +
+'      const styleName = item.styleName || item.style || "none";\n' +
+'      const genTime = item.generationTime ? item.generationTime.toFixed(2) + "s" : "N/A";\n' +
+'      const genMode = item.generationMode || "文生圖";\n' +
+'      \n' +
+'      return \'<div class="rounded-lg border border-border bg-card overflow-hidden hover:border-primary/50 transition-all group">\' +\n' +
+'        \'<div class="relative aspect-square cursor-pointer" onclick="showImageModal(\\\'\' + item.url.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + (item.prompt || "").replace(/\'/g, "\\\\\\'").substring(0, 100) + \'\\\', \\\'\' + (item.model || "") + \'\\\', \\\'\' + (item.width || "") + \'x\' + (item.height || "") + \'\\\', \\\'\' + styleName.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + (item.seed || "") + \'\\\')"><img src="\' + item.url + \'" alt="Generated image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"><div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div></div>\' +\n' +
+'        \'<div class="p-3 space-y-2"><div class="flex flex-wrap gap-1.5"><span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">\' + (item.model || "unknown") + \'</span><span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">\' + styleName + \'</span><span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">\' + (item.width || "") + \'x\' + (item.height || "") + \'</span><span class="inline-flex items-center rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400 ring-1 ring-inset ring-emerald-500/20">\' + genMode + \'</span><span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-medium text-pink-400 ring-1 ring-inset ring-pink-500/20">⏱️ \' + genTime + \'</span></div><p class="text-xs text-muted-foreground line-clamp-2" title="\' + (item.prompt || "").replace(/"/g, "&quot;") + \'">\' + (item.prompt || "No prompt") + \'</p><div class="flex items-center justify-between pt-2 border-t border-border"><span class="text-xs text-muted-foreground">\' + timeStr + \'</span><div class="flex gap-1"><button onclick="reuseParameters(\\\'\' + (item.prompt || "").replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + (item.model || "zimage") + \'\\\', \\\'\' + (item.style || "none") + \'\\\', \' + (item.seed || -1) + \', \' + (item.width || 1024) + \', \' + (item.height || 1024) + \')" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 w-7" title="' + t.results.reuse + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg></button><a href="\' + item.url + \'" download="flux-ai-\' + (item.seed || Date.now()) + \'.png" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-7 w-7" title="' + t.results.download + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></a><button onclick="deleteHistoryItem(\\\'\' + item.id + \'\\\');" class="inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-destructive/50 bg-destructive/10 text-destructive hover:bg-destructive/20 h-7 w-7" title="' + t.history.delete + '"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div></div></div>\' +\n' +
+'        \'</div>\';\n' +
+'    }).join("") +\n' +
+'    \'</div>\';\n' +
+'}\n' +
+'\n' +
+'function reuseParameters(prompt, model, style, seed, width, height) {\n' +
+'  document.getElementById("prompt").value = prompt;\n' +
+'  document.getElementById("model").value = model;\n' +
+'  document.getElementById("style").value = style;\n' +
+'  document.getElementById("seed").value = seed;\n' +
+'  \n' +
+'  const sizeKey = Object.keys(PRESET_SIZES).find(key => {\n' +
+'    const size = PRESET_SIZES[key];\n' +
+'    return size.width === width && size.height === height;\n' +
 '  });\n' +
-'  historyList.innerHTML = "";\n' +
-'  historyList.appendChild(galleryDiv);\n' +
-'  updateHistoryStats();\n' +
+'  if (sizeKey) {\n' +
+'    document.getElementById("size").value = sizeKey;\n' +
+'  }\n' +
+'  \n' +
+'  document.getElementById("style").dispatchEvent(new Event("change"));\n' +
+'  document.getElementById("model").dispatchEvent(new Event("change"));\n' +
+'  document.getElementById("size").dispatchEvent(new Event("change"));\n' +
+'  \n' +
+'  document.querySelector(\'[data-page="generate"]\').click();\n' +
+'  \n' +
+'  document.getElementById("prompt").scrollIntoView({ behavior: "smooth", block: "center" });\n' +
 '}\n' +
 '\n' +
-'function reusePrompt(id) {\n' +
+'document.getElementById("clearHistory").addEventListener("click", clearAllHistory);\n' +
+'\n' +
+'document.getElementById("exportHistory").addEventListener("click", () => {\n' +
 '  const history = getHistory();\n' +
-'  const item = history.find(h => h.id === id);\n' +
-'  if (!item) return;\n' +
-'  document.getElementById("prompt").value = item.prompt || "";\n' +
-'  document.getElementById("model").value = item.model || "zimage";\n' +
-'  document.getElementById("seed").value = item.seed || -1;\n' +
-'  document.getElementById("style").value = item.style || "none";\n' +
-'  document.getElementById("negativePrompt").value = item.negative_prompt || "";\n' +
-'  document.getElementById("referenceImages").value = (item.reference_images || []).join(", ");\n' +
-'  updatePreview();\n' +
-'  document.querySelector("[data-page=\\"generate\\"]").click();\n' +
-'  document.getElementById("prompt").focus();\n' +
-'}\n' +
-'\n' +
-'function downloadImage(url, seed) {\n' +
+'  const dataStr = JSON.stringify(history, null, 2);\n' +
+'  const dataBlob = new Blob([dataStr], { type: "application/json" });\n' +
+'  const url = URL.createObjectURL(dataBlob);\n' +
 '  const link = document.createElement("a");\n' +
 '  link.href = url;\n' +
-'  link.download = "flux-ai-" + seed + "-" + Date.now() + ".png";\n' +
+'  link.download = "flux-ai-history-" + Date.now() + ".json";\n' +
 '  link.click();\n' +
-'}\n' +
+'  URL.revokeObjectURL(url);\n' +
+'});\n' +
 '\n' +
-'function openModal(url) {\n' +
+'// 模態框\n' +
+'function showImageModal(url, prompt, model, size, style, seed) {\n' +
 '  document.getElementById("modalImage").src = url;\n' +
-'  document.getElementById("imageModal").classList.remove("hidden");\n' +
+'  document.getElementById("modalPrompt").textContent = prompt;\n' +
+'  document.getElementById("modalModel").textContent = model;\n' +
+'  document.getElementById("modalSize").textContent = size;\n' +
+'  document.getElementById("modalStyle").textContent = style;\n' +
+'  document.getElementById("modalSeed").textContent = seed;\n' +
+'  document.getElementById("imageModal").style.display = "flex";\n' +
 '}\n' +
 '\n' +
-'function closeModal() {\n' +
-'  document.getElementById("imageModal").classList.add("hidden");\n' +
-'}\n' +
-'\n' +
-'document.getElementById("exportBtn").addEventListener("click", exportHistory);\n' +
-'document.getElementById("clearBtn").addEventListener("click", clearHistory);\n' +
-'document.getElementById("modalCloseBtn").addEventListener("click", closeModal);\n' +
-'document.getElementById("imageModal").addEventListener("click", function(e) {\n' +
-'  if (e.target === this) closeModal();\n' +
+'document.getElementById("closeModal").addEventListener("click", () => {\n' +
+'  document.getElementById("imageModal").style.display = "none";\n' +
 '});\n' +
 '\n' +
-getFormSubmitHandler() +
-'\n' +
-'window.addEventListener("DOMContentLoaded", () => {\n' +
-'  updateHistoryStats();\n' +
-'  updatePreview();\n' +
-'  console.log("✅ Flux AI Pro 已加載完成");\n' +
-'  console.log("📊 風格數量:", Object.keys(STYLE_PRESETS).length);\n' +
-'  console.log("🎨 Shadcn UI 風格已應用");\n' +
+'document.getElementById("imageModal").addEventListener("click", (e) => {\n' +
+'  if (e.target.id === "imageModal") {\n' +
+'    document.getElementById("imageModal").style.display = "none";\n' +
+'  }\n' +
 '});\n' +
-'\x3C/script\x3E\n';
+'\n' +
+'updateHistoryCount();\n' +
+'\n';
 }
-function getFormSubmitHandler() {
-  return '// 顯示生成的圖像\n' +
-'function displayGeneratedImages(images) {\n' +
-'  const history = getHistory();\n' +
-'  const galleryDiv = document.createElement("div");\n' +
-'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn";\n' +
-'  const newImages = history.slice(0, images.length);\n' +
-'  newImages.forEach((item, index) => {\n' +
-'    const date = new Date(item.timestamp);\n' +
-'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });\n' +
-'    const styleConfig = STYLE_PRESETS[item.style];\n' +
-'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;\n' +
-'    const itemDiv = document.createElement("div");\n' +
-'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group";\n' +
-'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"Generated " + (index + 1) + "\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute top-2 left-2\\"><span class=\\"inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg\\">✅ 剛剛生成</span></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + (item.generation_mode ? " | " + item.generation_mode : "") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1\\"><span>📚</span><span>歷史</span></button></div></div>";\n' +
-'    const img = itemDiv.querySelector("img");\n' +
-'    img.addEventListener("click", () => openModal(item.url));\n' +
-'    const reuseBtn = itemDiv.querySelector(".reuse-result-btn");\n' +
-'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));\n' +
-'    const downloadBtn = itemDiv.querySelector(".download-result-btn");\n' +
-'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));\n' +
-'    const viewBtn = itemDiv.querySelector(".view-history-btn");\n' +
-'    viewBtn.addEventListener("click", () => {\n' +
-'      document.querySelector("[data-page=\\"history\\"]").click();\n' +
-'    });\n' +
-'    galleryDiv.appendChild(itemDiv);\n' +
-'  });\n' +
-'  const resultsDiv = document.getElementById("results");\n' +
-'  resultsDiv.innerHTML = "";\n' +
-'  const successDiv = document.createElement("div");\n' +
-'  successDiv.className = "rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4";\n' +
-'  successDiv.innerHTML = "<div class=\\"flex items-center gap-3\\"><div class=\\"rounded-lg bg-green-500/20 p-2\\"><span class=\\"text-2xl\\">✅</span></div><div><h4 class=\\"text-sm font-semibold text-green-400\\">生成成功！</h4><p class=\\"text-xs text-muted-foreground\\">已生成 " + images.length + " 張圖片並保存到歷史記錄</p></div></div>";\n' +
-'  resultsDiv.appendChild(successDiv);\n' +
-'  resultsDiv.appendChild(galleryDiv);\n' +
-'}\n' +
-'\n' +
-'// 表單提交處理\n' +
+
+function getJavaScriptFormSubmit(t) {
+  return '// 表單提交處理（含計時器）\n' +
 'const form = document.getElementById("generateForm");\n' +
 'const resultsDiv = document.getElementById("results");\n' +
 'const generateBtn = document.getElementById("generateBtn");\n' +
+'\n' +
 'form.addEventListener("submit", async (e) => {\n' +
 '  e.preventDefault();\n' +
+'  \n' +
 '  const prompt = document.getElementById("prompt").value;\n' +
 '  if (!prompt.trim()) {\n' +
 '    alert("請輸入提示詞");\n' +
 '    document.getElementById("prompt").focus();\n' +
 '    return;\n' +
 '  }\n' +
+'  \n' +
 '  const model = document.getElementById("model").value;\n' +
 '  const sizePreset = document.getElementById("size").value;\n' +
 '  const style = document.getElementById("style").value;\n' +
@@ -1914,14 +3197,30 @@ function getFormSubmitHandler() {
 '  const autoOptimize = document.getElementById("autoOptimize").checked;\n' +
 '  const autoHD = document.getElementById("autoHD").checked;\n' +
 '  const refImagesInput = document.getElementById("referenceImages").value;\n' +
+'  \n' +
 '  let referenceImages = [];\n' +
 '  if (refImagesInput.trim()) {\n' +
 '    referenceImages = refImagesInput.split(",").map(url => url.trim()).filter(url => url);\n' +
 '  }\n' +
+'  \n' +
 '  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];\n' +
+'  \n' +
 '  generateBtn.disabled = true;\n' +
-'  generateBtn.innerHTML = "<div class=\\"spinner\\"></div><span>生成中...</span>";\n' +
-'  resultsDiv.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"spinner mb-4\\"></div><p class=\\"text-sm font-medium mb-2\\">正在生成圖像，請稍候...</p><p class=\\"text-xs text-muted-foreground\\">這可能需要幾秒鐘到一分鐘</p></div>";\n' +
+'  generateBtn.innerHTML = \'<div class="spinner"></div><span>生成中...</span>\';\n' +
+'  \n' +
+'  // ⏱️ 開始計時\n' +
+'  timer.reset();\n' +
+'  timer.start();\n' +
+'  \n' +
+'  resultsDiv.innerHTML = \'<div class="flex flex-col items-center justify-center py-16 px-4 text-center"><div class="spinner mb-4"></div><p class="text-sm font-medium mb-2">正在生成圖像，請稍候...</p><p class="text-xs text-muted-foreground">這可能需要幾秒鐘到一分鐘</p><p class="text-xs text-primary font-mono mt-2">⏱️ 已用時: <span id="inlineTimer">0.0</span> 秒</p></div>\';\n' +
+'  \n' +
+'  const inlineTimerInterval = setInterval(() => {\n' +
+'    const inlineTimerEl = document.getElementById("inlineTimer");\n' +
+'    if (inlineTimerEl) {\n' +
+'      inlineTimerEl.textContent = timer.getElapsed().toFixed(1);\n' +
+'    }\n' +
+'  }, 100);\n' +
+'  \n' +
 '  try {\n' +
 '    const response = await fetch("/_internal/generate", {\n' +
 '      method: "POST",\n' +
@@ -1941,7 +3240,12 @@ function getFormSubmitHandler() {
 '        reference_images: referenceImages\n' +
 '      })\n' +
 '    });\n' +
+'    \n' +
+'    clearInterval(inlineTimerInterval);\n' +
+'    const totalTime = timer.stop();\n' +
+'    \n' +
 '    const contentType = response.headers.get("content-type");\n' +
+'    \n' +
 '    if (!response.ok) {\n' +
 '      const errorText = await response.text();\n' +
 '      let errorMsg = "生成失敗";\n' +
@@ -1951,12 +3255,11 @@ function getFormSubmitHandler() {
 '      } catch (e) {\n' +
 '        errorMsg = errorText.substring(0, 200);\n' +
 '      }\n' +
-'      resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + errorMsg + "</p></div></div></div>";\n' +
-'      if (response.status === 401 || response.status === 403) {\n' +
-'        resultsDiv.innerHTML += "<div class=\\"rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-amber-500/20 p-2\\"><span class=\\"text-2xl\\">⚠️</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-amber-400 mb-1\\">認證問題</h4><p class=\\"text-xs text-muted-foreground mb-2\\">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p><code class=\\"text-xs bg-background/50 px-2 py-1 rounded\\">wrangler secret put POLLINATIONS_API_KEY</code></div></div></div>";\n' +
-'      }\n' +
+'      \n' +
+'      resultsDiv.innerHTML = \'<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4"><div class="flex items-start gap-3"><div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div><div class="flex-1"><h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4><p class="text-xs text-muted-foreground">\' + errorMsg + \'</p><p class="text-xs text-muted-foreground mt-2">⏱️ 用時: \' + totalTime.toFixed(2) + \' 秒</p></div></div></div>\';\n' +
 '      return;\n' +
 '    }\n' +
+'    \n' +
 '    if (contentType && contentType.startsWith("image/")) {\n' +
 '      const imageBlob = await response.blob();\n' +
 '      const imageUrl = URL.createObjectURL(imageBlob);\n' +
@@ -1964,60 +3267,66 @@ function getFormSubmitHandler() {
 '      const seedUsed = parseInt(response.headers.get("X-Seed")) || seed;\n' +
 '      const widthUsed = parseInt(response.headers.get("X-Width")) || sizeConfig.width;\n' +
 '      const heightUsed = parseInt(response.headers.get("X-Height")) || sizeConfig.height;\n' +
-'      const qualityUsed = response.headers.get("X-Quality-Mode") || qualityMode;\n' +
-'      const styleUsed = response.headers.get("X-Style") || style;\n' +
-'      const genMode = response.headers.get("X-Generation-Mode") || "文生圖";\n' +
+'      const imageId = response.headers.get("X-Image-ID");\n' +
+'      const imagePublicUrl = response.headers.get("X-Image-URL");\n' +
+'      const styleName = response.headers.get("X-Style-Name") || style;\n' +
+'      const generationMode = response.headers.get("X-Generation-Mode") || "文生圖";\n' +
+'      \n' +
 '      addToHistory({\n' +
-'        url: imageUrl,\n' +
+'        url: imagePublicUrl || imageUrl,\n' +
+'        imageId: imageId,\n' +
 '        prompt: prompt,\n' +
 '        model: modelUsed,\n' +
 '        seed: seedUsed,\n' +
 '        width: widthUsed,\n' +
 '        height: heightUsed,\n' +
-'        style: styleUsed,\n' +
-'        quality_mode: qualityUsed,\n' +
-'        negative_prompt: negativePrompt,\n' +
-'        reference_images: referenceImages,\n' +
-'        generation_mode: genMode\n' +
+'        style: style,\n' +
+'        styleName: styleName,\n' +
+'        qualityMode: qualityMode,\n' +
+'        generationMode: generationMode,\n' +
+'        generationTime: totalTime\n' +
 '      });\n' +
-'      displayGeneratedImages([{\n' +
-'        url: imageUrl,\n' +
-'        model: modelUsed,\n' +
-'        seed: seedUsed,\n' +
-'        width: widthUsed,\n' +
-'        height: heightUsed,\n' +
-'        quality_mode: qualityUsed,\n' +
-'        style: styleUsed\n' +
-'      }]);\n' +
+'      \n' +
+'      resultsDiv.innerHTML = \'<div class="space-y-4"><div class="rounded-lg border border-primary/20 bg-primary/5 p-4"><div class="flex items-start gap-3"><div class="rounded-lg bg-primary/10 p-2"><span class="text-2xl">✅</span></div><div class="flex-1"><h4 class="text-sm font-semibold text-primary mb-1">生成成功！</h4><p class="text-xs text-muted-foreground">已生成 1 張圖片並保存到歷史記錄</p><p class="text-xs text-muted-foreground mt-1">⏱️ 總用時: \' + totalTime.toFixed(2) + \' 秒</p></div></div></div><div class="grid grid-cols-1 gap-4"><div class="rounded-lg border border-border bg-card overflow-hidden"><div class="relative aspect-square cursor-pointer" onclick="showImageModal(\\\'\' + imageUrl + \'\\\', \\\'\' + prompt.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + modelUsed + \'\\\', \\\'\' + widthUsed + \'x\' + heightUsed + \'\\\', \\\'\' + styleName.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + seedUsed + \'\\\')"><img src="\' + imageUrl + \'" alt="Generated image" class="w-full h-full object-cover"></div><div class="p-4 space-y-3"><div class="flex flex-wrap gap-2"><span class="inline-flex items-center rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">\' + modelUsed + \'</span><span class="inline-flex items-center rounded-md bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">\' + styleName + \'</span><span class="inline-flex items-center rounded-md bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">\' + widthUsed + \'x\' + heightUsed + \'</span><span class="inline-flex items-center rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20">Seed: \' + seedUsed + \'</span><span class="inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400 ring-1 ring-inset ring-emerald-500/20">\' + generationMode + \'</span><span class="inline-flex items-center rounded-md bg-pink-500/10 px-2.5 py-1 text-xs font-medium text-pink-400 ring-1 ring-inset ring-pink-500/20">⏱️ \' + totalTime.toFixed(2) + \'s</span></div><p class="text-sm text-muted-foreground line-clamp-3">\' + prompt + \'</p><div class="flex gap-2"><a href="\' + (imagePublicUrl || imageUrl) + \'" download="flux-ai-\' + seedUsed + \'.png" class="flex-1 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>下載圖像</span></a><button onclick="document.querySelector(\\\\\\'[data-page=\\\\\\"history\\\\\\"]\\\\\\'").click()" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>查看歷史</span></button></div></div></div></div></div>\';\n' +
 '    } else if (contentType && contentType.includes("application/json")) {\n' +
 '      const data = await response.json();\n' +
-'      if (data.error) {\n' +
-'        resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + data.error.message + "</p></div></div></div>";\n' +
-'      } else {\n' +
-'        const images = data.data.map(item => {\n' +
+'      \n' +
+'      if (data.data && Array.isArray(data.data)) {\n' +
+'        data.data.forEach(item => {\n' +
+'          const styleName = STYLE_PRESETS[item.style]?.name || item.style;\n' +
 '          addToHistory({\n' +
-'            url: item.image,\n' +
+'            url: item.imageUrl,\n' +
+'            imageId: item.imageId,\n' +
 '            prompt: prompt,\n' +
 '            model: item.model,\n' +
 '            seed: item.seed,\n' +
 '            width: item.width,\n' +
 '            height: item.height,\n' +
 '            style: item.style,\n' +
-'            quality_mode: item.quality_mode,\n' +
-'            negative_prompt: negativePrompt,\n' +
-'            reference_images: referenceImages,\n' +
-'            generation_mode: item.generation_mode\n' +
+'            styleName: styleName,\n' +
+'            qualityMode: item.quality_mode,\n' +
+'            generationMode: item.generation_mode,\n' +
+'            generationTime: totalTime\n' +
 '          });\n' +
-'          return item;\n' +
 '        });\n' +
-'        displayGeneratedImages(images);\n' +
+'        \n' +
+'        const imagesHTML = data.data.map((item, index) => {\n' +
+'          const styleName = STYLE_PRESETS[item.style]?.name || item.style;\n' +
+'          return \'<div class="rounded-lg border border-border bg-card overflow-hidden"><div class="relative aspect-square cursor-pointer" onclick="showImageModal(\\\'\' + item.imageUrl + \'\\\', \\\'\' + prompt.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + item.model + \'\\\', \\\'\' + item.width + \'x\' + item.height + \'\\\', \\\'\' + styleName.replace(/\'/g, "\\\\\\'") + \'\\\', \\\'\' + item.seed + \'\\\')"><img src="\' + item.imageUrl + \'" alt="Generated image \' + (index + 1) + \'" class="w-full h-full object-cover"></div><div class="p-4 space-y-3"><div class="flex flex-wrap gap-2"><span class="inline-flex items-center rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">\' + item.model + \'</span><span class="inline-flex items-center rounded-md bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">\' + styleName + \'</span><span class="inline-flex items-center rounded-md bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">\' + item.width + \'x\' + item.height + \'</span><span class="inline-flex items-center rounded-md bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400 ring-1 ring-inset ring-amber-500/20">Seed: \' + item.seed + \'</span><span class="inline-flex items-center rounded-md bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400 ring-1 ring-inset ring-emerald-500/20">\' + (item.generation_mode || "文生圖") + \'</span></div><div class="flex gap-2"><a href="\' + item.imageUrl + \'" download="flux-ai-\' + item.seed + \'.png" class="flex-1 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-3 gap-2 text-xs"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg><span>下載</span></a></div></div></div>\';\n' +
+'        }).join("");\n' +
+'        \n' +
+'        resultsDiv.innerHTML = \'<div class="space-y-4"><div class="rounded-lg border border-primary/20 bg-primary/5 p-4"><div class="flex items-start gap-3"><div class="rounded-lg bg-primary/10 p-2"><span class="text-2xl">✅</span></div><div class="flex-1"><h4 class="text-sm font-semibold text-primary mb-1">生成成功！</h4><p class="text-xs text-muted-foreground">已生成 \' + data.data.length + \' 張圖片並保存到歷史記錄</p><p class="text-xs text-muted-foreground mt-1">⏱️ 總用時: \' + totalTime.toFixed(2) + \' 秒</p></div></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">\' + imagesHTML + \'</div></div>\';\n' +
 '      }\n' +
 '    }\n' +
+'    \n' +
 '  } catch (error) {\n' +
-'    resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">網路錯誤</h4><p class=\\"text-xs text-muted-foreground\\">" + error.message + "</p></div></div></div>";\n' +
+'    clearInterval(inlineTimerInterval);\n' +
+'    timer.stop();\n' +
+'    \n' +
+'    resultsDiv.innerHTML = \'<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4"><div class="flex items-start gap-3"><div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div><div class="flex-1"><h4 class="text-sm font-semibold text-destructive mb-1">網路錯誤</h4><p class="text-xs text-muted-foreground">\' + error.message + \'</p></div></div></div>\';\n' +
 '  } finally {\n' +
 '    generateBtn.disabled = false;\n' +
-'    generateBtn.innerHTML = "<span class=\\"text-lg\\">🎨</span><span class=\\"font-bold\\">開始生成</span>";\n' +
+'    generateBtn.innerHTML = \'<span class="text-2xl">🎨</span><span class="text-lg">開始生成</span><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>\';\n' +
 '  }\n' +
-'});';
+'});\n';
 }
