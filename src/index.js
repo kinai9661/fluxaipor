@@ -224,10 +224,54 @@ function buildHTML(lang) {
     return '<option value="' + k + '">' + s.icon + ' ' + s.name + ' (' + s.width + '×' + s.height + ')</option>';
   }).join('');
   
-  const styles = Object.entries(CONFIG.STYLE_PRESETS).map(([k, s]) => {
-    const styleName = typeof s.name === 'object' ? s.name[lang] : s.name;
-    return '<option value="' + k + '">' + styleName + '</option>';
-  }).join('');
+  const styleGroups = {
+    zh: {
+      none: '基本',
+      realistic: '📸 寫實風格',
+      painting: '🎨 繪畫風格',
+      illustration: '🖌️ 插畫風格',
+      stylized: '🎭 風格化藝術',
+      digital: '🌃 數位藝術',
+      cinematic: '🎬 電影風格',
+      classical: '🏛️ 古典藝術',
+      effects: '🌈 特殊效果'
+    },
+    en: {
+      none: 'Basic',
+      realistic: '📸 Realistic',
+      painting: '🎨 Painting',
+      illustration: '🖌️ Illustration',
+      stylized: '🎭 Stylized',
+      digital: '🌃 Digital',
+      cinematic: '🎬 Cinematic',
+      classical: '🏛️ Classical',
+      effects: '🌈 Effects'
+    }
+  };
+
+  const styleCategories = {
+    none: ['none'],
+    realistic: ['photorealistic', 'hyperrealistic', 'portrait_photography', 'street_photography', 'macro_photography'],
+    painting: ['oil_painting', 'watercolor', 'acrylic_painting', 'impressionism', 'expressionism', 'abstract', 'cubism', 'surrealism'],
+    illustration: ['anime', 'manga', 'cartoon', 'comic_book', 'disney', 'pixar', 'studio_ghibli'],
+    stylized: ['art_nouveau', 'art_deco', 'pop_art', 'minimalist', 'graffiti'],
+    digital: ['digital_art', 'concept_art', 'cyberpunk', 'vaporwave', 'synthwave', 'low_poly', 'isometric'],
+    cinematic: ['cinematic', 'film_noir', 'sci_fi', 'fantasy', 'horror'],
+    classical: ['renaissance', 'baroque', 'ukiyo_e'],
+    effects: ['neon', 'glitch_art', 'holographic', 'psychedelic', 'steampunk']
+  };
+
+  let styles = '';
+  Object.entries(styleCategories).forEach(([category, styleKeys]) => {
+    const groupLabel = styleGroups[lang][category];
+    styles += '<optgroup label="' + groupLabel + '">';
+    styleKeys.forEach(key => {
+      const s = CONFIG.STYLE_PRESETS[key];
+      const styleName = typeof s.name === 'object' ? s.name[lang] : s.name;
+      styles += '<option value="' + key + '">' + styleName + '</option>';
+    });
+    styles += '</optgroup>';
+  });
   
   let h = '<!DOCTYPE html><html lang="' + lang + '" class="dark"><head>';
   h += '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">';
@@ -250,6 +294,8 @@ function buildHTML(lang) {
   h += '@media(max-width:1024px){.history-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}';
   h += 'select,input,textarea{background:rgba(31,41,55,0.8);border:1px solid rgba(75,85,99,0.5);color:#fff;border-radius:0.5rem;padding:0.5rem;width:100%}';
   h += 'select:focus,input:focus,textarea:focus{outline:none;border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,0.1)}';
+  h += 'optgroup{background:rgba(17,24,39,0.95);color:#10b981;font-weight:bold;font-size:0.85em;padding:0.5rem 0}';
+  h += 'option{background:rgba(31,41,55,0.9);color:#fff;padding:0.4rem 0.5rem}';
   h += 'button{cursor:pointer;transition:all 0.2s}';
   h += 'img{max-width:100%;height:auto;display:block}';
   h += '</style></head><body>';
