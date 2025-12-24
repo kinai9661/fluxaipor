@@ -22,12 +22,52 @@ const CONFIG = {
     'wide_1280': { name: 'Wide 16:9', width: 1280, height: 720, icon: '📺' }
   },
   STYLE_PRESETS: {
-    'none': { name: 'None', prompt: '', negative: '' },
-    'photorealistic': { name: 'Photorealistic', prompt: 'photorealistic, 8k uhd', negative: 'cartoon, anime' },
-    'anime': { name: 'Anime', prompt: 'anime style, manga', negative: 'realistic, 3d' },
-    'cinematic': { name: 'Cinematic', prompt: 'cinematic lighting, film grain', negative: 'amateur' },
-    'oil_painting': { name: 'Oil Painting', prompt: 'oil painting, classical art', negative: 'digital, modern' },
-    'cyberpunk': { name: 'Cyberpunk', prompt: 'cyberpunk, neon lights', negative: 'nature, traditional' }
+    'none': { name: '🔲 None', prompt: '', negative: '' },
+    'photorealistic': { name: '📷 Photorealistic', prompt: 'photorealistic, 8k uhd, high detail, professional photography, sharp focus', negative: 'cartoon, anime, illustration, painting, drawing, 3d render' },
+    'hyperrealistic': { name: '🔍 Hyperrealistic', prompt: 'hyperrealistic, ultra detailed, lifelike textures, sharp clarity, professional lighting', negative: 'stylized, artistic, low detail, blur' },
+    'portrait_photography': { name: '👤 Portrait Photo', prompt: 'portrait photography, professional studio lighting, bokeh background, 85mm lens, f/1.8', negative: 'full body, landscape, multiple people, bad lighting' },
+    'street_photography': { name: '🏙️ Street Photo', prompt: 'street photography, candid moment, urban environment, natural lighting, documentary style', negative: 'staged, studio, artificial, posed' },
+    'macro_photography': { name: '🔬 Macro Photo', prompt: 'macro photography, extreme close-up, shallow depth of field, intricate details, 100mm macro lens', negative: 'wide angle, landscape, distant, blurry' },
+    'oil_painting': { name: '🖼️ Oil Painting', prompt: 'oil painting, classical art style, rich colors, textured brush strokes, canvas texture', negative: 'digital, modern, photograph, 3d' },
+    'watercolor': { name: '💧 Watercolor', prompt: 'watercolor painting, soft edges, flowing colors, paper texture, transparent layers', negative: 'digital, sharp edges, photorealistic, oil painting' },
+    'acrylic_painting': { name: '🎨 Acrylic', prompt: 'acrylic painting, bold colors, thick paint texture, modern art style, vibrant', negative: 'watercolor, digital, photograph, pencil' },
+    'impressionism': { name: '🌅 Impressionism', prompt: 'impressionist painting, visible brush strokes, light and color emphasis, Monet style', negative: 'photorealistic, sharp details, modern, digital' },
+    'expressionism': { name: '😱 Expressionism', prompt: 'expressionist art, emotional distortion, bold colors, exaggerated forms, intense mood', negative: 'realistic, calm, balanced, traditional' },
+    'abstract': { name: '🔷 Abstract', prompt: 'abstract art, geometric shapes, bold colors, non-representational, modern composition', negative: 'realistic, detailed, figurative, portrait' },
+    'cubism': { name: '📐 Cubism', prompt: 'cubist style, geometric shapes, multiple perspectives, fragmented forms, Picasso inspired', negative: 'realistic, smooth, traditional, photographic' },
+    'surrealism': { name: '🌀 Surrealism', prompt: 'surrealist art, dreamlike imagery, impossible scenes, Salvador Dali style, symbolic', negative: 'realistic, logical, ordinary, documentary' },
+    'anime': { name: '⭐ Anime', prompt: 'anime style, manga art, cel shading, vibrant colors, expressive eyes, Japanese animation', negative: 'realistic, western cartoon, 3d, photograph' },
+    'manga': { name: '📚 Manga', prompt: 'manga style, black and white, screentone, dynamic composition, Japanese comic art', negative: 'color, realistic, western comic, 3d' },
+    'cartoon': { name: '🎭 Cartoon', prompt: 'cartoon style, simplified forms, bold outlines, exaggerated features, colorful', negative: 'realistic, detailed, photographic, serious' },
+    'comic_book': { name: '💥 Comic Book', prompt: 'comic book style, bold inking, halftone dots, dynamic poses, superhero art', negative: 'realistic, soft, painterly, photograph' },
+    'disney': { name: '🏰 Disney Style', prompt: 'Disney animation style, magical atmosphere, rounded features, expressive characters, colorful', negative: 'realistic, dark, gritty, anime' },
+    'pixar': { name: '🎬 Pixar 3D', prompt: 'Pixar style 3D render, smooth surfaces, vibrant colors, appealing characters, cinematic lighting', negative: 'realistic, 2d, flat, low quality' },
+    'studio_ghibli': { name: '🌿 Studio Ghibli', prompt: 'Studio Ghibli style, hand-drawn animation, soft colors, nature themes, whimsical atmosphere', negative: 'realistic, 3d, dark, modern digital' },
+    'art_nouveau': { name: '🌺 Art Nouveau', prompt: 'Art Nouveau style, flowing organic lines, floral motifs, decorative borders, elegant curves', negative: 'geometric, minimalist, modern, industrial' },
+    'art_deco': { name: '💎 Art Deco', prompt: 'Art Deco style, geometric patterns, luxury aesthetic, gold accents, 1920s glamour', negative: 'organic, messy, rustic, modern minimalism' },
+    'pop_art': { name: '🎨 Pop Art', prompt: 'pop art style, bold colors, halftone dots, Roy Lichtenstein inspired, commercial aesthetic', negative: 'realistic, muted colors, classical, subtle' },
+    'minimalist': { name: '⬜ Minimalist', prompt: 'minimalist art, simple shapes, clean lines, negative space, limited color palette', negative: 'detailed, complex, ornate, busy' },
+    'graffiti': { name: '🎨 Graffiti', prompt: 'graffiti art, urban street style, spray paint effect, bold letters, vibrant colors', negative: 'clean, traditional, formal, classical' },
+    'digital_art': { name: '💻 Digital Art', prompt: 'digital art, modern illustration, clean lines, vibrant colors, trending on ArtStation', negative: 'traditional media, messy, low resolution, amateur' },
+    'concept_art': { name: '🎮 Concept Art', prompt: 'concept art, game design, detailed environment, professional illustration, cinematic composition', negative: 'final render, photograph, simple, minimal' },
+    'cyberpunk': { name: '🌃 Cyberpunk', prompt: 'cyberpunk style, neon lights, futuristic city, dark atmosphere, high-tech dystopia', negative: 'nature, traditional, bright daylight, rustic' },
+    'vaporwave': { name: '🌸 Vaporwave', prompt: 'vaporwave aesthetic, retro 80s-90s, pastel colors, glitch effects, nostalgic technology', negative: 'modern, realistic, dark, muted' },
+    'synthwave': { name: '🌆 Synthwave', prompt: 'synthwave style, neon grids, sunset gradients, 80s retro futurism, glowing outlines', negative: 'realistic, modern, muted colors, daylight' },
+    'low_poly': { name: '🔺 Low Poly', prompt: 'low poly 3D art, geometric facets, flat shading, minimalist 3D, angular shapes', negative: 'high detail, smooth, realistic, organic' },
+    'isometric': { name: '📦 Isometric', prompt: 'isometric view, architectural style, clean lines, game asset style, balanced perspective', negative: 'perspective view, realistic, distorted, messy' },
+    'cinematic': { name: '🎬 Cinematic', prompt: 'cinematic lighting, film grain, movie still, dramatic atmosphere, anamorphic lens, color grading', negative: 'amateur, flat lighting, snapshot, low quality' },
+    'film_noir': { name: '🎞️ Film Noir', prompt: 'film noir style, high contrast black and white, dramatic shadows, 1940s aesthetic, moody', negative: 'color, bright, cheerful, modern' },
+    'sci_fi': { name: '🚀 Sci-Fi', prompt: 'science fiction, futuristic technology, space age, high-tech environment, cinematic sci-fi', negative: 'historical, natural, low-tech, medieval' },
+    'fantasy': { name: '🧙 Fantasy', prompt: 'fantasy art, magical atmosphere, epic scenery, mystical creatures, enchanted environment', negative: 'modern, realistic, urban, technological' },
+    'horror': { name: '👻 Horror', prompt: 'horror atmosphere, dark and eerie, ominous lighting, disturbing imagery, suspenseful mood', negative: 'bright, cheerful, cute, calming' },
+    'renaissance': { name: '🖼️ Renaissance', prompt: 'Renaissance art, classical painting, realistic proportions, chiaroscuro lighting, masterful technique', negative: 'modern, abstract, digital, simplified' },
+    'baroque': { name: '👑 Baroque', prompt: 'Baroque style, dramatic lighting, rich colors, ornate details, grandeur and drama', negative: 'minimalist, modern, simple, flat' },
+    'ukiyo_e': { name: '🗾 Ukiyo-e', prompt: 'Japanese ukiyo-e woodblock print, flat colors, bold outlines, traditional Japanese art', negative: 'realistic, 3d, western, photographic' },
+    'neon': { name: '💡 Neon Glow', prompt: 'neon glow effect, vibrant fluorescent colors, glowing edges, dark background, electric aesthetic', negative: 'muted, natural, daylight, realistic' },
+    'glitch_art': { name: '📺 Glitch Art', prompt: 'glitch art, digital corruption, RGB shift, pixelated distortion, cybernetic aesthetic', negative: 'clean, perfect, traditional, analog' },
+    'holographic': { name: '✨ Holographic', prompt: 'holographic effect, iridescent colors, rainbow shimmer, futuristic display, transparent glow', negative: 'matte, flat, opaque, dull' },
+    'psychedelic': { name: '🌀 Psychedelic', prompt: 'psychedelic art, swirling patterns, vibrant colors, hallucinatory imagery, trippy visuals', negative: 'realistic, muted, orderly, conservative' },
+    'steampunk': { name: '⚙️ Steampunk', prompt: 'steampunk style, Victorian era, brass and copper, mechanical gears, industrial revolution aesthetic', negative: 'modern, digital, clean, minimalist' }
   },
   FETCH_TIMEOUT: 120000
 };
@@ -203,7 +243,6 @@ function detectLang(request) {
   const accept = request.headers.get('Accept-Language') || '';
   return accept.includes('zh') ? 'zh' : 'en';
 }
-
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -296,6 +335,7 @@ async function handleGen(request) {
     return errorResponse('Generation failed: ' + e.message, 500);
   }
 }
+
 function buildHTML(lang) {
   const t = LANG[lang] || LANG['zh'];
   
