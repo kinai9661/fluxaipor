@@ -1,18 +1,13 @@
 // ============================================================
 // Flux AI Pro - Cloudflare Workers 版本
 // 版本: 3.0.0
-// 作者: Your Name
-// 描述: 專業 AI 圖像生成平台，基於 Pollinations.ai API
+// 描述: 專業 AI 圖像生成平台
 // ============================================================
 
-// ============================================================
-// 全局配置
-// ============================================================
 const CONFIG = {
   PROJECT_NAME: 'Flux AI Pro',
   PROJECT_VERSION: '3.0.0',
   
-  // API 配置
   PROVIDERS: {
     pollinations: {
       name: 'Pollinations AI',
@@ -95,14 +90,12 @@ const CONFIG = {
     }
   },
   
-  // API 認證
   POLLINATIONS_AUTH: {
     enabled: false,
     token: '',
     method: 'Bearer'
   },
   
-  // 預設尺寸
   PRESET_SIZES: {
     'square_1024': { name: '方形 1:1', width: 1024, height: 1024, icon: '⬛' },
     'portrait_768': { name: '豎屏 3:4', width: 768, height: 1024, icon: '📱' },
@@ -114,7 +107,6 @@ const CONFIG = {
     'custom': { name: '自定義', width: 1024, height: 1024, icon: '⚙️' }
   },
   
-  // 風格預設 (45+ 種風格)
   STYLE_PRESETS: {
     'none': {
       name: '無風格',
@@ -124,8 +116,6 @@ const CONFIG = {
       prompt: '',
       negative: ''
     },
-    
-    // 寫實風格
     'photorealistic': {
       name: '照片寫實',
       icon: '📷',
@@ -158,8 +148,6 @@ const CONFIG = {
       prompt: 'studio lighting, professional setup, clean background, high key lighting',
       negative: 'outdoor, natural light, messy'
     },
-    
-    // 動漫風格
     'anime': {
       name: '日系動漫',
       icon: '🎌',
@@ -192,8 +180,6 @@ const CONFIG = {
       prompt: 'studio ghibli style, hayao miyazaki, watercolor, dreamy atmosphere',
       negative: 'dark, horror, realistic'
     },
-    
-    // 藝術風格
     'oil_painting': {
       name: '油畫',
       icon: '🎨',
@@ -234,7 +220,6 @@ const CONFIG = {
       prompt: 'ukiyo-e, japanese woodblock print, hokusai style, traditional japanese art',
       negative: 'modern, realistic, western'
     },
-    // 數位藝術
     'digital_art': {
       name: '數位藝術',
       icon: '💻',
@@ -267,8 +252,6 @@ const CONFIG = {
       prompt: 'pixel art, 8bit, retro game style, pixelated, nostalgic',
       negative: 'realistic, smooth, high resolution'
     },
-    
-    // 3D 風格
     '3d_render': {
       name: '3D 渲染',
       icon: '🎲',
@@ -293,8 +276,6 @@ const CONFIG = {
       prompt: 'clay render, claymation, soft shapes, tactile, playful',
       negative: 'realistic, sharp, metallic'
     },
-    
-    // 奇幻風格
     'fantasy': {
       name: '奇幻藝術',
       icon: '🧙',
@@ -319,8 +300,6 @@ const CONFIG = {
       prompt: 'fairy tale, storybook illustration, whimsical, dreamy, magical',
       negative: 'realistic, dark, modern'
     },
-    
-    // 科幻風格
     'cyberpunk': {
       name: '賽博朋克',
       icon: '🌃',
@@ -345,8 +324,6 @@ const CONFIG = {
       prompt: 'steampunk, victorian era, brass, gears, steam powered, retro futuristic',
       negative: 'modern, digital, clean'
     },
-    
-    // 抽象風格
     'abstract': {
       name: '抽象藝術',
       icon: '🎨',
@@ -371,8 +348,6 @@ const CONFIG = {
       prompt: 'psychedelic art, trippy, vibrant colors, surreal, kaleidoscopic',
       negative: 'realistic, muted, simple'
     },
-    
-    // 復古風格
     'vintage': {
       name: '復古照片',
       icon: '📻',
@@ -397,8 +372,6 @@ const CONFIG = {
       prompt: 'vaporwave aesthetic, 80s 90s nostalgia, pastel colors, glitch art',
       negative: 'realistic, modern, natural'
     },
-    
-    // 極簡風格
     'minimalist': {
       name: '極簡主義',
       icon: '⚪',
@@ -415,8 +388,6 @@ const CONFIG = {
       prompt: 'line art, simple lines, black and white, clean strokes, elegant',
       negative: 'colored, textured, complex'
     },
-    
-    // 其他特殊風格
     'comic': {
       name: '漫畫風格',
       icon: '💥',
@@ -459,29 +430,21 @@ const CONFIG = {
     }
   },
   
-  // 請求超時設置
   FETCH_TIMEOUT: 120000,
-  
-  // 其他配置
   MAX_HISTORY: 100,
   DEFAULT_QUALITY: 'standard'
 };
 
-// ============================================================
-// 語言包
-// ============================================================
 const TRANSLATIONS = {
   'zh-TW': {
     title: 'Flux AI Pro',
     subtitle: '專業 AI 圖像生成平台',
     version: '版本',
-    
     nav: {
       generate: '生成',
       history: '歷史',
       settings: '設置'
     },
-    
     params: {
       title: '生成參數',
       modelSelection: '模型選擇',
@@ -507,7 +470,6 @@ const TRANSLATIONS = {
       autoHD: 'HD 自動增強',
       generateBtn: '開始生成'
     },
-    
     results: {
       title: '生成結果',
       waiting: '尚未生成任何圖像',
@@ -525,7 +487,6 @@ const TRANSLATIONS = {
       viewHistory: '查看歷史',
       reuse: '重用參數'
     },
-    
     prompt: {
       title: '提示詞',
       positive: '正面提示詞',
@@ -534,7 +495,7 @@ const TRANSLATIONS = {
       negativePlaceholder: '描述不想要的元素...\n\n例如：\n模糊、低質量、變形、多餘的肢體',
       negativeOptional: '（可選）',
       referenceImages: '參考圖像 URL',
-      referenceImagesPlaceholder: 'https://example.com/image1.jpg, https://example.com/image2.jpg\n\n支持多個 URL，用逗號分隔\n最多 3 張參考圖',
+      referenceImagesPlaceholder: 'https://example.com/image.jpg',
       referenceOptional: '（圖生圖 - 可選）',
       autoTranslate: '支持中文自動翻譯',
       supportImageToImage: '支持圖生圖的模型：Kontext',
@@ -550,7 +511,6 @@ const TRANSLATIONS = {
       noStyle: '無風格',
       styleDescription: '風格描述'
     },
-    
     history: {
       title: '生成歷史',
       count: '條記錄',
@@ -564,7 +524,6 @@ const TRANSLATIONS = {
       viewImage: '查看大圖',
       close: '關閉'
     },
-    
     styleCategories: {
       none: '無風格',
       realistic: '寫實風格',
@@ -581,13 +540,11 @@ const TRANSLATIONS = {
       minimal: '極簡風格',
       other: '其他風格'
     },
-    
     status: {
       online: '系統正常',
       apiConfigured: 'API 已配置',
       ready: '就緒'
     },
-    
     errors: {
       promptRequired: '請輸入提示詞',
       generationFailed: '生成失敗，請稍後重試',
@@ -595,136 +552,93 @@ const TRANSLATIONS = {
       apiError: 'API 錯誤'
     }
   },
-  
   'en': {
     title: 'Flux AI Pro',
-    subtitle: 'Professional AI Image Generation Platform',
+    subtitle: 'Professional AI Image Generation',
     version: 'Version',
-    
-    nav: {
-      generate: 'Generate',
-      history: 'History',
-      settings: 'Settings'
-    },
-    
+    nav: { generate: 'Generate', history: 'History', settings: 'Settings' },
     params: {
-      title: 'Generation Parameters',
-      modelSelection: 'Model Selection',
+      title: 'Parameters',
+      modelSelection: 'Model',
       priceLabel: 'Price',
       speedLabel: 'Speed',
-      paramsLabel: 'Parameters',
-      sizePreset: 'Size Preset',
-      artStyle: 'Art Style',
+      paramsLabel: 'Params',
+      sizePreset: 'Size',
+      artStyle: 'Style',
       styleCount: 'Styles',
       categories: 'Categories',
-      qualityMode: 'Quality Mode',
-      economy: 'Economy Mode',
-      economyDesc: 'Fast generation for testing',
-      standard: 'Standard Mode',
-      standardDesc: 'Balanced quality and speed (Recommended)',
-      ultra: 'Ultra HD Mode',
-      ultraDesc: 'Maximum quality, slower generation',
-      advancedOptions: 'Advanced Options',
+      qualityMode: 'Quality',
+      economy: 'Economy',
+      economyDesc: 'Fast',
+      standard: 'Standard',
+      standardDesc: 'Balanced',
+      ultra: 'Ultra',
+      ultraDesc: 'High quality',
+      advancedOptions: 'Advanced',
       seed: 'Seed',
-      seedPlaceholder: '-1 for random',
-      numOutputs: 'Number of Outputs',
-      autoOptimize: 'Auto Optimize',
-      autoHD: 'Auto HD Enhancement',
+      seedPlaceholder: '-1 random',
+      numOutputs: 'Count',
+      autoOptimize: 'Auto optimize',
+      autoHD: 'Auto HD',
       generateBtn: 'Generate'
     },
-    
     results: {
-      title: 'Generated Results',
-      waiting: 'No images generated yet',
-      waitingDesc: 'Fill in parameters and prompt, then click generate',
-      generating: 'AI is creating',
-      generatingDesc: 'This may take a few seconds to a minute',
-      timeElapsed: 'Time elapsed',
-      seconds: 'seconds',
-      success: 'Generation successful!',
+      title: 'Results',
+      waiting: 'No images yet',
+      waitingDesc: 'Fill parameters and click generate',
+      generating: 'Generating',
+      generatingDesc: 'Please wait',
+      timeElapsed: 'Time',
+      seconds: 's',
+      success: 'Success!',
       successDesc: 'Generated',
       images: 'images',
-      failed: 'Generation failed',
+      failed: 'Failed',
       download: 'Download',
       regenerate: 'Regenerate',
-      viewHistory: 'View History',
-      reuse: 'Reuse Parameters'
+      viewHistory: 'History',
+      reuse: 'Reuse'
     },
-    
     prompt: {
       title: 'Prompt',
-      positive: 'Positive Prompt',
-      positivePlaceholder: 'Describe the image you want to generate...',
-      negative: 'Negative Prompt',
-      negativePlaceholder: 'Describe unwanted elements...',
+      positive: 'Positive',
+      positivePlaceholder: 'Describe your image...',
+      negative: 'Negative',
+      negativePlaceholder: 'Unwanted elements...',
       negativeOptional: '(Optional)',
-      referenceImages: 'Reference Images URL',
+      referenceImages: 'Reference',
       referenceImagesPlaceholder: 'https://example.com/image.jpg',
-      referenceOptional: '(Image-to-Image - Optional)',
-      autoTranslate: 'Auto translation supported',
-      supportImageToImage: 'Image-to-Image model: Kontext',
-      styleHints: 'Style Hints',
-      hints: [
-        'Detailed descriptions yield better results',
-        'Art styles enhance visual effects',
-        'Chinese prompts are auto-translated',
-        'Negative prompts help exclude unwanted elements',
-        'Reference images work only with Kontext'
-      ],
-      currentStyle: 'Current Style',
-      noStyle: 'No Style',
-      styleDescription: 'Style Description'
+      referenceOptional: '(Optional)',
+      autoTranslate: 'Auto translate',
+      supportImageToImage: 'Image-to-Image: Kontext',
+      styleHints: 'Hints',
+      hints: ['Detailed descriptions work better', 'Use art styles', 'Auto translation', 'Use negative prompts', 'Reference images for Kontext'],
+      currentStyle: 'Style',
+      noStyle: 'None',
+      styleDescription: 'Description'
     },
-    
     history: {
-      title: 'Generation History',
+      title: 'History',
       count: 'records',
       total: 'Total',
-      noHistory: 'No history yet',
-      noHistoryDesc: 'Your generated images will appear here',
+      noHistory: 'No history',
+      noHistoryDesc: 'Generated images appear here',
       export: 'Export',
-      clear: 'Clear All',
-      confirmClear: 'Clear all history? This cannot be undone.',
+      clear: 'Clear',
+      confirmClear: 'Clear all history?',
       delete: 'Delete',
-      viewImage: 'View Image',
+      viewImage: 'View',
       close: 'Close'
     },
-    
     styleCategories: {
-      none: 'No Style',
-      realistic: 'Realistic',
-      anime: 'Anime',
-      art: 'Art',
-      digital: 'Digital Art',
-      cinematic: 'Cinematic',
-      fantasy: 'Fantasy',
-      scifi: 'Sci-Fi',
-      abstract: 'Abstract',
-      traditional: 'Traditional',
-      modern: 'Modern',
-      retro: 'Retro',
-      minimal: 'Minimal',
-      other: 'Other'
+      none: 'None', realistic: 'Realistic', anime: 'Anime', art: 'Art', digital: 'Digital',
+      cinematic: 'Cinematic', fantasy: 'Fantasy', scifi: 'Sci-Fi', abstract: 'Abstract',
+      traditional: 'Traditional', modern: 'Modern', retro: 'Retro', minimal: 'Minimal', other: 'Other'
     },
-    
-    status: {
-      online: 'Online',
-      apiConfigured: 'API Configured',
-      ready: 'Ready'
-    },
-    
-    errors: {
-      promptRequired: 'Please enter a prompt',
-      generationFailed: 'Generation failed',
-      networkError: 'Network error',
-      apiError: 'API Error'
-    }
+    status: { online: 'Online', apiConfigured: 'Configured', ready: 'Ready' },
+    errors: { promptRequired: 'Prompt required', generationFailed: 'Failed', networkError: 'Network error', apiError: 'API Error' }
   }
 };
-// ============================================================
-// 工具函數
-// ============================================================
-
 function corsHeaders(additionalHeaders = {}) {
   return {
     'Access-Control-Allow-Origin': '*',
@@ -798,10 +712,6 @@ function log(level, message, data = {}) {
   console.log(JSON.stringify(logEntry));
 }
 
-// ============================================================
-// 主要 Worker 邏輯
-// ============================================================
-
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -871,10 +781,6 @@ export default {
     }
   }
 };
-
-// ============================================================
-// API 處理函數
-// ============================================================
 
 function handleHealthCheck(env) {
   const health = {
@@ -946,10 +852,6 @@ function handleGetStyles(lang = 'zh-TW') {
     styles: stylesByCategory
   });
 }
-
-// ============================================================
-// 圖像生成處理
-// ============================================================
 
 async function handleGenerate(request, env, clientIP) {
   const startTime = Date.now();
@@ -1097,10 +999,6 @@ async function handleGenerate(request, env, clientIP) {
     return errorResponse('Generation failed: ' + error.message, 500);
   }
 }
-// ============================================================
-// HTML 頁面生成
-// ============================================================
-
 function getHTML(lang = 'zh-TW') {
   const t = TRANSLATIONS[lang] || TRANSLATIONS['zh-TW'];
   
@@ -1826,8 +1724,6 @@ body {
       updateStylePreview();
       updateQualityDesc();
     }
-`;
-}
     async function handleGenerate(e) {
       e.preventDefault();
       
@@ -2230,11 +2126,5 @@ body {
 </body>
 </html>`;
 }
-// HTML 生成函數結束，getHTML() 已完成
-
-// ============================================================
-// 文件結束
-// ============================================================
-
-// 注意：export default 已在文件前面定義
-// 所有代碼到此結束
+// getHTML 函數結束
+// 所有代碼完成
