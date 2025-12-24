@@ -1599,10 +1599,8 @@ body {
       </div>
     </aside>
 `;
-    <!-- 中間欄 - 生成結果 -->
     <main id="mainPanel" class="flex-1 glass-card overflow-y-auto">
       <div class="p-4 lg:p-6">
-        <!-- 標題 -->
         <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-700">
           <span class="text-2xl">🖼️</span>
           <h2 class="text-lg font-bold">${t.results.title}</h2>
