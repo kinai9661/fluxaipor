@@ -1,0 +1,22 @@
+# Cloudflare Workers 配置示例
+# 複製此檔案為 wrangler.toml 並填入你的配置
+
+name = "flux-ai-pro"
+main = "workers/worker.js"
+compatibility_date = "2025-12-24"
+
+# AI 綁定 (可選)
+# ai = { binding = "AI" }
+
+# 環境變量 (使用 wrangler secret 設定)
+# [vars]
+# POLLINATIONS_API_KEY = "your_key_here"
+
+# Pages 配置
+[site]
+entry-point = "workers"
+
+# 路由配置
+[[routes]]
+pattern = "*/*"
+zone_name = "your-domain.com"
