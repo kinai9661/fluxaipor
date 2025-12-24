@@ -1,9 +1,9 @@
 // =================================================================================
 //  項目: Flux AI Pro - Extended Styles Edition
-//  版本: 9.6.1-extended-styles (✅ 45+ 種藝術風格)
+//  版本: 9.6.1-extended-styles-shadcn (✅ 45+ 種藝術風格)
 //  作者: Enhanced by AI Assistant  
-//  日期: 2025-12-17
-//  更新: ✅ 45+ 種藝術風格 | ✅ 分類組織 | ✅ 新 API 端點 | ✅ Shadcn UI
+//  日期: 2025-12-24
+//  更新: ✅ 45+ 種藝術風格 | ✅ Shadcn UI | ✅ 新 API 端點
 //  模型: zimage, flux, turbo, kontext (4個模型)
 // =================================================================================
 
@@ -16,7 +16,7 @@ const CONFIG = {
   
   POLLINATIONS_AUTH: {
     enabled: true,
-    token: "",  // 將從 env.POLLINATIONS_API_KEY 讀取
+    token: "",
     method: "header"
   },
   
@@ -112,342 +112,47 @@ const CONFIG = {
   
   DEFAULT_PROVIDER: "pollinations",
   
-  // ========================================
-  // ✨ 擴展風格庫 - 45+ 種藝術風格
-  // ========================================
   STYLE_PRESETS: {
-    // ========== 基礎風格 ==========
-    none: { 
-      name: "無風格", 
-      prompt: "", 
-      negative: "",
-      category: "basic",
-      icon: "⚡",
-      description: "使用原始提示詞"
-    },
-    
-    // ========== 插畫動畫 ==========
-    anime: { 
-      name: "動漫風格", 
-      prompt: "anime style, anime art, vibrant colors, cel shading, detailed anime", 
-      negative: "realistic, photograph, 3d, ugly",
-      category: "illustration",
-      icon: "🎭",
-      description: "日系動漫風格"
-    },
-    ghibli: { 
-      name: "吉卜力", 
-      prompt: "Studio Ghibli style, Hayao Miyazaki, anime, soft colors, whimsical, detailed background, hand-drawn", 
-      negative: "realistic, dark, 3D, western animation",
-      category: "illustration",
-      icon: "🍃",
-      description: "宮崎駿動畫風格"
-    },
-    
-    // ========== 漫畫風格 ==========
-    manga: {
-      name: "日本漫畫",
-      prompt: "manga style, japanese comic art, black and white, screentones, halftone patterns, dynamic poses, detailed linework",
-      negative: "color, colorful, realistic, photo, western comic",
-      category: "manga",
-      icon: "📖",
-      description: "經典日本漫畫黑白網點"
-    },
-    "manga-color": {
-      name: "彩色日漫",
-      prompt: "colored manga style, japanese comic art, vibrant colors, cel shading, clean linework, digital coloring",
-      negative: "realistic, photo, western style, messy",
-      category: "manga",
-      icon: "🎨",
-      description: "彩色日本漫畫風格"
-    },
-    "american-comic": {
-      name: "美式漫畫",
-      prompt: "american comic book style, bold lines, vibrant colors, superhero art, dynamic action, dramatic shading",
-      negative: "anime, manga, realistic photo, soft",
-      category: "manga",
-      icon: "💥",
-      description: "美國超級英雄漫畫"
-    },
-    "korean-webtoon": {
-      name: "韓國網漫",
-      prompt: "korean webtoon style, manhwa art, detailed linework, soft colors, romantic, vertical scroll format",
-      negative: "american comic, rough sketch, dark",
-      category: "manga",
-      icon: "📱",
-      description: "韓國網路漫畫風格"
-    },
-    chibi: {
-      name: "Q版漫畫",
-      prompt: "chibi style, super deformed, cute, kawaii, big head small body, simple features, adorable",
-      negative: "realistic proportions, serious, dark",
-      category: "manga",
-      icon: "🥰",
-      description: "Q版可愛漫畫風格"
-    },
-    
-    // ========== 黑白單色 ==========
-    "black-white": {
-      name: "黑白",
-      prompt: "black and white, monochrome, high contrast, dramatic lighting, grayscale",
-      negative: "color, colorful, vibrant, saturated",
-      category: "monochrome",
-      icon: "⚫⚪",
-      description: "純黑白高對比效果"
-    },
-    sketch: {
-      name: "素描",
-      prompt: "pencil sketch, hand drawn, graphite drawing, detailed shading, artistic sketch, loose lines",
-      negative: "color, digital, polished, photo",
-      category: "monochrome",
-      icon: "✏️",
-      description: "鉛筆素描手繪質感"
-    },
-    "ink-drawing": {
-      name: "水墨畫",
-      prompt: "traditional chinese ink painting, sumi-e, brush strokes, minimalist, zen aesthetic, black ink on white paper",
-      negative: "color, western style, detailed, cluttered",
-      category: "monochrome",
-      icon: "🖌️",
-      description: "中國傳統水墨畫"
-    },
-    silhouette: {
-      name: "剪影",
-      prompt: "silhouette art, stark contrast, black shapes, minimalist, dramatic, shadow play, clean edges",
-      negative: "detailed, realistic, colorful, textured",
-      category: "monochrome",
-      icon: "👤",
-      description: "剪影藝術極簡構圖"
-    },
-    charcoal: {
-      name: "炭筆畫",
-      prompt: "charcoal drawing, rough texture, dramatic shading, expressive, smudged, artistic, monochrome",
-      negative: "clean, digital, colorful, precise",
-      category: "monochrome",
-      icon: "🖤",
-      description: "炭筆繪畫粗糙質感"
-    },
-    
-    // ========== 寫實風格 ==========
-    photorealistic: { 
-      name: "寫實照片", 
-      prompt: "photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus", 
-      negative: "anime, cartoon, illustration, painting, drawing, art",
-      category: "realistic",
-      icon: "📷",
-      description: "攝影級寫實效果"
-    },
-    
-    // ========== 繪畫風格 ==========
-    "oil-painting": { 
-      name: "油畫", 
-      prompt: "oil painting, canvas texture, visible brushstrokes, rich colors, artistic, masterpiece", 
-      negative: "photograph, digital art, anime, flat",
-      category: "painting",
-      icon: "🖼️",
-      description: "經典油畫質感"
-    },
-    watercolor: { 
-      name: "水彩畫", 
-      prompt: "watercolor painting, soft colors, watercolor texture, artistic, hand-painted, paper texture, flowing colors", 
-      negative: "photograph, digital, sharp edges, 3d",
-      category: "painting",
-      icon: "💧",
-      description: "清新水彩風格"
-    },
-    
-    // ========== 藝術流派 ==========
-    impressionism: {
-      name: "印象派",
-      prompt: "impressionist painting, soft brushstrokes, light and color focus, Monet style, outdoor scene, visible brush marks",
-      negative: "sharp, detailed, photorealistic, dark",
-      category: "art-movement",
-      icon: "🌅",
-      description: "印象派繪畫光影捕捉"
-    },
-    abstract: {
-      name: "抽象派",
-      prompt: "abstract art, non-representational, geometric shapes, bold colors, modern art, expressive",
-      negative: "realistic, figurative, detailed, representational",
-      category: "art-movement",
-      icon: "🎭",
-      description: "抽象藝術幾何圖形"
-    },
-    cubism: {
-      name: "立體主義",
-      prompt: "cubist style, geometric shapes, multiple perspectives, fragmented, Picasso inspired, angular forms",
-      negative: "realistic, smooth, traditional, single perspective",
-      category: "art-movement",
-      icon: "🔷",
-      description: "立體主義多視角解構"
-    },
-    surrealism: {
-      name: "超現實主義",
-      prompt: "surrealist art, dreamlike, bizarre, impossible scenes, Salvador Dali style, imaginative, symbolic",
-      negative: "realistic, mundane, ordinary, logical",
-      category: "art-movement",
-      icon: "🌀",
-      description: "超現實主義夢幻場景"
-    },
-    "pop-art": {
-      name: "普普藝術",
-      prompt: "pop art style, bold colors, comic book elements, Andy Warhol inspired, retro, screen print effect",
-      negative: "subtle, muted, traditional, realistic",
-      category: "art-movement",
-      icon: "🎪",
-      description: "普普藝術大膽色彩"
-    },
-    
-    // ========== 視覺風格 ==========
-    neon: {
-      name: "霓虹燈",
-      prompt: "neon lights, glowing, vibrant neon colors, night scene, electric, luminous, dark background",
-      negative: "daylight, muted, natural, dull",
-      category: "visual",
-      icon: "💡",
-      description: "霓虹燈發光效果"
-    },
-    vintage: {
-      name: "復古",
-      prompt: "vintage style, retro, aged, nostalgic, warm tones, classic, faded colors, old photograph",
-      negative: "modern, futuristic, clean, vibrant",
-      category: "visual",
-      icon: "📻",
-      description: "復古懷舊褪色效果"
-    },
-    steampunk: {
-      name: "蒸汽朋克",
-      prompt: "steampunk style, Victorian era, brass and copper, gears and mechanisms, mechanical, industrial",
-      negative: "modern, minimalist, clean, futuristic",
-      category: "visual",
-      icon: "⚙️",
-      description: "蒸汽朋克機械美學"
-    },
-    minimalist: {
-      name: "極簡主義",
-      prompt: "minimalist design, clean, simple, geometric, negative space, modern, uncluttered",
-      negative: "detailed, complex, ornate, busy",
-      category: "visual",
-      icon: "◽",
-      description: "極簡設計留白美學"
-    },
-    vaporwave: {
-      name: "蒸氣波",
-      prompt: "vaporwave aesthetic, retro futuristic, pastel colors, glitch art, 80s 90s nostalgia, neon pink and blue",
-      negative: "realistic, natural, muted, traditional",
-      category: "visual",
-      icon: "🌴",
-      description: "蒸氣波復古未來"
-    },
-    
-    // ========== 數位風格 ==========
-    "pixel-art": {
-      name: "像素藝術",
-      prompt: "pixel art, 8-bit, 16-bit, retro gaming style, pixelated, nostalgic, limited color palette",
-      negative: "high resolution, smooth, realistic, detailed",
-      category: "digital",
-      icon: "🎮",
-      description: "像素藝術復古遊戲"
-    },
-    "low-poly": {
-      name: "低多邊形",
-      prompt: "low poly 3d, geometric, faceted, minimalist 3d art, polygonal, angular shapes",
-      negative: "high poly, detailed, realistic, organic",
-      category: "digital",
-      icon: "🔺",
-      description: "低多邊形3D幾何"
-    },
-    "3d-render": {
-      name: "3D渲染",
-      prompt: "3d render, cinema 4d, octane render, detailed, professional lighting, ray tracing, photorealistic 3d",
-      negative: "2d, flat, hand drawn, sketchy",
-      category: "digital",
-      icon: "🎬",
-      description: "專業3D渲染寫實光影"
-    },
-    gradient: {
-      name: "漸變",
-      prompt: "gradient art, smooth color transitions, modern, vibrant gradients, soft blending, colorful",
-      negative: "solid colors, flat, harsh edges, traditional",
-      category: "digital",
-      icon: "🌈",
-      description: "漸變藝術柔和過渡"
-    },
-    glitch: {
-      name: "故障藝術",
-      prompt: "glitch art, digital corruption, RGB shift, distorted, cyberpunk, data moshing, scanlines",
-      negative: "clean, perfect, traditional, smooth",
-      category: "digital",
-      icon: "📺",
-      description: "故障美學數位崩壞"
-    },
-    
-    // ========== 傳統藝術 ==========
-    "ukiyo-e": {
-      name: "浮世繪",
-      prompt: "ukiyo-e style, japanese woodblock print, Hokusai inspired, traditional japanese art, flat colors, bold outlines",
-      negative: "modern, western, photographic, 3d",
-      category: "traditional",
-      icon: "🗾",
-      description: "日本浮世繪木刻版畫"
-    },
-    "stained-glass": {
-      name: "彩繪玻璃",
-      prompt: "stained glass art, colorful, leaded glass, church window style, luminous, geometric patterns, light through glass",
-      negative: "realistic, photographic, modern, opaque",
-      category: "traditional",
-      icon: "🪟",
-      description: "彩繪玻璃透光效果"
-    },
-    "paper-cut": {
-      name: "剪紙藝術",
-      prompt: "paper cut art, layered paper, shadow box effect, intricate patterns, handcrafted, silhouette",
-      negative: "painted, digital, realistic, photographic",
-      category: "traditional",
-      icon: "✂️",
-      description: "剪紙藝術層次堆疊"
-    },
-    
-    // ========== 美學風格 ==========
-    gothic: {
-      name: "哥特風格",
-      prompt: "gothic style, dark, ornate, Victorian gothic, mysterious, dramatic, baroque elements, elegant darkness",
-      negative: "bright, cheerful, minimalist, modern",
-      category: "aesthetic",
-      icon: "🦇",
-      description: "哥特美學黑暗華麗"
-    },
-    "art-nouveau": {
-      name: "新藝術",
-      prompt: "art nouveau style, organic forms, flowing lines, decorative, elegant, floral motifs, Alphonse Mucha inspired",
-      negative: "geometric, minimalist, modern, rigid",
-      category: "aesthetic",
-      icon: "🌺",
-      description: "新藝術流動線條"
-    },
-    
-    // ========== 科幻奇幻 ==========
-    cyberpunk: { 
-      name: "賽博朋克", 
-      prompt: "cyberpunk style, neon lights, futuristic, sci-fi, dystopian, high-tech low-life, blade runner style", 
-      negative: "natural, rustic, medieval, fantasy",
-      category: "scifi",
-      icon: "🌃",
-      description: "賽博朋克未來科幻"
-    },
-    fantasy: { 
-      name: "奇幻風格", 
-      prompt: "fantasy art, magical, epic fantasy, detailed fantasy illustration, mystical, enchanted", 
-      negative: "modern, realistic, mundane, contemporary",
-      category: "fantasy",
-      icon: "🐉",
-      description: "奇幻魔法世界"
-    }
+    none: { name: "無風格", prompt: "", negative: "", category: "basic", icon: "⚡", description: "使用原始提示詞" },
+    anime: { name: "動漫風格", prompt: "anime style, anime art, vibrant colors, cel shading, detailed anime", negative: "realistic, photograph, 3d, ugly", category: "illustration", icon: "🎭", description: "日系動漫風格" },
+    ghibli: { name: "吉卜力", prompt: "Studio Ghibli style, Hayao Miyazaki, anime, soft colors, whimsical, detailed background, hand-drawn", negative: "realistic, dark, 3D, western animation", category: "illustration", icon: "🍃", description: "宮崎駿動畫風格" },
+    manga: { name: "日本漫畫", prompt: "manga style, japanese comic art, black and white, screentones, halftone patterns, dynamic poses, detailed linework", negative: "color, colorful, realistic, photo, western comic", category: "manga", icon: "📖", description: "經典日本漫畫黑白網點" },
+    "manga-color": { name: "彩色日漫", prompt: "colored manga style, japanese comic art, vibrant colors, cel shading, clean linework, digital coloring", negative: "realistic, photo, western style, messy", category: "manga", icon: "🎨", description: "彩色日本漫畫風格" },
+    "american-comic": { name: "美式漫畫", prompt: "american comic book style, bold lines, vibrant colors, superhero art, dynamic action, dramatic shading", negative: "anime, manga, realistic photo, soft", category: "manga", icon: "💥", description: "美國超級英雄漫畫" },
+    "korean-webtoon": { name: "韓國網漫", prompt: "korean webtoon style, manhwa art, detailed linework, soft colors, romantic, vertical scroll format", negative: "american comic, rough sketch, dark", category: "manga", icon: "📱", description: "韓國網路漫畫風格" },
+    chibi: { name: "Q版漫畫", prompt: "chibi style, super deformed, cute, kawaii, big head small body, simple features, adorable", negative: "realistic proportions, serious, dark", category: "manga", icon: "🥰", description: "Q版可愛漫畫風格" },
+    "black-white": { name: "黑白", prompt: "black and white, monochrome, high contrast, dramatic lighting, grayscale", negative: "color, colorful, vibrant, saturated", category: "monochrome", icon: "⚫⚪", description: "純黑白高對比效果" },
+    sketch: { name: "素描", prompt: "pencil sketch, hand drawn, graphite drawing, detailed shading, artistic sketch, loose lines", negative: "color, digital, polished, photo", category: "monochrome", icon: "✏️", description: "鉛筆素描手繪質感" },
+    "ink-drawing": { name: "水墨畫", prompt: "traditional chinese ink painting, sumi-e, brush strokes, minimalist, zen aesthetic, black ink on white paper", negative: "color, western style, detailed, cluttered", category: "monochrome", icon: "🖌️", description: "中國傳統水墨畫" },
+    silhouette: { name: "剪影", prompt: "silhouette art, stark contrast, black shapes, minimalist, dramatic, shadow play, clean edges", negative: "detailed, realistic, colorful, textured", category: "monochrome", icon: "👤", description: "剪影藝術極簡構圖" },
+    charcoal: { name: "炭筆畫", prompt: "charcoal drawing, rough texture, dramatic shading, expressive, smudged, artistic, monochrome", negative: "clean, digital, colorful, precise", category: "monochrome", icon: "🖤", description: "炭筆繪畫粗糙質感" },
+    photorealistic: { name: "寫實照片", prompt: "photorealistic, 8k uhd, high quality, detailed, professional photography, sharp focus", negative: "anime, cartoon, illustration, painting, drawing, art", category: "realistic", icon: "📷", description: "攝影級寫實效果" },
+    "oil-painting": { name: "油畫", prompt: "oil painting, canvas texture, visible brushstrokes, rich colors, artistic, masterpiece", negative: "photograph, digital art, anime, flat", category: "painting", icon: "🖼️", description: "經典油畫質感" },
+    watercolor: { name: "水彩畫", prompt: "watercolor painting, soft colors, watercolor texture, artistic, hand-painted, paper texture, flowing colors", negative: "photograph, digital, sharp edges, 3d", category: "painting", icon: "💧", description: "清新水彩風格" },
+    impressionism: { name: "印象派", prompt: "impressionist painting, soft brushstrokes, light and color focus, Monet style, outdoor scene, visible brush marks", negative: "sharp, detailed, photorealistic, dark", category: "art-movement", icon: "🌅", description: "印象派繪畫光影捕捉" },
+    abstract: { name: "抽象派", prompt: "abstract art, non-representational, geometric shapes, bold colors, modern art, expressive", negative: "realistic, figurative, detailed, representational", category: "art-movement", icon: "🎭", description: "抽象藝術幾何圖形" },
+    cubism: { name: "立體主義", prompt: "cubist style, geometric shapes, multiple perspectives, fragmented, Picasso inspired, angular forms", negative: "realistic, smooth, traditional, single perspective", category: "art-movement", icon: "🔷", description: "立體主義多視角解構" },
+    surrealism: { name: "超現實主義", prompt: "surrealist art, dreamlike, bizarre, impossible scenes, Salvador Dali style, imaginative, symbolic", negative: "realistic, mundane, ordinary, logical", category: "art-movement", icon: "🌀", description: "超現實主義夢幻場景" },
+    "pop-art": { name: "普普藝術", prompt: "pop art style, bold colors, comic book elements, Andy Warhol inspired, retro, screen print effect", negative: "subtle, muted, traditional, realistic", category: "art-movement", icon: "🎪", description: "普普藝術大膽色彩" },
+    neon: { name: "霓虹燈", prompt: "neon lights, glowing, vibrant neon colors, night scene, electric, luminous, dark background", negative: "daylight, muted, natural, dull", category: "visual", icon: "💡", description: "霓虹燈發光效果" },
+    vintage: { name: "復古", prompt: "vintage style, retro, aged, nostalgic, warm tones, classic, faded colors, old photograph", negative: "modern, futuristic, clean, vibrant", category: "visual", icon: "📻", description: "復古懷舊褪色效果" },
+    steampunk: { name: "蒸汽朋克", prompt: "steampunk style, Victorian era, brass and copper, gears and mechanisms, mechanical, industrial", negative: "modern, minimalist, clean, futuristic", category: "visual", icon: "⚙️", description: "蒸汽朋克機械美學" },
+    minimalist: { name: "極簡主義", prompt: "minimalist design, clean, simple, geometric, negative space, modern, uncluttered", negative: "detailed, complex, ornate, busy", category: "visual", icon: "◽", description: "極簡設計留白美學" },
+    vaporwave: { name: "蒸氣波", prompt: "vaporwave aesthetic, retro futuristic, pastel colors, glitch art, 80s 90s nostalgia, neon pink and blue", negative: "realistic, natural, muted, traditional", category: "visual", icon: "🌴", description: "蒸氣波復古未來" },
+    "pixel-art": { name: "像素藝術", prompt: "pixel art, 8-bit, 16-bit, retro gaming style, pixelated, nostalgic, limited color palette", negative: "high resolution, smooth, realistic, detailed", category: "digital", icon: "🎮", description: "像素藝術復古遊戲" },
+    "low-poly": { name: "低多邊形", prompt: "low poly 3d, geometric, faceted, minimalist 3d art, polygonal, angular shapes", negative: "high poly, detailed, realistic, organic", category: "digital", icon: "🔺", description: "低多邊形3D幾何" },
+    "3d-render": { name: "3D渲染", prompt: "3d render, cinema 4d, octane render, detailed, professional lighting, ray tracing, photorealistic 3d", negative: "2d, flat, hand drawn, sketchy", category: "digital", icon: "🎬", description: "專業3D渲染寫實光影" },
+    gradient: { name: "漸變", prompt: "gradient art, smooth color transitions, modern, vibrant gradients, soft blending, colorful", negative: "solid colors, flat, harsh edges, traditional", category: "digital", icon: "🌈", description: "漸變藝術柔和過渡" },
+    glitch: { name: "故障藝術", prompt: "glitch art, digital corruption, RGB shift, distorted, cyberpunk, data moshing, scanlines", negative: "clean, perfect, traditional, smooth", category: "digital", icon: "📺", description: "故障美學數位崩壞" },
+    "ukiyo-e": { name: "浮世繪", prompt: "ukiyo-e style, japanese woodblock print, Hokusai inspired, traditional japanese art, flat colors, bold outlines", negative: "modern, western, photographic, 3d", category: "traditional", icon: "🗾", description: "日本浮世繪木刻版畫" },
+    "stained-glass": { name: "彩繪玻璃", prompt: "stained glass art, colorful, leaded glass, church window style, luminous, geometric patterns, light through glass", negative: "realistic, photographic, modern, opaque", category: "traditional", icon: "🪟", description: "彩繪玻璃透光效果" },
+    "paper-cut": { name: "剪紙藝術", prompt: "paper cut art, layered paper, shadow box effect, intricate patterns, handcrafted, silhouette", negative: "painted, digital, realistic, photographic", category: "traditional", icon: "✂️", description: "剪紙藝術層次堆疊" },
+    gothic: { name: "哥特風格", prompt: "gothic style, dark, ornate, Victorian gothic, mysterious, dramatic, baroque elements, elegant darkness", negative: "bright, cheerful, minimalist, modern", category: "aesthetic", icon: "🦇", description: "哥特美學黑暗華麗" },
+    "art-nouveau": { name: "新藝術", prompt: "art nouveau style, organic forms, flowing lines, decorative, elegant, floral motifs, Alphonse Mucha inspired", negative: "geometric, minimalist, modern, rigid", category: "aesthetic", icon: "🌺", description: "新藝術流動線條" },
+    cyberpunk: { name: "賽博朋克", prompt: "cyberpunk style, neon lights, futuristic, sci-fi, dystopian, high-tech low-life, blade runner style", negative: "natural, rustic, medieval, fantasy", category: "scifi", icon: "🌃", description: "賽博朋克未來科幻" },
+    fantasy: { name: "奇幻風格", prompt: "fantasy art, magical, epic fantasy, detailed fantasy illustration, mystical, enchanted", negative: "modern, realistic, mundane, contemporary", category: "fantasy", icon: "🐉", description: "奇幻魔法世界" }
   },
   
-  // ========================================
-  // 風格分類配置
-  // ========================================
   STYLE_CATEGORIES: {
     'basic': { name: '基礎', icon: '⚡', order: 1 },
     'illustration': { name: '插畫動畫', icon: '🎨', order: 2 },
@@ -492,34 +197,9 @@ const CONFIG = {
   HD_OPTIMIZATION: {
     enabled: true,
     QUALITY_MODES: {
-      economy: { 
-        name: "經濟模式", 
-        description: "快速出圖", 
-        min_resolution: 1024, 
-        max_resolution: 2048, 
-        steps_multiplier: 0.85, 
-        guidance_multiplier: 0.9, 
-        hd_level: "basic" 
-      },
-      standard: { 
-        name: "標準模式", 
-        description: "平衡質量與速度", 
-        min_resolution: 1280, 
-        max_resolution: 2048, 
-        steps_multiplier: 1.0, 
-        guidance_multiplier: 1.0, 
-        hd_level: "enhanced" 
-      },
-      ultra: { 
-        name: "超高清模式", 
-        description: "極致質量", 
-        min_resolution: 1536, 
-        max_resolution: 2048, 
-        steps_multiplier: 1.35, 
-        guidance_multiplier: 1.15, 
-        hd_level: "maximum", 
-        force_upscale: true 
-      }
+      economy: { name: "經濟模式", description: "快速出圖", min_resolution: 1024, max_resolution: 2048, steps_multiplier: 0.85, guidance_multiplier: 0.9, hd_level: "basic" },
+      standard: { name: "標準模式", description: "平衡質量與速度", min_resolution: 1280, max_resolution: 2048, steps_multiplier: 1.0, guidance_multiplier: 1.0, hd_level: "enhanced" },
+      ultra: { name: "超高清模式", description: "極致質量", min_resolution: 1536, max_resolution: 2048, steps_multiplier: 1.35, guidance_multiplier: 1.15, hd_level: "maximum", force_upscale: true }
     },
     HD_PROMPTS: {
       basic: "high quality, detailed, sharp",
@@ -528,34 +208,10 @@ const CONFIG = {
     },
     HD_NEGATIVE: "blurry, low quality, distorted, ugly, bad anatomy, low resolution, pixelated, artifacts, noise",
     MODEL_QUALITY_PROFILES: {
-      "zimage": { 
-        min_resolution: 1024, 
-        max_resolution: 2048, 
-        optimal_steps_boost: 1.0, 
-        guidance_boost: 1.0, 
-        recommended_quality: "economy" 
-      },
-      "flux": { 
-        min_resolution: 1024, 
-        max_resolution: 2048, 
-        optimal_steps_boost: 1.1, 
-        guidance_boost: 1.0, 
-        recommended_quality: "standard" 
-      },
-      "turbo": { 
-        min_resolution: 1024, 
-        max_resolution: 2048, 
-        optimal_steps_boost: 0.9, 
-        guidance_boost: 0.95, 
-        recommended_quality: "economy" 
-      },
-      "kontext": { 
-        min_resolution: 1280, 
-        max_resolution: 2048, 
-        optimal_steps_boost: 1.2, 
-        guidance_boost: 1.1, 
-        recommended_quality: "ultra" 
-      }
+      "zimage": { min_resolution: 1024, max_resolution: 2048, optimal_steps_boost: 1.0, guidance_boost: 1.0, recommended_quality: "economy" },
+      "flux": { min_resolution: 1024, max_resolution: 2048, optimal_steps_boost: 1.1, guidance_boost: 1.0, recommended_quality: "standard" },
+      "turbo": { min_resolution: 1024, max_resolution: 2048, optimal_steps_boost: 0.9, guidance_boost: 0.95, recommended_quality: "economy" },
+      "kontext": { min_resolution: 1280, max_resolution: 2048, optimal_steps_boost: 1.2, guidance_boost: 1.1, recommended_quality: "ultra" }
     }
   }
 };
@@ -1117,7 +773,7 @@ class PollinationsProvider {
     
     const authConfig = CONFIG.POLLINATIONS_AUTH;
     if (authConfig.enabled && authConfig.token) {
-      headers['Authorization'] = `Bearer ${authConfig.token}`;
+      headers['Authorization'] = 'Bearer ' + authConfig.token;
       logger.add("🔐 API Authentication", { 
         method: "Bearer Token",
         token_prefix: authConfig.token.substring(0, 8) + "...",
@@ -1285,7 +941,6 @@ export default {
     const startTime = Date.now();
     const clientIP = getClientIP(request);
     
-    // 從環境變量讀取 API Key
     if (env.POLLINATIONS_API_KEY) {
       CONFIG.POLLINATIONS_AUTH.enabled = true;
       CONFIG.POLLINATIONS_AUTH.token = env.POLLINATIONS_API_KEY;
@@ -1459,14 +1114,13 @@ async function handleInternalGenerate(request, env, ctx) {
     
     const duration = Date.now() - startTime;
     
-    // 單張圖片：直接返回圖片字節
     if (results.length === 1 && results[0].imageData) {
       const result = results[0];
       
       return new Response(result.imageData, {
         headers: {
           'Content-Type': result.contentType || 'image/png',
-          'Content-Disposition': `inline; filename="flux-ai-${result.seed}.png"`,
+          'Content-Disposition': 'inline; filename="flux-ai-' + result.seed + '.png"',
           'X-Model': result.model,
           'X-Model-Name': result.style_name || result.model,
           'X-Seed': result.seed.toString(),
@@ -1485,7 +1139,6 @@ async function handleInternalGenerate(request, env, ctx) {
       });
     }
     
-    // 多張圖片：返回 JSON（包含 base64）
     const imagesData = await Promise.all(results.map(async (r) => {
       if (r.imageData) {
         const uint8Array = new Uint8Array(r.imageData);
@@ -1497,7 +1150,7 @@ async function handleInternalGenerate(request, env, ctx) {
         const base64 = btoa(binary);
         
         return {
-          image: `data:${r.contentType};base64,${base64}`,
+          image: 'data:' + r.contentType + ';base64,' + base64,
           model: r.model,
           seed: r.seed,
           width: r.width,
@@ -1556,13 +1209,11 @@ function handleUI() {
   const apiEndpoint = CONFIG.PROVIDERS.pollinations.endpoint;
   const stylesCount = Object.keys(CONFIG.STYLE_PRESETS).length;
   
-  // 生成風格選項（按分類組織）
   const styleCategories = CONFIG.STYLE_CATEGORIES;
   const stylePresets = CONFIG.STYLE_PRESETS;
   
   let styleOptionsHTML = '';
   
-  // 按分類順序排序
   const sortedCategories = Object.entries(styleCategories)
     .sort((a, b) => a[1].order - b[1].order);
   
@@ -1571,1099 +1222,754 @@ function handleUI() {
       .filter(([key, style]) => style.category === categoryKey);
     
     if (stylesInCategory.length > 0) {
-      styleOptionsHTML += `<optgroup label="${categoryInfo.icon} ${categoryInfo.name}">`;
+      styleOptionsHTML += '<optgroup label="' + categoryInfo.icon + ' ' + categoryInfo.name + '">';
       
       for (const [styleKey, styleConfig] of stylesInCategory) {
         const selected = styleKey === 'none' ? ' selected' : '';
-        styleOptionsHTML += `<option value="${styleKey}"${selected}>${styleConfig.icon} ${styleConfig.name}</option>`;
+        styleOptionsHTML += '<option value="' + styleKey + '"' + selected + '>' + styleConfig.icon + ' ' + styleConfig.name + '</option>';
       }
       
       styleOptionsHTML += '</optgroup>';
     }
   }
   
-  const html = `<!DOCTYPE html>
-<html lang="zh-TW" class="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flux AI Pro v${CONFIG.PROJECT_VERSION}</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        border: 'hsl(240 3.7% 15.9%)',
-        input: 'hsl(240 3.7% 15.9%)',
-        ring: 'hsl(142.4 71.8% 29.2%)',
-        background: 'hsl(240 10% 3.9%)',
-        foreground: 'hsl(0 0% 98%)',
-        primary: {
-          DEFAULT: 'hsl(142.1 70.6% 45.3%)',
-          foreground: 'hsl(144.9 80.4% 10%)',
-        },
-        secondary: {
-          DEFAULT: 'hsl(240 3.7% 15.9%)',
-          foreground: 'hsl(0 0% 98%)',
-        },
-        destructive: {
-          DEFAULT: 'hsl(0 62.8% 30.6%)',
-          foreground: 'hsl(0 0% 98%)',
-        },
-        muted: {
-          DEFAULT: 'hsl(240 3.7% 15.9%)',
-          foreground: 'hsl(240 5% 64.9%)',
-        },
-        accent: {
-          DEFAULT: 'hsl(240 3.7% 15.9%)',
-          foreground: 'hsl(0 0% 98%)',
-        },
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        slideDown: {
-          '0%': { opacity: '0', transform: 'translateY(-10px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-      },
-      animation: {
-        fadeIn: 'fadeIn 0.3s ease-out',
-        slideDown: 'slideDown 0.2s ease-out',
-      },
-    },
-  },
-}
-</script>
-<style>
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-muted/50;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-primary/30 rounded-md hover:bg-primary/50 transition-colors;
-}
-.spinner {
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top: 3px solid hsl(142.1 70.6% 45.3%);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-.badge-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .8; }
-}
-</style>
-</head>
-<body class="bg-background text-foreground antialiased">
+  const html = '<!DOCTYPE html>' +
+'<html lang="zh-TW" class="dark">' +
+'<head>' +
+'<meta charset="UTF-8">' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+'<title>Flux AI Pro v' + CONFIG.PROJECT_VERSION + '</title>' +
+'<link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>🎨</text></svg>">' +
+'<script src="https://cdn.tailwindcss.com"></script>' +
+'<script>' +
+'tailwind.config = {' +
+'  darkMode: "class",' +
+'  theme: {' +
+'    extend: {' +
+'      colors: {' +
+'        border: "hsl(240 3.7% 15.9%)",' +
+'        input: "hsl(240 3.7% 15.9%)",' +
+'        ring: "hsl(142.4 71.8% 29.2%)",' +
+'        background: "hsl(240 10% 3.9%)",' +
+'        foreground: "hsl(0 0% 98%)",' +
+'        primary: {' +
+'          DEFAULT: "hsl(142.1 70.6% 45.3%)",' +
+'          foreground: "hsl(144.9 80.4% 10%)"' +
+'        },' +
+'        secondary: {' +
+'          DEFAULT: "hsl(240 3.7% 15.9%)",' +
+'          foreground: "hsl(0 0% 98%)"' +
+'        },' +
+'        destructive: {' +
+'          DEFAULT: "hsl(0 62.8% 30.6%)",' +
+'          foreground: "hsl(0 0% 98%)"' +
+'        },' +
+'        muted: {' +
+'          DEFAULT: "hsl(240 3.7% 15.9%)",' +
+'          foreground: "hsl(240 5% 64.9%)"' +
+'        },' +
+'        accent: {' +
+'          DEFAULT: "hsl(240 3.7% 15.9%)",' +
+'          foreground: "hsl(0 0% 98%)"' +
+'        }' +
+'      },' +
+'      keyframes: {' +
+'        fadeIn: {' +
+'          "0%": { opacity: "0", transform: "translateY(10px)" },' +
+'          "100%": { opacity: "1", transform: "translateY(0)" }' +
+'        },' +
+'        slideDown: {' +
+'          "0%": { opacity: "0", transform: "translateY(-10px)" },' +
+'          "100%": { opacity: "1", transform: "translateY(0)" }' +
+'        }' +
+'      },' +
+'      animation: {' +
+'        fadeIn: "fadeIn 0.3s ease-out",' +
+'        slideDown: "slideDown 0.2s ease-out"' +
+'      }' +
+'    }' +
+'  }' +
+'};' +
+'</script>' +
+'<style>' +
+'::-webkit-scrollbar { width: 8px; height: 8px; }' +
+'::-webkit-scrollbar-track { background: hsl(240 3.7% 15.9% / 0.5); }' +
+'::-webkit-scrollbar-thumb { background: hsl(142.1 70.6% 45.3% / 0.3); border-radius: 4px; }' +
+'::-webkit-scrollbar-thumb:hover { background: hsl(142.1 70.6% 45.3% / 0.5); }' +
+'.spinner {' +
+'  border: 3px solid rgba(255, 255, 255, 0.1);' +
+'  border-top: 3px solid hsl(142.1 70.6% 45.3%);' +
+'  border-radius: 50%;' +
+'  width: 40px;' +
+'  height: 40px;' +
+'  animation: spin 1s linear infinite;' +
+'}' +
+'@keyframes spin {' +
+'  0% { transform: rotate(0deg); }' +
+'  100% { transform: rotate(360deg); }' +
+'}' +
+'.badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }' +
+'@keyframes pulse {' +
+'  0%, 100% { opacity: 1; }' +
+'  50% { opacity: .8; }' +
+'}' +
+'</style>' +
+'</head>' +
+'<body class="bg-background text-foreground antialiased">' +
+'<div class="min-h-screen flex flex-col">' +
+'<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">' +
+'  <div class="container flex h-16 items-center justify-between px-4 max-w-screen-2xl mx-auto">' +
+'    <div class="flex items-center gap-4">' +
+'      <div class="flex items-center gap-3">' +
+'        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">' +
+'          <span class="text-2xl">🎨</span>' +
+'        </div>' +
+'        <div class="flex flex-col">' +
+'          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Flux AI Pro</h1>' +
+'          <div class="flex items-center gap-2">' +
+'            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">v' + CONFIG.PROJECT_VERSION + '</span>' +
+'            <span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-bold text-pink-500 ring-1 ring-inset ring-pink-500/20 badge-pulse">NEW</span>' +
+'            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">' + stylesCount + ' 風格</span>' +
+'          </div>' +
+'        </div>' +
+'      </div>' +
+'      <div class="hidden md:flex flex-col ml-4 border-l border-border/40 pl-4">' +
+'        <div class="inline-flex items-center gap-2 text-sm">' + authStatus + '</div>' +
+'        <div class="text-xs text-muted-foreground truncate max-w-[200px]" title="' + apiEndpoint + '">📡 ' + apiEndpoint + '</div>' +
+'      </div>' +
+'    </div>' +
+'    <nav class="flex items-center gap-2">' +
+'      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring h-10 py-2 px-4 gap-2 bg-primary text-primary-foreground shadow hover:bg-primary/90" data-page="generate">' +
+'        <span class="text-lg">🎨</span>' +
+'        <span class="hidden sm:inline">生成圖像</span>' +
+'      </button>' +
+'      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 gap-2" data-page="history">' +
+'        <span class="text-lg">📚</span>' +
+'        <span class="hidden sm:inline">歷史</span>' +
+'        <span id="historyCount" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">0</span>' +
+'      </button>' +
+'    </nav>' +
+'  </div>' +
+'</header>' +
+'<main class="flex-1">' +
+'  <div id="generatePage" class="page active">' +
+'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">' +
+'      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
 
-<!-- 主容器 -->
-<div class="min-h-screen flex flex-col">
-
-<!-- 頂部導航欄 -->
-<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-  <div class="container flex h-16 items-center justify-between px-4 max-w-screen-2xl mx-auto">
-    
-    <!-- 左側 Logo -->
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">
-          <span class="text-2xl">🎨</span>
-        </div>
-        <div class="flex flex-col">
-          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
-            Flux AI Pro
-          </h1>
-          <div class="flex items-center gap-2">
-            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
-              v${CONFIG.PROJECT_VERSION}
-            </span>
-            <span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-bold text-pink-500 ring-1 ring-inset ring-pink-500/20 badge-pulse">
-              NEW
-            </span>
-            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">
-              ${stylesCount} 風格
-            </span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- API 狀態 -->
-      <div class="hidden md:flex flex-col ml-4 border-l border-border/40 pl-4">
-        <div class="inline-flex items-center gap-2 text-sm">
-          ${authStatus}
-        </div>
-        <div class="text-xs text-muted-foreground truncate max-w-[200px]" title="${apiEndpoint}">
-          📡 ${apiEndpoint}
-        </div>
-      </div>
-    </div>
-    
-    <!-- 右側導航按鈕 -->
-    <nav class="flex items-center gap-2">
-      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring h-10 py-2 px-4 gap-2 bg-primary text-primary-foreground shadow hover:bg-primary/90" data-page="generate">
-        <span class="text-lg">🎨</span>
-        <span class="hidden sm:inline">生成圖像</span>
-      </button>
-      
-      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 gap-2" data-page="history">
-        <span class="text-lg">📚</span>
-        <span class="hidden sm:inline">歷史</span>
-        <span id="historyCount" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
-          0
-        </span>
-      </button>
-    </nav>
-  </div>
-</header>
-
-<!-- 主內容區 -->
-<main class="flex-1">
-  
-  <!-- 生成頁面 -->
-  <div id="generatePage" class="page active">
-    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-`;
-
-  return html + getLeftPanel(styleOptionsHTML) + getCenterPanel() + getRightPanel(apiEndpoint) + getHistoryPage() + getModalAndScripts(stylesCount);
+  return html + getLeftPanel(styleOptionsHTML) + getCenterPanel() + getRightPanel(apiEndpoint) + getHistoryPage() + getModalAndScripts();
 }
+
 function getLeftPanel(styleOptionsHTML) {
-  return `
-        <!-- 左側欄：參數設置 (3列) -->
-        <aside class="lg:col-span-3 space-y-4">
-          <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
-            <div class="flex flex-col space-y-1.5 p-6 pb-4">
-              <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                <span>⚙️</span>
-                <span>生成參數</span>
-              </h3>
-            </div>
-            
-            <div class="p-6 pt-0 space-y-4">
-              <form id="generateForm" class="space-y-4">
-                
-                <!-- 模型選擇 -->
-                <div class="space-y-2">
-                  <label class="text-sm font-medium leading-none">
-                    模型選擇
-                  </label>
-                  <select id="model" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                    <optgroup label="⚡ Z-Image 系列（默認）">
-                      <option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>
-                    </optgroup>
-                    <optgroup label="🎨 Flux 系列">
-                      <option value="flux">Flux 標準版 (平衡速度與質量)</option>
-                      <option value="turbo">Flux Turbo ⚡ (超快速生成)</option>
-                    </optgroup>
-                    <optgroup label="🖼️ Kontext 系列（圖生圖）">
-                      <option value="kontext">Kontext 🎨 (支持參考圖像)</option>
-                    </optgroup>
-                  </select>
-                  <p class="text-xs text-muted-foreground">
-                    💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003)
-                  </p>
-                </div>
-                
-                <!-- 尺寸預設 -->
-                <div class="space-y-2">
-                  <label class="text-sm font-medium leading-none">
-                    尺寸預設
-                  </label>
-                  <select id="size" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                    <option value="square-1k" selected>方形 1024x1024</option>
-                    <option value="square-1.5k">方形 1536x1536</option>
-                    <option value="square-2k">方形 2048x2048</option>
-                    <option value="portrait-9-16-hd">豎屏 1080x1920</option>
-                    <option value="landscape-16-9-hd">橫屏 1920x1080</option>
-                    <option value="instagram-square">Instagram 方形</option>
-                    <option value="wallpaper-fhd">桌布 Full HD</option>
-                  </select>
-                </div>
-                
-                <!-- 藝術風格 -->
-                <div class="space-y-2">
-                  <label class="text-sm font-medium leading-none flex items-center gap-2">
-                    <span>🎨</span>
-                    <span>藝術風格</span>
-                  </label>
-                  <select id="style" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                    ${styleOptionsHTML}
-                  </select>
-                  <p class="text-xs text-purple-400 font-medium">
-                    ✨ 45+ 種風格可選，分 13 大類
-                  </p>
-                </div>
-                
-                <!-- 質量模式 -->
-                <div class="space-y-2">
-                  <label class="text-sm font-medium leading-none">
-                    質量模式
-                  </label>
-                  <select id="qualityMode" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                    <option value="economy">經濟模式 (快速)</option>
-                    <option value="standard" selected>標準模式 (平衡)</option>
-                    <option value="ultra">超高清模式 (極致)</option>
-                  </select>
-                </div>
-                
-                <!-- 進階選項切換 -->
-                <div class="pt-2">
-                  <button type="button" id="advancedToggle" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline cursor-pointer">
-                    <span id="advancedToggleIcon">▼</span>
-                    <span>進階選項</span>
-                  </button>
-                </div>
-                
-                <!-- 進階選項區域 -->
-                <div id="advancedSection" class="hidden space-y-4">
-                  <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none">
-                      Seed
-                    </label>
-                    <input type="number" id="seed" value="-1" min="-1" max="999999" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                    <p class="text-xs text-muted-foreground">-1 = 隨機</p>
-                  </div>
-                  
-                  <div class="space-y-2">
-                    <label class="text-sm font-medium leading-none">
-                      生成數量
-                    </label>
-                    <input type="number" id="numOutputs" value="1" min="1" max="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                  </div>
-                  
-                  <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="autoOptimize" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
-                    <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">
-                      自動優化參數
-                    </label>
-                  </div>
-                  
-                  <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="autoHD" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">
-                    <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">
-                      自動HD增強
-                    </label>
-                  </div>
-                </div>
-                
-                <!-- 生成按鈕 -->
-                <button type="submit" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full gap-2 shadow-lg shadow-primary/25 active:scale-95">
-                  <span class="text-lg">🎨</span>
-                  <span class="font-bold">開始生成</span>
-                </button>
-                
-              </form>
-            </div>
-          </div>
-        </aside>
-`;
+  return '<aside class="lg:col-span-3 space-y-4">' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
+'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">' +
+'        <span>⚙️</span><span>生成參數</span>' +
+'      </h3>' +
+'    </div>' +
+'    <div class="p-6 pt-0 space-y-4">' +
+'      <form id="generateForm" class="space-y-4">' +
+'        <div class="space-y-2">' +
+'          <label class="text-sm font-medium leading-none">模型選擇</label>' +
+'          <select id="model" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+'            <optgroup label="⚡ Z-Image 系列（默認）">' +
+'              <option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>' +
+'            </optgroup>' +
+'            <optgroup label="🎨 Flux 系列">' +
+'              <option value="flux">Flux 標準版 (平衡速度與質量)</option>' +
+'              <option value="turbo">Flux Turbo ⚡ (超快速生成)</option>' +
+'            </optgroup>' +
+'            <optgroup label="🖼️ Kontext 系列（圖生圖）">' +
+'              <option value="kontext">Kontext 🎨 (支持參考圖像)</option>' +
+'            </optgroup>' +
+'          </select>' +
+'          <p class="text-xs text-muted-foreground">💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003)</p>' +
+'        </div>' +
+'        <div class="space-y-2">' +
+'          <label class="text-sm font-medium leading-none">尺寸預設</label>' +
+'          <select id="size" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+'            <option value="square-1k" selected>方形 1024x1024</option>' +
+'            <option value="square-1.5k">方形 1536x1536</option>' +
+'            <option value="square-2k">方形 2048x2048</option>' +
+'            <option value="portrait-9-16-hd">豎屏 1080x1920</option>' +
+'            <option value="landscape-16-9-hd">橫屏 1920x1080</option>' +
+'            <option value="instagram-square">Instagram 方形</option>' +
+'            <option value="wallpaper-fhd">桌布 Full HD</option>' +
+'          </select>' +
+'        </div>' +
+'        <div class="space-y-2">' +
+'          <label class="text-sm font-medium leading-none flex items-center gap-2"><span>🎨</span><span>藝術風格</span></label>' +
+'          <select id="style" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+styleOptionsHTML +
+'          </select>' +
+'          <p class="text-xs text-purple-400 font-medium">✨ 45+ 種風格可選，分 13 大類</p>' +
+'        </div>' +
+'        <div class="space-y-2">' +
+'          <label class="text-sm font-medium leading-none">質量模式</label>' +
+'          <select id="qualityMode" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+'            <option value="economy">經濟模式 (快速)</option>' +
+'            <option value="standard" selected>標準模式 (平衡)</option>' +
+'            <option value="ultra">超高清模式 (極致)</option>' +
+'          </select>' +
+'        </div>' +
+'        <div class="pt-2">' +
+'          <button type="button" id="advancedToggle" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline cursor-pointer">' +
+'            <span id="advancedToggleIcon">▼</span><span>進階選項</span>' +
+'          </button>' +
+'        </div>' +
+'        <div id="advancedSection" class="hidden space-y-4">' +
+'          <div class="space-y-2">' +
+'            <label class="text-sm font-medium leading-none">Seed</label>' +
+'            <input type="number" id="seed" value="-1" min="-1" max="999999" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+'            <p class="text-xs text-muted-foreground">-1 = 隨機</p>' +
+'          </div>' +
+'          <div class="space-y-2">' +
+'            <label class="text-sm font-medium leading-none">生成數量</label>' +
+'            <input type="number" id="numOutputs" value="1" min="1" max="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+'          </div>' +
+'          <div class="flex items-center space-x-2">' +
+'            <input type="checkbox" id="autoOptimize" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">' +
+'            <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">自動優化參數</label>' +
+'          </div>' +
+'          <div class="flex items-center space-x-2">' +
+'            <input type="checkbox" id="autoHD" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">' +
+'            <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">自動HD增強</label>' +
+'          </div>' +
+'        </div>' +
+'        <button type="submit" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full gap-2 shadow-lg shadow-primary/25 active:scale-95">' +
+'          <span class="text-lg">🎨</span><span class="font-bold">開始生成</span>' +
+'        </button>' +
+'      </form>' +
+'    </div>' +
+'  </div>' +
+'</aside>';
 }
+function getCenterPanel() {
+  return '<section class="lg:col-span-6 space-y-4">' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
+'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">' +
+'        <span>🖼️</span><span>生成結果</span>' +
+'      </h3>' +
+'    </div>' +
+'    <div class="p-6 pt-0">' +
+'      <div id="results">' +
+'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">' +
+'          <div class="rounded-full bg-muted/50 p-6 mb-4">' +
+'            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+'              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect>' +
+'              <circle cx="8.5" cy="8.5" r="1.5"></circle>' +
+'              <polyline points="21 15 16 10 5 21" stroke-width="2"></polyline>' +
+'            </svg>' +
+'          </div>' +
+'          <h4 class="text-lg font-semibold mb-2">尚未生成任何圖像</h4>' +
+'          <p class="text-sm text-muted-foreground max-w-sm">填寫左側參數並輸入提示詞後點擊生成按鈕</p>' +
+'        </div>' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'</section>';
+}
+
 function getRightPanel(apiEndpoint) {
-  return `
-        <!-- 右側欄：提示詞輸入 (3列) -->
-        <aside class="lg:col-span-3 space-y-4">
-          
-          <!-- 提示詞卡片 -->
-          <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
-            <div class="flex flex-col space-y-1.5 p-6 pb-4">
-              <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">
-                <span>💬</span>
-                <span>提示詞</span>
-              </h3>
-            </div>
-            
-            <div class="p-6 pt-0 space-y-4">
-              
-              <!-- 正面提示詞 -->
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none">
-                  正面提示詞
-                </label>
-                <textarea 
-                  id="prompt" 
-                  rows="6"
-                  placeholder="描述你想生成的圖像...
-
-例如：
-• A beautiful sunset over mountains
-• 一隻可愛的貓咪在花園裡玩耍
-• Cyberpunk city at night, neon lights
-• Anime girl with blue hair"
-                  class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
-                  required
-                ></textarea>
-                <p class="text-xs text-primary font-medium">
-                  ✅ 支持中文自動翻譯
-                </p>
-              </div>
-              
-              <!-- 負面提示詞 -->
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none">
-                  負面提示詞 (可選)
-                </label>
-                <textarea 
-                  id="negativePrompt" 
-                  rows="3"
-                  placeholder="描述不想要的內容...
-
-例如：
-• blurry, low quality, distorted
-• ugly, deformed, bad anatomy"
-                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
-                ></textarea>
-              </div>
-              
-              <!-- 參考圖像 URL -->
-              <div class="space-y-2">
-                <label class="text-sm font-medium leading-none">
-                  參考圖像 URL (可選)
-                </label>
-                <textarea 
-                  id="referenceImages" 
-                  rows="3"
-                  placeholder="多張圖片用逗號分隔
-
-例如：
-https://example.com/image1.jpg,
-https://example.com/image2.jpg"
-                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
-                ></textarea>
-                <p class="text-xs text-muted-foreground">
-                  📌 支持圖生圖的模型：Kontext
-                </p>
-              </div>
-              
-            </div>
-          </div>
-          
-          <!-- 風格提示卡片 -->
-          <div class="rounded-lg border border-purple-500/20 bg-purple-500/5 p-4">
-            <div class="flex items-start gap-3">
-              <div class="rounded-lg bg-purple-500/10 p-2">
-                <span class="text-2xl">🎨</span>
-              </div>
-              <div class="flex-1 space-y-1">
-                <h4 class="text-sm font-semibold text-purple-400">風格提示</h4>
-                <p class="text-xs text-muted-foreground">
-                  當前已選: <span id="currentStyleName" class="text-foreground font-medium">無風格</span>
-                </p>
-                <p id="styleDescription" class="text-xs text-muted-foreground/80">
-                  使用原始提示詞
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- 配置預覽卡片 -->
-          <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">
-            <div class="flex flex-col space-y-1.5 p-6 pb-4">
-              <h3 class="text-sm font-semibold leading-none tracking-tight flex items-center gap-2">
-                <span>📋</span>
-                <span>當前配置</span>
-              </h3>
-            </div>
-            
-            <div class="p-6 pt-0 space-y-3">
-              
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">模型</div>
-                <div id="previewModel" class="text-sm font-medium">Z-Image Turbo</div>
-              </div>
-              
-              <div class="h-px bg-border"></div>
-              
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">尺寸</div>
-                <div id="previewSize" class="text-sm font-medium">1024x1024</div>
-              </div>
-              
-              <div class="h-px bg-border"></div>
-              
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">風格</div>
-                <div id="previewStyle" class="text-sm font-medium">無風格</div>
-              </div>
-              
-              <div class="h-px bg-border"></div>
-              
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">API 端點</div>
-                <div class="text-xs font-mono text-muted-foreground/80 break-all">
-                  ${apiEndpoint}
-                </div>
-              </div>
-              
-            </div>
-          </div>
-          
-        </aside>
-      </div>
-    </div>
-  </div>
-`;
+  return '<aside class="lg:col-span-3 space-y-4">' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
+'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">' +
+'        <span>💬</span><span>提示詞</span>' +
+'      </h3>' +
+'    </div>' +
+'    <div class="p-6 pt-0 space-y-4">' +
+'      <div class="space-y-2">' +
+'        <label class="text-sm font-medium leading-none">正面提示詞</label>' +
+'        <textarea id="prompt" rows="6" placeholder="描述你想生成的圖像...\n\n例如：\n• A beautiful sunset over mountains\n• 一隻可愛的貓咪在花園裡玩耍\n• Cyberpunk city at night, neon lights\n• Anime girl with blue hair" class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y" required></textarea>' +
+'        <p class="text-xs text-primary font-medium">✅ 支持中文自動翻譯</p>' +
+'      </div>' +
+'      <div class="space-y-2">' +
+'        <label class="text-sm font-medium leading-none">負面提示詞 (可選)</label>' +
+'        <textarea id="negativePrompt" rows="3" placeholder="描述不想要的內容...\n\n例如：\n• blurry, low quality, distorted\n• ugly, deformed, bad anatomy" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>' +
+'      </div>' +
+'      <div class="space-y-2">' +
+'        <label class="text-sm font-medium leading-none">參考圖像 URL (可選)</label>' +
+'        <textarea id="referenceImages" rows="3" placeholder="多張圖片用逗號分隔\n\n例如：\nhttps://example.com/image1.jpg,\nhttps://example.com/image2.jpg" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>' +
+'        <p class="text-xs text-muted-foreground">📌 支持圖生圖的模型：Kontext</p>' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'  <div class="rounded-lg border border-purple-500/20 bg-purple-500/5 p-4">' +
+'    <div class="flex items-start gap-3">' +
+'      <div class="rounded-lg bg-purple-500/10 p-2"><span class="text-2xl">🎨</span></div>' +
+'      <div class="flex-1 space-y-1">' +
+'        <h4 class="text-sm font-semibold text-purple-400">風格提示</h4>' +
+'        <p class="text-xs text-muted-foreground">當前已選: <span id="currentStyleName" class="text-foreground font-medium">無風格</span></p>' +
+'        <p id="styleDescription" class="text-xs text-muted-foreground/80">使用原始提示詞</p>' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
+'      <h3 class="text-sm font-semibold leading-none tracking-tight flex items-center gap-2">' +
+'        <span>📋</span><span>當前配置</span>' +
+'      </h3>' +
+'    </div>' +
+'    <div class="p-6 pt-0 space-y-3">' +
+'      <div class="space-y-1">' +
+'        <div class="text-xs font-medium text-muted-foreground">模型</div>' +
+'        <div id="previewModel" class="text-sm font-medium">Z-Image Turbo</div>' +
+'      </div>' +
+'      <div class="h-px bg-border"></div>' +
+'      <div class="space-y-1">' +
+'        <div class="text-xs font-medium text-muted-foreground">尺寸</div>' +
+'        <div id="previewSize" class="text-sm font-medium">1024x1024</div>' +
+'      </div>' +
+'      <div class="h-px bg-border"></div>' +
+'      <div class="space-y-1">' +
+'        <div class="text-xs font-medium text-muted-foreground">風格</div>' +
+'        <div id="previewStyle" class="text-sm font-medium">無風格</div>' +
+'      </div>' +
+'      <div class="h-px bg-border"></div>' +
+'      <div class="space-y-1">' +
+'        <div class="text-xs font-medium text-muted-foreground">API 端點</div>' +
+'        <div class="text-xs font-mono text-muted-foreground/80 break-all">' + apiEndpoint + '</div>' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'</aside>' +
+'      </div>' +
+'    </div>' +
+'  </div>';
 }
+
 function getHistoryPage() {
-  return `
-  <!-- 歷史記錄頁面 -->
-  <div id="historyPage" class="page hidden">
-    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">
-      
-      <!-- 歷史記錄頭部 -->
-      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm mb-6">
-        <div class="p-6">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            
-            <!-- 統計數據 -->
-            <div class="flex flex-wrap items-center gap-6">
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">📊 總記錄數</div>
-                <div id="historyTotal" class="text-3xl font-bold text-primary">0</div>
-              </div>
-              
-              <div class="hidden sm:block h-12 w-px bg-border"></div>
-              
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">💾 存儲空間</div>
-                <div id="storageSize" class="text-2xl font-bold">0 KB</div>
-              </div>
-              
-              <div class="hidden sm:block h-12 w-px bg-border"></div>
-              
-              <div class="space-y-1">
-                <div class="text-xs font-medium text-muted-foreground">🎨 最近風格</div>
-                <div id="recentStyle" class="text-sm font-medium">-</div>
-              </div>
-            </div>
-            
-            <!-- 操作按鈕 -->
-            <div class="flex items-center gap-2">
-              <button id="exportBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">
-                <span>📥</span>
-                <span>導出</span>
-              </button>
-              
-              <button id="clearBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 gap-2">
-                <span>🗑️</span>
-                <span>清空</span>
-              </button>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-      
-      <!-- 歷史記錄列表 -->
-      <div id="historyList">
-        <!-- 空狀態 -->
-        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
-          <div class="rounded-full bg-muted/50 p-6 mb-4">
-            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>
-          <p class="text-sm text-muted-foreground max-w-sm">
-            生成的圖像會自動保存在這裡
-          </p>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-  
-</main>
-`;
+  return '<div id="historyPage" class="page hidden">' +
+'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">' +
+'      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm mb-6">' +
+'        <div class="p-6">' +
+'          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">' +
+'            <div class="flex flex-wrap items-center gap-6">' +
+'              <div class="space-y-1">' +
+'                <div class="text-xs font-medium text-muted-foreground">📊 總記錄數</div>' +
+'                <div id="historyTotal" class="text-3xl font-bold text-primary">0</div>' +
+'              </div>' +
+'              <div class="hidden sm:block h-12 w-px bg-border"></div>' +
+'              <div class="space-y-1">' +
+'                <div class="text-xs font-medium text-muted-foreground">💾 存儲空間</div>' +
+'                <div id="storageSize" class="text-2xl font-bold">0 KB</div>' +
+'              </div>' +
+'              <div class="hidden sm:block h-12 w-px bg-border"></div>' +
+'              <div class="space-y-1">' +
+'                <div class="text-xs font-medium text-muted-foreground">🎨 最近風格</div>' +
+'                <div id="recentStyle" class="text-sm font-medium">-</div>' +
+'              </div>' +
+'            </div>' +
+'            <div class="flex items-center gap-2">' +
+'              <button id="exportBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">' +
+'                <span>📥</span><span>導出</span>' +
+'              </button>' +
+'              <button id="clearBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 gap-2">' +
+'                <span>🗑️</span><span>清空</span>' +
+'              </button>' +
+'            </div>' +
+'          </div>' +
+'        </div>' +
+'      </div>' +
+'      <div id="historyList">' +
+'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">' +
+'          <div class="rounded-full bg-muted/50 p-6 mb-4">' +
+'            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+'              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>' +
+'            </svg>' +
+'          </div>' +
+'          <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>' +
+'          <p class="text-sm text-muted-foreground max-w-sm">生成的圖像會自動保存在這裡</p>' +
+'        </div>' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'</main>';
 }
-function getModalAndScripts(stylesCount) {
-  return `
-<!-- 圖片預覽模態框 -->
-<div id="imageModal" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out">
-  <div class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl p-4">
-    <div class="relative">
-      <button id="modalCloseBtn" class="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm p-2 text-foreground transition-all hover:bg-background hover:rotate-90 focus:outline-none focus:ring-2 focus:ring-ring">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-      <div class="rounded-lg overflow-hidden border border-border shadow-2xl">
-        <img id="modalImage" src="" alt="Preview" class="w-full h-auto max-h-[85vh] object-contain bg-black">
-      </div>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<script>
-// ==================== 全局配置 ====================
-const STYLE_PRESETS = ${JSON.stringify(CONFIG.STYLE_PRESETS)};
-const PRESET_SIZES = ${JSON.stringify(CONFIG.PRESET_SIZES)};
-const STORAGE_KEY = 'flux_ai_history';
-const MAX_HISTORY = 100;
-
-// ==================== 頁面導航 ====================
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const pageName = this.dataset.page;
-    
-    // 移除所有active類
-    document.querySelectorAll('.page').forEach(p => {
-      p.classList.remove('active');
-      p.classList.add('hidden');
-    });
-    document.querySelectorAll('.nav-btn').forEach(b => {
-      b.classList.remove('bg-primary', 'text-primary-foreground', 'shadow', 'hover:bg-primary/90');
-      b.classList.add('border', 'border-input', 'bg-background', 'hover:bg-accent');
-    });
-    
-    // 添加active類
-    document.getElementById(pageName + 'Page').classList.remove('hidden');
-    document.getElementById(pageName + 'Page').classList.add('active');
-    this.classList.add('bg-primary', 'text-primary-foreground', 'shadow', 'hover:bg-primary/90');
-    this.classList.remove('border', 'border-input', 'bg-background', 'hover:bg-accent');
-    
-    if (pageName === 'history') {
-      updateHistoryDisplay();
-    }
-  });
-});
-
-// ==================== 進階選項切換 ====================
-document.getElementById('advancedToggle').addEventListener('click', function() {
-  const section = document.getElementById('advancedSection');
-  const icon = document.getElementById('advancedToggleIcon');
-  
-  if (section.classList.contains('hidden')) {
-    section.classList.remove('hidden');
-    icon.textContent = '▲';
-  } else {
-    section.classList.add('hidden');
-    icon.textContent = '▼';
-  }
-});
-
-// ==================== 風格描述更新 ====================
-function updateStyleDescription() {
-  const styleSelect = document.getElementById('style');
-  const selectedStyle = styleSelect.value;
-  const styleConfig = STYLE_PRESETS[selectedStyle];
-  
-  if (styleConfig) {
-    document.getElementById('currentStyleName').textContent = styleConfig.name;
-    document.getElementById('styleDescription').textContent = styleConfig.description || '無描述';
-  }
+function getModalAndScripts() {
+  return '<div id="imageModal" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">' +
+'  <div class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl p-4">' +
+'    <div class="relative">' +
+'      <button id="modalCloseBtn" class="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm p-2 text-foreground transition-all hover:bg-background hover:rotate-90 focus:outline-none focus:ring-2 focus:ring-ring">' +
+'        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
+'          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' +
+'        </svg>' +
+'      </button>' +
+'      <div class="rounded-lg overflow-hidden border border-border shadow-2xl">' +
+'        <img id="modalImage" src="" alt="Preview" class="w-full h-auto max-h-[85vh] object-contain bg-black">' +
+'      </div>' +
+'    </div>' +
+'  </div>' +
+'</div>' +
+'</div>' +
+'<' + 'script>' +
+'const STYLE_PRESETS = ' + JSON.stringify(CONFIG.STYLE_PRESETS) + ';' +
+'const PRESET_SIZES = ' + JSON.stringify(CONFIG.PRESET_SIZES) + ';' +
+'const STORAGE_KEY = "flux_ai_history";' +
+'const MAX_HISTORY = 100;' +
+'document.querySelectorAll(".nav-btn").forEach(btn => {' +
+'  btn.addEventListener("click", function() {' +
+'    const pageName = this.dataset.page;' +
+'    document.querySelectorAll(".page").forEach(p => {' +
+'      p.classList.remove("active");' +
+'      p.classList.add("hidden");' +
+'    });' +
+'    document.querySelectorAll(".nav-btn").forEach(b => {' +
+'      b.classList.remove("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");' +
+'      b.classList.add("border", "border-input", "bg-background", "hover:bg-accent");' +
+'    });' +
+'    document.getElementById(pageName + "Page").classList.remove("hidden");' +
+'    document.getElementById(pageName + "Page").classList.add("active");' +
+'    this.classList.add("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");' +
+'    this.classList.remove("border", "border-input", "bg-background", "hover:bg-accent");' +
+'    if (pageName === "history") updateHistoryDisplay();' +
+'  });' +
+'});' +
+'document.getElementById("advancedToggle").addEventListener("click", function() {' +
+'  const section = document.getElementById("advancedSection");' +
+'  const icon = document.getElementById("advancedToggleIcon");' +
+'  if (section.classList.contains("hidden")) {' +
+'    section.classList.remove("hidden");' +
+'    icon.textContent = "▲";' +
+'  } else {' +
+'    section.classList.add("hidden");' +
+'    icon.textContent = "▼";' +
+'  }' +
+'});' +
+'function updateStyleDescription() {' +
+'  const styleSelect = document.getElementById("style");' +
+'  const selectedStyle = styleSelect.value;' +
+'  const styleConfig = STYLE_PRESETS[selectedStyle];' +
+'  if (styleConfig) {' +
+'    document.getElementById("currentStyleName").textContent = styleConfig.name;' +
+'    document.getElementById("styleDescription").textContent = styleConfig.description || "無描述";' +
+'  }' +
+'}' +
+'function updatePreview() {' +
+'  const model = document.getElementById("model").value;' +
+'  const sizePreset = document.getElementById("size").value;' +
+'  const style = document.getElementById("style").value;' +
+'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];' +
+'  const styleConfig = STYLE_PRESETS[style];' +
+'  const modelNames = {' +
+'    "zimage": "Z-Image Turbo ⚡",' +
+'    "flux": "Flux 標準版",' +
+'    "turbo": "Flux Turbo ⚡",' +
+'    "kontext": "Kontext 🎨"' +
+'  };' +
+'  document.getElementById("previewModel").textContent = modelNames[model] || model;' +
+'  document.getElementById("previewSize").textContent = sizeConfig.name + " (" + sizeConfig.width + "x" + sizeConfig.height + ")";' +
+'  document.getElementById("previewStyle").textContent = styleConfig ? styleConfig.icon + " " + styleConfig.name : "無風格";' +
+'  updateStyleDescription();' +
+'}' +
+'document.getElementById("model").addEventListener("change", updatePreview);' +
+'document.getElementById("size").addEventListener("change", updatePreview);' +
+'document.getElementById("style").addEventListener("change", updatePreview);' +
+'updatePreview();' +
+'function getHistory() {' +
+'  try {' +
+'    const data = localStorage.getItem(STORAGE_KEY);' +
+'    return data ? JSON.parse(data) : [];' +
+'  } catch (e) {' +
+'    console.error("Failed to load history:", e);' +
+'    return [];' +
+'  }' +
+'}' +
+'function saveHistory(history) {' +
+'  try {' +
+'    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));' +
+'    updateHistoryStats();' +
+'  } catch (e) {' +
+'    console.error("Failed to save history:", e);' +
+'  }' +
+'}' +
+'function addToHistory(item) {' +
+'  let history = getHistory();' +
+'  history.unshift({' +
+'    ...item,' +
+'    id: Date.now() + Math.random(),' +
+'    timestamp: new Date().toISOString()' +
+'  });' +
+'  if (history.length > MAX_HISTORY) {' +
+'    history = history.slice(0, MAX_HISTORY);' +
+'  }' +
+'  saveHistory(history);' +
+'}' +
+'function deleteFromHistory(id) {' +
+'  if (!confirm("確定要刪除這條記錄嗎？")) return;' +
+'  let history = getHistory();' +
+'  history = history.filter(item => item.id !== id);' +
+'  saveHistory(history);' +
+'  updateHistoryDisplay();' +
+'}' +
+'function clearHistory() {' +
+'  if (!confirm("確定要清空所有歷史記錄嗎？此操作不可恢復！")) return;' +
+'  localStorage.removeItem(STORAGE_KEY);' +
+'  updateHistoryDisplay();' +
+'  updateHistoryStats();' +
+'}' +
+'function exportHistory() {' +
+'  const history = getHistory();' +
+'  const dataStr = JSON.stringify(history, null, 2);' +
+'  const dataBlob = new Blob([dataStr], { type: "application/json" });' +
+'  const url = URL.createObjectURL(dataBlob);' +
+'  const link = document.createElement("a");' +
+'  link.href = url;' +
+'  link.download = "flux-ai-history-" + new Date().toISOString().split("T")[0] + ".json";' +
+'  link.click();' +
+'  URL.revokeObjectURL(url);' +
+'}' +
+'function updateHistoryStats() {' +
+'  const history = getHistory();' +
+'  document.getElementById("historyCount").textContent = history.length;' +
+'  document.getElementById("historyTotal").textContent = history.length;' +
+'  const sizeKB = new Blob([JSON.stringify(history)]).size / 1024;' +
+'  document.getElementById("storageSize").textContent = sizeKB.toFixed(1) + " KB";' +
+'  if (history.length > 0) {' +
+'    const styleConfig = STYLE_PRESETS[history[0].style];' +
+'    document.getElementById("recentStyle").textContent = styleConfig ? styleConfig.name : history[0].style;' +
+'  } else {' +
+'    document.getElementById("recentStyle").textContent = "-";' +
+'  }' +
+'}' +
+'function updateHistoryDisplay() {' +
+'  const history = getHistory();' +
+'  const historyList = document.getElementById("historyList");' +
+'  if (history.length === 0) {' +
+'    historyList.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"rounded-full bg-muted/50 p-6 mb-4\\"><svg class=\\"w-16 h-16 text-muted-foreground\\" fill=\\"none\\" stroke=\\"currentColor\\" viewBox=\\"0 0 24 24\\"><path stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" stroke-width=\\"2\\" d=\\"M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z\\"></path></svg></div><h4 class=\\"text-lg font-semibold mb-2\\">暫無歷史記錄</h4><p class=\\"text-sm text-muted-foreground max-w-sm\\">生成的圖像會自動保存在這裡</p></div>";' +
+'    updateHistoryStats();' +
+'    return;' +
+'  }' +
+'  const galleryDiv = document.createElement("div");' +
+'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";' +
+'  history.forEach(item => {' +
+'    const date = new Date(item.timestamp);' +
+'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });' +
+'    const styleConfig = STYLE_PRESETS[item.style];' +
+'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;' +
+'    const itemDiv = document.createElement("div");' +
+'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group";' +
+'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"History\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300\\"></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"delete-btn inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-8 px-3\\"><span>🗑️</span></button></div></div>";' +
+'    const img = itemDiv.querySelector("img");' +
+'    img.addEventListener("click", () => openModal(item.url));' +
+'    const reuseBtn = itemDiv.querySelector(".reuse-btn");' +
+'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));' +
+'    const downloadBtn = itemDiv.querySelector(".download-btn");' +
+'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));' +
+'    const deleteBtn = itemDiv.querySelector(".delete-btn");' +
+'    deleteBtn.addEventListener("click", () => deleteFromHistory(item.id));' +
+'    galleryDiv.appendChild(itemDiv);' +
+'  });' +
+'  historyList.innerHTML = "";' +
+'  historyList.appendChild(galleryDiv);' +
+'  updateHistoryStats();' +
+'}' +
+'function reusePrompt(id) {' +
+'  const history = getHistory();' +
+'  const item = history.find(h => h.id === id);' +
+'  if (!item) return;' +
+'  document.getElementById("prompt").value = item.prompt || "";' +
+'  document.getElementById("model").value = item.model || "zimage";' +
+'  document.getElementById("seed").value = item.seed || -1;' +
+'  document.getElementById("style").value = item.style || "none";' +
+'  document.getElementById("negativePrompt").value = item.negative_prompt || "";' +
+'  document.getElementById("referenceImages").value = (item.reference_images || []).join(", ");' +
+'  updatePreview();' +
+'  document.querySelector("[data-page=\\"generate\\"]").click();' +
+'  document.getElementById("prompt").focus();' +
+'}' +
+'function downloadImage(url, seed) {' +
+'  const link = document.createElement("a");' +
+'  link.href = url;' +
+'  link.download = "flux-ai-" + seed + "-" + Date.now() + ".png";' +
+'  link.click();' +
+'}' +
+'function openModal(url) {' +
+'  document.getElementById("modalImage").src = url;' +
+'  document.getElementById("imageModal").classList.remove("hidden");' +
+'}' +
+'function closeModal() {' +
+'  document.getElementById("imageModal").classList.add("hidden");' +
+'}' +
+'document.getElementById("exportBtn").addEventListener("click", exportHistory);' +
+'document.getElementById("clearBtn").addEventListener("click", clearHistory);' +
+'document.getElementById("modalCloseBtn").addEventListener("click", closeModal);' +
+'document.getElementById("imageModal").addEventListener("click", function(e) {' +
+'  if (e.target === this) closeModal();' +
+'});' +
+getFormSubmitScript() +
+'<' + '/script>' +
+'<' + '/body>' +
+'<' + '/html>';
 }
-
-// ==================== 預覽更新 ====================
-function updatePreview() {
-  const model = document.getElementById('model').value;
-  const sizePreset = document.getElementById('size').value;
-  const style = document.getElementById('style').value;
-  
-  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES['square-1k'];
-  const styleConfig = STYLE_PRESETS[style];
-  
-  const modelNames = {
-    'zimage': 'Z-Image Turbo ⚡',
-    'flux': 'Flux 標準版',
-    'turbo': 'Flux Turbo ⚡',
-    'kontext': 'Kontext 🎨'
-  };
-  
-  document.getElementById('previewModel').textContent = modelNames[model] || model;
-  document.getElementById('previewSize').textContent = sizeConfig.name + ' (' + sizeConfig.width + 'x' + sizeConfig.height + ')';
-  document.getElementById('previewStyle').textContent = styleConfig ? styleConfig.icon + ' ' + styleConfig.name : '無風格';
-  
-  updateStyleDescription();
-}
-
-document.getElementById('model').addEventListener('change', updatePreview);
-document.getElementById('size').addEventListener('change', updatePreview);
-document.getElementById('style').addEventListener('change', updatePreview);
-updatePreview();
-
-// ==================== 歷史記錄管理 ====================
-function getHistory() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (e) {
-    console.error('Failed to load history:', e);
-    return [];
-  }
-}
-
-function saveHistory(history) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-    updateHistoryStats();
-  } catch (e) {
-    console.error('Failed to save history:', e);
-  }
-}
-
-function addToHistory(item) {
-  let history = getHistory();
-  history.unshift({
-    ...item,
-    id: Date.now() + Math.random(),
-    timestamp: new Date().toISOString()
-  });
-  if (history.length > MAX_HISTORY) {
-    history = history.slice(0, MAX_HISTORY);
-  }
-  saveHistory(history);
-}
-
-function deleteFromHistory(id) {
-  if (!confirm('確定要刪除這條記錄嗎？')) return;
-  let history = getHistory();
-  history = history.filter(item => item.id !== id);
-  saveHistory(history);
-  updateHistoryDisplay();
-}
-
-function clearHistory() {
-  if (!confirm('確定要清空所有歷史記錄嗎？此操作不可恢復！')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  updateHistoryDisplay();
-  updateHistoryStats();
-}
-
-function exportHistory() {
-  const history = getHistory();
-  const dataStr = JSON.stringify(history, null, 2);
-  const dataBlob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(dataBlob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'flux-ai-history-' + new Date().toISOString().split('T')[0] + '.json';
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-function updateHistoryStats() {
-  const history = getHistory();
-  document.getElementById('historyCount').textContent = history.length;
-  document.getElementById('historyTotal').textContent = history.length;
-  
-  const sizeKB = new Blob([JSON.stringify(history)]).size / 1024;
-  document.getElementById('storageSize').textContent = sizeKB.toFixed(1) + ' KB';
-  
-  if (history.length > 0) {
-    const styleConfig = STYLE_PRESETS[history[0].style];
-    document.getElementById('recentStyle').textContent = styleConfig ? styleConfig.name : history[0].style;
-  } else {
-    document.getElementById('recentStyle').textContent = '-';
-  }
-}
-
-// ==================== 歷史記錄顯示 ====================
-function updateHistoryDisplay() {
-  const history = getHistory();
-  const historyList = document.getElementById('historyList');
-  
-  if (history.length === 0) {
-    historyList.innerHTML = \`
-      <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div class="rounded-full bg-muted/50 p-6 mb-4">
-          <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-        </div>
-        <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>
-        <p class="text-sm text-muted-foreground max-w-sm">生成的圖像會自動保存在這裡</p>
-      </div>
-    \`;
-    updateHistoryStats();
-    return;
-  }
-  
-  const galleryDiv = document.createElement('div');
-  galleryDiv.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4';
-  
-  history.forEach(item => {
-    const date = new Date(item.timestamp);
-    const timeStr = date.toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    const styleConfig = STYLE_PRESETS[item.style];
-    const styleName = styleConfig ? styleConfig.icon + ' ' + styleConfig.name : item.style;
-    
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group';
-    itemDiv.innerHTML = \`
-      <div class="relative overflow-hidden aspect-square">
-        <img src="\${item.url}" alt="History" loading="lazy" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-      <div class="p-4 space-y-3">
-        <div class="flex flex-wrap gap-2">
-          <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
-            \${item.model}
-          </span>
-          <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
-            Seed: \${item.seed}
-          </span>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">
-            \${styleName}
-          </span>
-          <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
-            \${timeStr}
-          </span>
-        </div>
-        <div class="text-xs text-muted-foreground">
-          \${item.width}x\${item.height} | \${item.quality_mode || 'standard'}
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button class="reuse-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
-            <span>🔄</span>
-            <span>重用</span>
-          </button>
-          <button class="download-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
-            <span>💾</span>
-            <span>下載</span>
-          </button>
-          <button class="delete-btn inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-8 px-3">
-            <span>🗑️</span>
-          </button>
-        </div>
-      </div>
-    \`;
-    
-    const img = itemDiv.querySelector('img');
-    img.addEventListener('click', () => openModal(item.url));
-    
-    const reuseBtn = itemDiv.querySelector('.reuse-btn');
-    reuseBtn.addEventListener('click', () => reusePrompt(item.id));
-    
-    const downloadBtn = itemDiv.querySelector('.download-btn');
-    downloadBtn.addEventListener('click', () => downloadImage(item.url, item.seed));
-    
-    const deleteBtn = itemDiv.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', () => deleteFromHistory(item.id));
-    
-    galleryDiv.appendChild(itemDiv);
-  });
-  
-  historyList.innerHTML = '';
-  historyList.appendChild(galleryDiv);
-  updateHistoryStats();
-}
-
-function reusePrompt(id) {
-  const history = getHistory();
-  const item = history.find(h => h.id === id);
-  if (!item) return;
-  
-  document.getElementById('prompt').value = item.prompt || '';
-  document.getElementById('model').value = item.model || 'zimage';
-  document.getElementById('seed').value = item.seed || -1;
-  document.getElementById('style').value = item.style || 'none';
-  document.getElementById('negativePrompt').value = item.negative_prompt || '';
-  document.getElementById('referenceImages').value = (item.reference_images || []).join(', ');
-  
-  updatePreview();
-  document.querySelector('[data-page="generate"]').click();
-  document.getElementById('prompt').focus();
-}
-
-function downloadImage(url, seed) {
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'flux-ai-' + seed + '-' + Date.now() + '.png';
-  link.click();
-}
-
-function openModal(url) {
-  document.getElementById('modalImage').src = url;
-  document.getElementById('imageModal').classList.remove('hidden');
-}
-
-function closeModal() {
-  document.getElementById('imageModal').classList.add('hidden');
-}
-
-document.getElementById('exportBtn').addEventListener('click', exportHistory);
-document.getElementById('clearBtn').addEventListener('click', clearHistory);
-document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
-document.getElementById('imageModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-`;
-}
-// 接續 Part 10 的 script 標籤內
-
-// ==================== 顯示生成的圖片 ====================
-function displayGeneratedImages(images) {
-  const history = getHistory();
-  const galleryDiv = document.createElement('div');
-  galleryDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn';
-  
-  const newImages = history.slice(0, images.length);
-  
-  newImages.forEach((item, index) => {
-    const date = new Date(item.timestamp);
-    const timeStr = date.toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-    const styleConfig = STYLE_PRESETS[item.style];
-    const styleName = styleConfig ? styleConfig.icon + ' ' + styleConfig.name : item.style;
-    
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group';
-    itemDiv.innerHTML = '<div class="relative overflow-hidden aspect-square">' +
-      '<img src="' + item.url + '" alt="Generated ' + (index + 1) + '" loading="lazy" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105">' +
-      '<div class="absolute top-2 left-2">' +
-      '<span class="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg">✅ 剛剛生成</span>' +
-      '</div></div>' +
-      '<div class="p-4 space-y-3">' +
-      '<div class="flex flex-wrap gap-2">' +
-      '<span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">' + item.model + '</span>' +
-      '<span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">Seed: ' + item.seed + '</span>' +
-      '</div>' +
-      '<div class="flex flex-wrap gap-2">' +
-      '<span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">' + styleName + '</span>' +
-      '<span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">' + timeStr + '</span>' +
-      '</div>' +
-      '<div class="text-xs text-muted-foreground">' + item.width + 'x' + item.height + ' | ' + (item.quality_mode || 'standard') + (item.generation_mode ? ' | ' + item.generation_mode : '') + '</div>' +
-      '<div class="flex gap-2 pt-2">' +
-      '<button class="reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">' +
-      '<span>🔄</span><span>重用</span></button>' +
-      '<button class="download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">' +
-      '<span>💾</span><span>下載</span></button>' +
-      '<button class="view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1">' +
-      '<span>📚</span><span>歷史</span></button>' +
-      '</div></div>';
-    
-    const img = itemDiv.querySelector('img');
-    img.addEventListener('click', () => openModal(item.url));
-    
-    const reuseBtn = itemDiv.querySelector('.reuse-result-btn');
-    reuseBtn.addEventListener('click', () => reusePrompt(item.id));
-    
-    const downloadBtn = itemDiv.querySelector('.download-result-btn');
-    downloadBtn.addEventListener('click', () => downloadImage(item.url, item.seed));
-    
-    const viewBtn = itemDiv.querySelector('.view-history-btn');
-    viewBtn.addEventListener('click', () => {
-      document.querySelector('[data-page="history"]').click();
-    });
-    
-    galleryDiv.appendChild(itemDiv);
-  });
-  
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = '';
-  
-  const successDiv = document.createElement('div');
-  successDiv.className = 'rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4';
-  successDiv.innerHTML = '<div class="flex items-center gap-3">' +
-    '<div class="rounded-lg bg-green-500/20 p-2"><span class="text-2xl">✅</span></div>' +
-    '<div><h4 class="text-sm font-semibold text-green-400">生成成功！</h4>' +
-    '<p class="text-xs text-muted-foreground">已生成 ' + images.length + ' 張圖片並保存到歷史記錄</p></div></div>';
-  resultsDiv.appendChild(successDiv);
-  resultsDiv.appendChild(galleryDiv);
-}
-
-// ==================== 表單提交 ====================
-const form = document.getElementById('generateForm');
-const resultsDiv = document.getElementById('results');
-const generateBtn = document.getElementById('generateBtn');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const prompt = document.getElementById('prompt').value;
-  if (!prompt.trim()) {
-    alert('請輸入提示詞');
-    document.getElementById('prompt').focus();
-    return;
-  }
-  
-  const model = document.getElementById('model').value;
-  const sizePreset = document.getElementById('size').value;
-  const style = document.getElementById('style').value;
-  const qualityMode = document.getElementById('qualityMode').value;
-  const seed = parseInt(document.getElementById('seed').value);
-  const numOutputs = parseInt(document.getElementById('numOutputs').value);
-  const negativePrompt = document.getElementById('negativePrompt').value;
-  const autoOptimize = document.getElementById('autoOptimize').checked;
-  const autoHD = document.getElementById('autoHD').checked;
-  const refImagesInput = document.getElementById('referenceImages').value;
-  
-  let referenceImages = [];
-  if (refImagesInput.trim()) {
-    referenceImages = refImagesInput.split(',').map(url => url.trim()).filter(url => url);
-  }
-  
-  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES['square-1k'];
-  
-  generateBtn.disabled = true;
-  generateBtn.innerHTML = '<div class="spinner"></div><span>生成中...</span>';
-  resultsDiv.innerHTML = '<div class="flex flex-col items-center justify-center py-16 px-4 text-center">' +
-    '<div class="spinner mb-4"></div>' +
-    '<p class="text-sm font-medium mb-2">正在生成圖像，請稍候...</p>' +
-    '<p class="text-xs text-muted-foreground">這可能需要幾秒鐘到一分鐘</p></div>';
-  
-  try {
-    const response = await fetch('/_internal/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        prompt,
-        model,
-        width: sizeConfig.width,
-        height: sizeConfig.height,
-        style,
-        quality_mode: qualityMode,
-        seed: seed,
-        n: numOutputs,
-        negative_prompt: negativePrompt,
-        auto_optimize: autoOptimize,
-        auto_hd: autoHD,
-        reference_images: referenceImages
-      })
-    });
-    
-    const contentType = response.headers.get('content-type');
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMsg = '生成失敗';
-      try {
-        const errorJson = JSON.parse(errorText);
-        errorMsg = errorJson.error?.message || errorMsg;
-      } catch (e) {
-        errorMsg = errorText.substring(0, 200);
-      }
-      
-      resultsDiv.innerHTML = '<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">' +
-        '<div class="flex items-start gap-3">' +
-        '<div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div>' +
-        '<div class="flex-1">' +
-        '<h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>' +
-        '<p class="text-xs text-muted-foreground">' + errorMsg + '</p></div></div></div>';
-      
-      if (response.status === 401 || response.status === 403) {
-        resultsDiv.innerHTML += '<div class="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4">' +
-          '<div class="flex items-start gap-3">' +
-          '<div class="rounded-lg bg-amber-500/20 p-2"><span class="text-2xl">⚠️</span></div>' +
-          '<div class="flex-1">' +
-          '<h4 class="text-sm font-semibold text-amber-400 mb-1">認證問題</h4>' +
-          '<p class="text-xs text-muted-foreground mb-2">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p>' +
-          '<code class="text-xs bg-background/50 px-2 py-1 rounded">wrangler secret put POLLINATIONS_API_KEY</code>' +
-          '</div></div></div>';
-      }
-      return;
-    }
-    
-    if (contentType && contentType.startsWith('image/')) {
-      const imageBlob = await response.blob();
-      const imageUrl = URL.createObjectURL(imageBlob);
-      
-      const modelUsed = response.headers.get('X-Model') || model;
-      const seedUsed = parseInt(response.headers.get('X-Seed')) || seed;
-      const widthUsed = parseInt(response.headers.get('X-Width')) || sizeConfig.width;
-      const heightUsed = parseInt(response.headers.get('X-Height')) || sizeConfig.height;
-      const qualityUsed = response.headers.get('X-Quality-Mode') || qualityMode;
-      const styleUsed = response.headers.get('X-Style') || style;
-      const genMode = response.headers.get('X-Generation-Mode') || '文生圖';
-      
-      addToHistory({
-        url: imageUrl,
-        prompt: prompt,
-        model: modelUsed,
-        seed: seedUsed,
-        width: widthUsed,
-        height: heightUsed,
-        style: styleUsed,
-        quality_mode: qualityUsed,
-        negative_prompt: negativePrompt,
-        reference_images: referenceImages,
-        generation_mode: genMode
-      });
-      
-      displayGeneratedImages([{
-        url: imageUrl,
-        model: modelUsed,
-        seed: seedUsed,
-        width: widthUsed,
-        height: heightUsed,
-        quality_mode: qualityUsed,
-        style: styleUsed
-      }]);
-    } else if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      
-      if (data.error) {
-        resultsDiv.innerHTML = '<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">' +
-          '<div class="flex items-start gap-3">' +
-          '<div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div>' +
-          '<div class="flex-1">' +
-          '<h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>' +
-          '<p class="text-xs text-muted-foreground">' + data.error.message + '</p></div></div></div>';
-      } else {
-        const images = data.data.map(item => {
-          addToHistory({
-            url: item.image,
-            prompt: prompt,
-            model: item.model,
-            seed: item.seed,
-            width: item.width,
-            height: item.height,
-            style: item.style,
-            quality_mode: item.quality_mode,
-            negative_prompt: negativePrompt,
-            reference_images: referenceImages,
-            generation_mode: item.generation_mode
-          });
-          return item;
-        });
-        displayGeneratedImages(images);
-      }
-    }
-  } catch (error) {
-    resultsDiv.innerHTML = '<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">' +
-      '<div class="flex items-start gap-3">' +
-      '<div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div>' +
-      '<div class="flex-1">' +
-      '<h4 class="text-sm font-semibold text-destructive mb-1">網路錯誤</h4>' +
-      '<p class="text-xs text-muted-foreground">' + error.message + '</p></div></div></div>';
-  } finally {
-    generateBtn.disabled = false;
-    generateBtn.innerHTML = '<span class="text-lg">🎨</span><span class="font-bold">開始生成</span>';
-  }
-});
-
-// ==================== 初始化 ====================
-window.addEventListener('DOMContentLoaded', () => {
-  updateHistoryStats();
-  updatePreview();
-  console.log('✅ Flux AI Pro 已加載完成');
-  console.log('📊 風格數量:', Object.keys(STYLE_PRESETS).length);
-  console.log('🎨 Shadcn UI 風格已應用');
-});
-
-</script>
-</body>
-</html>
-`;
+function getFormSubmitScript() {
+  return 'function displayGeneratedImages(images) {' +
+'  const history = getHistory();' +
+'  const galleryDiv = document.createElement("div");' +
+'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn";' +
+'  const newImages = history.slice(0, images.length);' +
+'  newImages.forEach((item, index) => {' +
+'    const date = new Date(item.timestamp);' +
+'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });' +
+'    const styleConfig = STYLE_PRESETS[item.style];' +
+'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;' +
+'    const itemDiv = document.createElement("div");' +
+'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group";' +
+'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"Generated " + (index + 1) + "\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute top-2 left-2\\"><span class=\\"inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg\\">✅ 剛剛生成</span></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + (item.generation_mode ? " | " + item.generation_mode : "") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1\\"><span>📚</span><span>歷史</span></button></div></div>";' +
+'    const img = itemDiv.querySelector("img");' +
+'    img.addEventListener("click", () => openModal(item.url));' +
+'    const reuseBtn = itemDiv.querySelector(".reuse-result-btn");' +
+'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));' +
+'    const downloadBtn = itemDiv.querySelector(".download-result-btn");' +
+'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));' +
+'    const viewBtn = itemDiv.querySelector(".view-history-btn");' +
+'    viewBtn.addEventListener("click", () => {' +
+'      document.querySelector("[data-page=\\"history\\"]").click();' +
+'    });' +
+'    galleryDiv.appendChild(itemDiv);' +
+'  });' +
+'  const resultsDiv = document.getElementById("results");' +
+'  resultsDiv.innerHTML = "";' +
+'  const successDiv = document.createElement("div");' +
+'  successDiv.className = "rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4";' +
+'  successDiv.innerHTML = "<div class=\\"flex items-center gap-3\\"><div class=\\"rounded-lg bg-green-500/20 p-2\\"><span class=\\"text-2xl\\">✅</span></div><div><h4 class=\\"text-sm font-semibold text-green-400\\">生成成功！</h4><p class=\\"text-xs text-muted-foreground\\">已生成 " + images.length + " 張圖片並保存到歷史記錄</p></div></div>";' +
+'  resultsDiv.appendChild(successDiv);' +
+'  resultsDiv.appendChild(galleryDiv);' +
+'}' +
+'const form = document.getElementById("generateForm");' +
+'const resultsDiv = document.getElementById("results");' +
+'const generateBtn = document.getElementById("generateBtn");' +
+'form.addEventListener("submit", async (e) => {' +
+'  e.preventDefault();' +
+'  const prompt = document.getElementById("prompt").value;' +
+'  if (!prompt.trim()) {' +
+'    alert("請輸入提示詞");' +
+'    document.getElementById("prompt").focus();' +
+'    return;' +
+'  }' +
+'  const model = document.getElementById("model").value;' +
+'  const sizePreset = document.getElementById("size").value;' +
+'  const style = document.getElementById("style").value;' +
+'  const qualityMode = document.getElementById("qualityMode").value;' +
+'  const seed = parseInt(document.getElementById("seed").value);' +
+'  const numOutputs = parseInt(document.getElementById("numOutputs").value);' +
+'  const negativePrompt = document.getElementById("negativePrompt").value;' +
+'  const autoOptimize = document.getElementById("autoOptimize").checked;' +
+'  const autoHD = document.getElementById("autoHD").checked;' +
+'  const refImagesInput = document.getElementById("referenceImages").value;' +
+'  let referenceImages = [];' +
+'  if (refImagesInput.trim()) {' +
+'    referenceImages = refImagesInput.split(",").map(url => url.trim()).filter(url => url);' +
+'  }' +
+'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];' +
+'  generateBtn.disabled = true;' +
+'  generateBtn.innerHTML = "<div class=\\"spinner\\"></div><span>生成中...</span>";' +
+'  resultsDiv.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"spinner mb-4\\"></div><p class=\\"text-sm font-medium mb-2\\">正在生成圖像，請稍候...</p><p class=\\"text-xs text-muted-foreground\\">這可能需要幾秒鐘到一分鐘</p></div>";' +
+'  try {' +
+'    const response = await fetch("/_internal/generate", {' +
+'      method: "POST",' +
+'      headers: { "Content-Type": "application/json" },' +
+'      body: JSON.stringify({' +
+'        prompt,' +
+'        model,' +
+'        width: sizeConfig.width,' +
+'        height: sizeConfig.height,' +
+'        style,' +
+'        quality_mode: qualityMode,' +
+'        seed: seed,' +
+'        n: numOutputs,' +
+'        negative_prompt: negativePrompt,' +
+'        auto_optimize: autoOptimize,' +
+'        auto_hd: autoHD,' +
+'        reference_images: referenceImages' +
+'      })' +
+'    });' +
+'    const contentType = response.headers.get("content-type");' +
+'    if (!response.ok) {' +
+'      const errorText = await response.text();' +
+'      let errorMsg = "生成失敗";' +
+'      try {' +
+'        const errorJson = JSON.parse(errorText);' +
+'        errorMsg = errorJson.error?.message || errorMsg;' +
+'      } catch (e) {' +
+'        errorMsg = errorText.substring(0, 200);' +
+'      }' +
+'      resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + errorMsg + "</p></div></div></div>";' +
+'      if (response.status === 401 || response.status === 403) {' +
+'        resultsDiv.innerHTML += "<div class=\\"rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-amber-500/20 p-2\\"><span class=\\"text-2xl\\">⚠️</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-amber-400 mb-1\\">認證問題</h4><p class=\\"text-xs text-muted-foreground mb-2\\">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p><code class=\\"text-xs bg-background/50 px-2 py-1 rounded\\">wrangler secret put POLLINATIONS_API_KEY</code></div></div></div>";' +
+'      }' +
+'      return;' +
+'    }' +
+'    if (contentType && contentType.startsWith("image/")) {' +
+'      const imageBlob = await response.blob();' +
+'      const imageUrl = URL.createObjectURL(imageBlob);' +
+'      const modelUsed = response.headers.get("X-Model") || model;' +
+'      const seedUsed = parseInt(response.headers.get("X-Seed")) || seed;' +
+'      const widthUsed = parseInt(response.headers.get("X-Width")) || sizeConfig.width;' +
+'      const heightUsed = parseInt(response.headers.get("X-Height")) || sizeConfig.height;' +
+'      const qualityUsed = response.headers.get("X-Quality-Mode") || qualityMode;' +
+'      const styleUsed = response.headers.get("X-Style") || style;' +
+'      const genMode = response.headers.get("X-Generation-Mode") || "文生圖";' +
+'      addToHistory({' +
+'        url: imageUrl,' +
+'        prompt: prompt,' +
+'        model: modelUsed,' +
+'        seed: seedUsed,' +
+'        width: widthUsed,' +
+'        height: heightUsed,' +
+'        style: styleUsed,' +
+'        quality_mode: qualityUsed,' +
+'        negative_prompt: negativePrompt,' +
+'        reference_images: referenceImages,' +
+'        generation_mode: genMode' +
+'      });' +
+'      displayGeneratedImages([{' +
+'        url: imageUrl,' +
+'        model: modelUsed,' +
+'        seed: seedUsed,' +
+'        width: widthUsed,' +
+'        height: heightUsed,' +
+'        quality_mode: qualityUsed,' +
+'        style: styleUsed' +
+'      }]);' +
+'    } else if (contentType && contentType.includes("application/json")) {' +
+'      const data = await response.json();' +
+'      if (data.error) {' +
+'        resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + data.error.message + "</p></div></div></div>";' +
+'      } else {' +
+'        const images = data.data.map(item => {' +
+'          addToHistory({' +
+'            url: item.image,' +
+'            prompt: prompt,' +
+'            model: item.model,' +
+'            seed: item.seed,' +
+'            width: item.width,' +
+'            height: item.height,' +
+'            style: item.style,' +
+'            quality_mode: item.quality_mode,' +
+'            negative_prompt: negativePrompt,' +
+'            reference_images: referenceImages,' +
+'            generation_mode: item.generation_mode' +
+'          });' +
+'          return item;' +
+'        });' +
+'        displayGeneratedImages(images);' +
+'      }' +
+'    }' +
+'  } catch (error) {' +
+'    resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">網路錯誤</h4><p class=\\"text-xs text-muted-foreground\\">" + error.message + "</p></div></div></div>";' +
+'  } finally {' +
+'    generateBtn.disabled = false;' +
+'    generateBtn.innerHTML = "<span class=\\"text-lg\\">🎨</span><span class=\\"font-bold\\">開始生成</span>";' +
+'  }' +
+'});' +
+'window.addEventListener("DOMContentLoaded", () => {' +
+'  updateHistoryStats();' +
+'  updatePreview();' +
+'  console.log("✅ Flux AI Pro 已加載完成");' +
+'  console.log("📊 風格數量:", Object.keys(STYLE_PRESETS).length);' +
+'  console.log("🎨 Shadcn UI 風格已應用");' +
+'});';
 }
