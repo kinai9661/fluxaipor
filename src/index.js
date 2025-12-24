@@ -1606,7 +1606,6 @@ body {
           <h2 class="text-lg font-bold">${t.results.title}</h2>
         </div>
 
-        <!-- 空狀態 -->
         <div id="emptyState" class="flex flex-col items-center justify-center py-16 px-4">
           <div class="w-32 h-32 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center mb-6 shadow-2xl">
             <span class="text-6xl opacity-50">🎨</span>
