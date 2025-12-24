@@ -1198,10 +1198,10 @@ async function handleInternalGenerate(request, env, ctx) {
   }
 }
 // =================================================================================
-// Web UI 界面處理函數（Shadcn 風格）
+// Web UI 界面處理函數（Shadcn 風格）- 修復版
 // =================================================================================
 
-function handleUI() {
+function handleUI(request) {
   const authStatus = CONFIG.POLLINATIONS_AUTH.enabled ? 
     '<span class="text-green-500 font-semibold text-xs">🔐 已認證</span>' : 
     '<span class="text-amber-500 font-semibold text-xs">⚠️ 需要 API Key</span>';
@@ -1209,16 +1209,13 @@ function handleUI() {
   const apiEndpoint = CONFIG.PROVIDERS.pollinations.endpoint;
   const stylesCount = Object.keys(CONFIG.STYLE_PRESETS).length;
   
-  const styleCategories = CONFIG.STYLE_CATEGORIES;
-  const stylePresets = CONFIG.STYLE_PRESETS;
-  
+  // 生成風格選項
   let styleOptionsHTML = '';
-  
-  const sortedCategories = Object.entries(styleCategories)
+  const sortedCategories = Object.entries(CONFIG.STYLE_CATEGORIES)
     .sort((a, b) => a[1].order - b[1].order);
   
   for (const [categoryKey, categoryInfo] of sortedCategories) {
-    const stylesInCategory = Object.entries(stylePresets)
+    const stylesInCategory = Object.entries(CONFIG.STYLE_PRESETS)
       .filter(([key, style]) => style.category === categoryKey);
     
     if (stylesInCategory.length > 0) {
@@ -1233,743 +1230,794 @@ function handleUI() {
     }
   }
   
-  const html = '<!DOCTYPE html>' +
-'<html lang="zh-TW" class="dark">' +
-'<head>' +
-'<meta charset="UTF-8">' +
-'<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-'<title>Flux AI Pro v' + CONFIG.PROJECT_VERSION + '</title>' +
-'<link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>🎨</text></svg>">' +
-'<script src="https://cdn.tailwindcss.com"></script>' +
-'<script>' +
-'tailwind.config = {' +
-'  darkMode: "class",' +
-'  theme: {' +
-'    extend: {' +
-'      colors: {' +
-'        border: "hsl(240 3.7% 15.9%)",' +
-'        input: "hsl(240 3.7% 15.9%)",' +
-'        ring: "hsl(142.4 71.8% 29.2%)",' +
-'        background: "hsl(240 10% 3.9%)",' +
-'        foreground: "hsl(0 0% 98%)",' +
-'        primary: {' +
-'          DEFAULT: "hsl(142.1 70.6% 45.3%)",' +
-'          foreground: "hsl(144.9 80.4% 10%)"' +
-'        },' +
-'        secondary: {' +
-'          DEFAULT: "hsl(240 3.7% 15.9%)",' +
-'          foreground: "hsl(0 0% 98%)"' +
-'        },' +
-'        destructive: {' +
-'          DEFAULT: "hsl(0 62.8% 30.6%)",' +
-'          foreground: "hsl(0 0% 98%)"' +
-'        },' +
-'        muted: {' +
-'          DEFAULT: "hsl(240 3.7% 15.9%)",' +
-'          foreground: "hsl(240 5% 64.9%)"' +
-'        },' +
-'        accent: {' +
-'          DEFAULT: "hsl(240 3.7% 15.9%)",' +
-'          foreground: "hsl(0 0% 98%)"' +
-'        }' +
-'      },' +
-'      keyframes: {' +
-'        fadeIn: {' +
-'          "0%": { opacity: "0", transform: "translateY(10px)" },' +
-'          "100%": { opacity: "1", transform: "translateY(0)" }' +
-'        },' +
-'        slideDown: {' +
-'          "0%": { opacity: "0", transform: "translateY(-10px)" },' +
-'          "100%": { opacity: "1", transform: "translateY(0)" }' +
-'        }' +
-'      },' +
-'      animation: {' +
-'        fadeIn: "fadeIn 0.3s ease-out",' +
-'        slideDown: "slideDown 0.2s ease-out"' +
-'      }' +
-'    }' +
-'  }' +
-'};' +
-'</script>' +
-'<style>' +
-'::-webkit-scrollbar { width: 8px; height: 8px; }' +
-'::-webkit-scrollbar-track { background: hsl(240 3.7% 15.9% / 0.5); }' +
-'::-webkit-scrollbar-thumb { background: hsl(142.1 70.6% 45.3% / 0.3); border-radius: 4px; }' +
-'::-webkit-scrollbar-thumb:hover { background: hsl(142.1 70.6% 45.3% / 0.5); }' +
-'.spinner {' +
-'  border: 3px solid rgba(255, 255, 255, 0.1);' +
-'  border-top: 3px solid hsl(142.1 70.6% 45.3%);' +
-'  border-radius: 50%;' +
-'  width: 40px;' +
-'  height: 40px;' +
-'  animation: spin 1s linear infinite;' +
-'}' +
-'@keyframes spin {' +
-'  0% { transform: rotate(0deg); }' +
-'  100% { transform: rotate(360deg); }' +
-'}' +
-'.badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }' +
-'@keyframes pulse {' +
-'  0%, 100% { opacity: 1; }' +
-'  50% { opacity: .8; }' +
-'}' +
-'</style>' +
-'</head>' +
-'<body class="bg-background text-foreground antialiased">' +
-'<div class="min-h-screen flex flex-col">' +
-'<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">' +
-'  <div class="container flex h-16 items-center justify-between px-4 max-w-screen-2xl mx-auto">' +
-'    <div class="flex items-center gap-4">' +
-'      <div class="flex items-center gap-3">' +
-'        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">' +
-'          <span class="text-2xl">🎨</span>' +
-'        </div>' +
-'        <div class="flex flex-col">' +
-'          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Flux AI Pro</h1>' +
-'          <div class="flex items-center gap-2">' +
-'            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">v' + CONFIG.PROJECT_VERSION + '</span>' +
-'            <span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-bold text-pink-500 ring-1 ring-inset ring-pink-500/20 badge-pulse">NEW</span>' +
-'            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">' + stylesCount + ' 風格</span>' +
-'          </div>' +
-'        </div>' +
-'      </div>' +
-'      <div class="hidden md:flex flex-col ml-4 border-l border-border/40 pl-4">' +
-'        <div class="inline-flex items-center gap-2 text-sm">' + authStatus + '</div>' +
-'        <div class="text-xs text-muted-foreground truncate max-w-[200px]" title="' + apiEndpoint + '">📡 ' + apiEndpoint + '</div>' +
-'      </div>' +
-'    </div>' +
-'    <nav class="flex items-center gap-2">' +
-'      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring h-10 py-2 px-4 gap-2 bg-primary text-primary-foreground shadow hover:bg-primary/90" data-page="generate">' +
-'        <span class="text-lg">🎨</span>' +
-'        <span class="hidden sm:inline">生成圖像</span>' +
-'      </button>' +
-'      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 gap-2" data-page="history">' +
-'        <span class="text-lg">📚</span>' +
-'        <span class="hidden sm:inline">歷史</span>' +
-'        <span id="historyCount" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">0</span>' +
-'      </button>' +
-'    </nav>' +
-'  </div>' +
-'</header>' +
-'<main class="flex-1">' +
-'  <div id="generatePage" class="page active">' +
-'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">' +
-'      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">';
-
-  return html + getLeftPanel(styleOptionsHTML) + getCenterPanel() + getRightPanel(apiEndpoint) + getHistoryPage() + getModalAndScripts();
+  // 構建完整 HTML
+  const html = buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTML);
+  
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      ...corsHeaders()
+    }
+  });
 }
 
+function buildCompleteHTML(authStatus, apiEndpoint, stylesCount, styleOptionsHTML) {
+  return '<!DOCTYPE html>\n' +
+'<html lang="zh-TW" class="dark">\n' +
+'<head>\n' +
+'<meta charset="UTF-8">\n' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+'<title>Flux AI Pro v' + CONFIG.PROJECT_VERSION + '</title>\n' +
+'<link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>🎨</text></svg>">\n' +
+'<script src="https://cdn.tailwindcss.com"><\/script>\n' +
+'<script>\n' +
+'tailwind.config = {\n' +
+'  darkMode: "class",\n' +
+'  theme: {\n' +
+'    extend: {\n' +
+'      colors: {\n' +
+'        border: "hsl(240 3.7% 15.9%)",\n' +
+'        input: "hsl(240 3.7% 15.9%)",\n' +
+'        ring: "hsl(142.4 71.8% 29.2%)",\n' +
+'        background: "hsl(240 10% 3.9%)",\n' +
+'        foreground: "hsl(0 0% 98%)",\n' +
+'        primary: {\n' +
+'          DEFAULT: "hsl(142.1 70.6% 45.3%)",\n' +
+'          foreground: "hsl(144.9 80.4% 10%)"\n' +
+'        },\n' +
+'        secondary: {\n' +
+'          DEFAULT: "hsl(240 3.7% 15.9%)",\n' +
+'          foreground: "hsl(0 0% 98%)"\n' +
+'        },\n' +
+'        destructive: {\n' +
+'          DEFAULT: "hsl(0 62.8% 30.6%)",\n' +
+'          foreground: "hsl(0 0% 98%)"\n' +
+'        },\n' +
+'        muted: {\n' +
+'          DEFAULT: "hsl(240 3.7% 15.9%)",\n' +
+'          foreground: "hsl(240 5% 64.9%)"\n' +
+'        },\n' +
+'        accent: {\n' +
+'          DEFAULT: "hsl(240 3.7% 15.9%)",\n' +
+'          foreground: "hsl(0 0% 98%)"\n' +
+'        }\n' +
+'      },\n' +
+'      keyframes: {\n' +
+'        fadeIn: {\n' +
+'          "0%": { opacity: "0", transform: "translateY(10px)" },\n' +
+'          "100%": { opacity: "1", transform: "translateY(0)" }\n' +
+'        },\n' +
+'        slideDown: {\n' +
+'          "0%": { opacity: "0", transform: "translateY(-10px)" },\n' +
+'          "100%": { opacity: "1", transform: "translateY(0)" }\n' +
+'        }\n' +
+'      },\n' +
+'      animation: {\n' +
+'        fadeIn: "fadeIn 0.3s ease-out",\n' +
+'        slideDown: "slideDown 0.2s ease-out"\n' +
+'      }\n' +
+'    }\n' +
+'  }\n' +
+'};\n' +
+'<\/script>\n' +
+'<style>\n' +
+'::-webkit-scrollbar { width: 8px; height: 8px; }\n' +
+'::-webkit-scrollbar-track { background: hsl(240 3.7% 15.9% / 0.5); }\n' +
+'::-webkit-scrollbar-thumb { background: hsl(142.1 70.6% 45.3% / 0.3); border-radius: 4px; }\n' +
+'::-webkit-scrollbar-thumb:hover { background: hsl(142.1 70.6% 45.3% / 0.5); }\n' +
+'.spinner {\n' +
+'  border: 3px solid rgba(255, 255, 255, 0.1);\n' +
+'  border-top: 3px solid hsl(142.1 70.6% 45.3%);\n' +
+'  border-radius: 50%;\n' +
+'  width: 40px;\n' +
+'  height: 40px;\n' +
+'  animation: spin 1s linear infinite;\n' +
+'}\n' +
+'@keyframes spin {\n' +
+'  0% { transform: rotate(0deg); }\n' +
+'  100% { transform: rotate(360deg); }\n' +
+'}\n' +
+'.badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }\n' +
+'@keyframes pulse {\n' +
+'  0%, 100% { opacity: 1; }\n' +
+'  50% { opacity: .8; }\n' +
+'}\n' +
+'</style>\n' +
+'</head>\n' +
+'<body class="bg-background text-foreground antialiased">\n' +
+'<div class="min-h-screen flex flex-col">\n' +
+getHeader(authStatus, apiEndpoint, stylesCount) +
+'<main class="flex-1">\n' +
+'  <div id="generatePage" class="page active">\n' +
+'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">\n' +
+'      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">\n' +
+getLeftPanel(styleOptionsHTML) +
+getCenterPanel() +
+getRightPanel(apiEndpoint) +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+getHistoryPage() +
+'</main>\n' +
+getModal() +
+'</div>\n' +
+getJavaScript() +
+'</body>\n' +
+'</html>';
+}
+
+function getHeader(authStatus, apiEndpoint, stylesCount) {
+  return '<header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">\n' +
+'  <div class="container flex h-16 items-center justify-between px-4 max-w-screen-2xl mx-auto">\n' +
+'    <div class="flex items-center gap-4">\n' +
+'      <div class="flex items-center gap-3">\n' +
+'        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center shadow-lg shadow-primary/25">\n' +
+'          <span class="text-2xl">🎨</span>\n' +
+'        </div>\n' +
+'        <div class="flex flex-col">\n' +
+'          <h1 class="text-lg font-bold bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">Flux AI Pro</h1>\n' +
+'          <div class="flex items-center gap-2">\n' +
+'            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">v' + CONFIG.PROJECT_VERSION + '</span>\n' +
+'            <span class="inline-flex items-center rounded-md bg-pink-500/10 px-2 py-0.5 text-xs font-bold text-pink-500 ring-1 ring-inset ring-pink-500/20 badge-pulse">NEW</span>\n' +
+'            <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-xs font-bold text-purple-400 ring-1 ring-inset ring-purple-500/20">' + stylesCount + ' 風格</span>\n' +
+'          </div>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'      <div class="hidden md:flex flex-col ml-4 border-l border-border/40 pl-4">\n' +
+'        <div class="inline-flex items-center gap-2 text-sm">' + authStatus + '</div>\n' +
+'        <div class="text-xs text-muted-foreground truncate max-w-[200px]" title="' + apiEndpoint + '">📡 ' + apiEndpoint + '</div>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'    <nav class="flex items-center gap-2">\n' +
+'      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring h-10 py-2 px-4 gap-2 bg-primary text-primary-foreground shadow hover:bg-primary/90" data-page="generate">\n' +
+'        <span class="text-lg">🎨</span>\n' +
+'        <span class="hidden sm:inline">生成圖像</span>\n' +
+'      </button>\n' +
+'      <button class="nav-btn inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 gap-2" data-page="history">\n' +
+'        <span class="text-lg">📚</span>\n' +
+'        <span class="hidden sm:inline">歷史</span>\n' +
+'        <span id="historyCount" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">0</span>\n' +
+'      </button>\n' +
+'    </nav>\n' +
+'  </div>\n' +
+'</header>\n';
+}
 function getLeftPanel(styleOptionsHTML) {
-  return '<aside class="lg:col-span-3 space-y-4">' +
-'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
-'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
-'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">' +
-'        <span>⚙️</span><span>生成參數</span>' +
-'      </h3>' +
-'    </div>' +
-'    <div class="p-6 pt-0 space-y-4">' +
-'      <form id="generateForm" class="space-y-4">' +
-'        <div class="space-y-2">' +
-'          <label class="text-sm font-medium leading-none">模型選擇</label>' +
-'          <select id="model" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
-'            <optgroup label="⚡ Z-Image 系列（默認）">' +
-'              <option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>' +
-'            </optgroup>' +
-'            <optgroup label="🎨 Flux 系列">' +
-'              <option value="flux">Flux 標準版 (平衡速度與質量)</option>' +
-'              <option value="turbo">Flux Turbo ⚡ (超快速生成)</option>' +
-'            </optgroup>' +
-'            <optgroup label="🖼️ Kontext 系列（圖生圖）">' +
-'              <option value="kontext">Kontext 🎨 (支持參考圖像)</option>' +
-'            </optgroup>' +
-'          </select>' +
-'          <p class="text-xs text-muted-foreground">💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003)</p>' +
-'        </div>' +
-'        <div class="space-y-2">' +
-'          <label class="text-sm font-medium leading-none">尺寸預設</label>' +
-'          <select id="size" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
-'            <option value="square-1k" selected>方形 1024x1024</option>' +
-'            <option value="square-1.5k">方形 1536x1536</option>' +
-'            <option value="square-2k">方形 2048x2048</option>' +
-'            <option value="portrait-9-16-hd">豎屏 1080x1920</option>' +
-'            <option value="landscape-16-9-hd">橫屏 1920x1080</option>' +
-'            <option value="instagram-square">Instagram 方形</option>' +
-'            <option value="wallpaper-fhd">桌布 Full HD</option>' +
-'          </select>' +
-'        </div>' +
-'        <div class="space-y-2">' +
-'          <label class="text-sm font-medium leading-none flex items-center gap-2"><span>🎨</span><span>藝術風格</span></label>' +
-'          <select id="style" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
+  return '<aside class="lg:col-span-3 space-y-4">\n' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
+'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
+'        <span>⚙️</span><span>生成參數</span>\n' +
+'      </h3>\n' +
+'    </div>\n' +
+'    <div class="p-6 pt-0 space-y-4">\n' +
+'      <form id="generateForm" class="space-y-4">\n' +
+'        <div class="space-y-2">\n' +
+'          <label class="text-sm font-medium leading-none">模型選擇</label>\n' +
+'          <select id="model" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
+'            <optgroup label="⚡ Z-Image 系列（默認）">\n' +
+'              <option value="zimage" selected>Z-Image Turbo ⚡ (6B 參數, 極速)</option>\n' +
+'            </optgroup>\n' +
+'            <optgroup label="🎨 Flux 系列">\n' +
+'              <option value="flux">Flux 標準版 (平衡速度與質量)</option>\n' +
+'              <option value="turbo">Flux Turbo ⚡ (超快速生成)</option>\n' +
+'            </optgroup>\n' +
+'            <optgroup label="🖼️ Kontext 系列（圖生圖）">\n' +
+'              <option value="kontext">Kontext 🎨 (支持參考圖像)</option>\n' +
+'            </optgroup>\n' +
+'          </select>\n' +
+'          <p class="text-xs text-muted-foreground">💰 價格: Z-Image (0.0002) | Flux (0.00012) | Turbo (0.0003)</p>\n' +
+'        </div>\n' +
+'        <div class="space-y-2">\n' +
+'          <label class="text-sm font-medium leading-none">尺寸預設</label>\n' +
+'          <select id="size" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
+'            <option value="square-1k" selected>方形 1024x1024</option>\n' +
+'            <option value="square-1.5k">方形 1536x1536</option>\n' +
+'            <option value="square-2k">方形 2048x2048</option>\n' +
+'            <option value="portrait-9-16-hd">豎屏 1080x1920</option>\n' +
+'            <option value="landscape-16-9-hd">橫屏 1920x1080</option>\n' +
+'            <option value="instagram-square">Instagram 方形</option>\n' +
+'            <option value="wallpaper-fhd">桌布 Full HD</option>\n' +
+'          </select>\n' +
+'        </div>\n' +
+'        <div class="space-y-2">\n' +
+'          <label class="text-sm font-medium leading-none flex items-center gap-2"><span>🎨</span><span>藝術風格</span></label>\n' +
+'          <select id="style" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
 styleOptionsHTML +
-'          </select>' +
-'          <p class="text-xs text-purple-400 font-medium">✨ 45+ 種風格可選，分 13 大類</p>' +
-'        </div>' +
-'        <div class="space-y-2">' +
-'          <label class="text-sm font-medium leading-none">質量模式</label>' +
-'          <select id="qualityMode" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
-'            <option value="economy">經濟模式 (快速)</option>' +
-'            <option value="standard" selected>標準模式 (平衡)</option>' +
-'            <option value="ultra">超高清模式 (極致)</option>' +
-'          </select>' +
-'        </div>' +
-'        <div class="pt-2">' +
-'          <button type="button" id="advancedToggle" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline cursor-pointer">' +
-'            <span id="advancedToggleIcon">▼</span><span>進階選項</span>' +
-'          </button>' +
-'        </div>' +
-'        <div id="advancedSection" class="hidden space-y-4">' +
-'          <div class="space-y-2">' +
-'            <label class="text-sm font-medium leading-none">Seed</label>' +
-'            <input type="number" id="seed" value="-1" min="-1" max="999999" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
-'            <p class="text-xs text-muted-foreground">-1 = 隨機</p>' +
-'          </div>' +
-'          <div class="space-y-2">' +
-'            <label class="text-sm font-medium leading-none">生成數量</label>' +
-'            <input type="number" id="numOutputs" value="1" min="1" max="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">' +
-'          </div>' +
-'          <div class="flex items-center space-x-2">' +
-'            <input type="checkbox" id="autoOptimize" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">' +
-'            <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">自動優化參數</label>' +
-'          </div>' +
-'          <div class="flex items-center space-x-2">' +
-'            <input type="checkbox" id="autoHD" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">' +
-'            <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">自動HD增強</label>' +
-'          </div>' +
-'        </div>' +
-'        <button type="submit" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full gap-2 shadow-lg shadow-primary/25 active:scale-95">' +
-'          <span class="text-lg">🎨</span><span class="font-bold">開始生成</span>' +
-'        </button>' +
-'      </form>' +
-'    </div>' +
-'  </div>' +
-'</aside>';
-}
-function getCenterPanel() {
-  return '<section class="lg:col-span-6 space-y-4">' +
-'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
-'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
-'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">' +
-'        <span>🖼️</span><span>生成結果</span>' +
-'      </h3>' +
-'    </div>' +
-'    <div class="p-6 pt-0">' +
-'      <div id="results">' +
-'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">' +
-'          <div class="rounded-full bg-muted/50 p-6 mb-4">' +
-'            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-'              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect>' +
-'              <circle cx="8.5" cy="8.5" r="1.5"></circle>' +
-'              <polyline points="21 15 16 10 5 21" stroke-width="2"></polyline>' +
-'            </svg>' +
-'          </div>' +
-'          <h4 class="text-lg font-semibold mb-2">尚未生成任何圖像</h4>' +
-'          <p class="text-sm text-muted-foreground max-w-sm">填寫左側參數並輸入提示詞後點擊生成按鈕</p>' +
-'        </div>' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'</section>';
+'          </select>\n' +
+'          <p class="text-xs text-purple-400 font-medium">✨ 45+ 種風格可選，分 13 大類</p>\n' +
+'        </div>\n' +
+'        <div class="space-y-2">\n' +
+'          <label class="text-sm font-medium leading-none">質量模式</label>\n' +
+'          <select id="qualityMode" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
+'            <option value="economy">經濟模式 (快速)</option>\n' +
+'            <option value="standard" selected>標準模式 (平衡)</option>\n' +
+'            <option value="ultra">超高清模式 (極致)</option>\n' +
+'          </select>\n' +
+'        </div>\n' +
+'        <div class="pt-2">\n' +
+'          <button type="button" id="advancedToggle" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline cursor-pointer">\n' +
+'            <span id="advancedToggleIcon">▼</span><span>進階選項</span>\n' +
+'          </button>\n' +
+'        </div>\n' +
+'        <div id="advancedSection" class="hidden space-y-4">\n' +
+'          <div class="space-y-2">\n' +
+'            <label class="text-sm font-medium leading-none">Seed</label>\n' +
+'            <input type="number" id="seed" value="-1" min="-1" max="999999" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
+'            <p class="text-xs text-muted-foreground">-1 = 隨機</p>\n' +
+'          </div>\n' +
+'          <div class="space-y-2">\n' +
+'            <label class="text-sm font-medium leading-none">生成數量</label>\n' +
+'            <input type="number" id="numOutputs" value="1" min="1" max="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">\n' +
+'          </div>\n' +
+'          <div class="flex items-center space-x-2">\n' +
+'            <input type="checkbox" id="autoOptimize" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">\n' +
+'            <label for="autoOptimize" class="text-sm font-medium leading-none cursor-pointer">自動優化參數</label>\n' +
+'          </div>\n' +
+'          <div class="flex items-center space-x-2">\n' +
+'            <input type="checkbox" id="autoHD" checked class="h-4 w-4 rounded border-input text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer">\n' +
+'            <label for="autoHD" class="text-sm font-medium leading-none cursor-pointer">自動HD增強</label>\n' +
+'          </div>\n' +
+'        </div>\n' +
+'        <button type="submit" id="generateBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8 w-full gap-2 shadow-lg shadow-primary/25 active:scale-95">\n' +
+'          <span class="text-lg">🎨</span><span class="font-bold">開始生成</span>\n' +
+'        </button>\n' +
+'      </form>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</aside>\n';
 }
 
+function getCenterPanel() {
+  return '<section class="lg:col-span-6 space-y-4">\n' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
+'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
+'        <span>🖼️</span><span>生成結果</span>\n' +
+'      </h3>\n' +
+'    </div>\n' +
+'    <div class="p-6 pt-0">\n' +
+'      <div id="results">\n' +
+'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">\n' +
+'          <div class="rounded-full bg-muted/50 p-6 mb-4">\n' +
+'            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
+'              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect>\n' +
+'              <circle cx="8.5" cy="8.5" r="1.5"></circle>\n' +
+'              <polyline points="21 15 16 10 5 21" stroke-width="2"></polyline>\n' +
+'            </svg>\n' +
+'          </div>\n' +
+'          <h4 class="text-lg font-semibold mb-2">尚未生成任何圖像</h4>\n' +
+'          <p class="text-sm text-muted-foreground max-w-sm">填寫左側參數並輸入提示詞後點擊生成按鈕</p>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</section>\n';
+}
 function getRightPanel(apiEndpoint) {
-  return '<aside class="lg:col-span-3 space-y-4">' +
-'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
-'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
-'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">' +
-'        <span>💬</span><span>提示詞</span>' +
-'      </h3>' +
-'    </div>' +
-'    <div class="p-6 pt-0 space-y-4">' +
-'      <div class="space-y-2">' +
-'        <label class="text-sm font-medium leading-none">正面提示詞</label>' +
-'        <textarea id="prompt" rows="6" placeholder="描述你想生成的圖像...\n\n例如：\n• A beautiful sunset over mountains\n• 一隻可愛的貓咪在花園裡玩耍\n• Cyberpunk city at night, neon lights\n• Anime girl with blue hair" class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y" required></textarea>' +
-'        <p class="text-xs text-primary font-medium">✅ 支持中文自動翻譯</p>' +
-'      </div>' +
-'      <div class="space-y-2">' +
-'        <label class="text-sm font-medium leading-none">負面提示詞 (可選)</label>' +
-'        <textarea id="negativePrompt" rows="3" placeholder="描述不想要的內容...\n\n例如：\n• blurry, low quality, distorted\n• ugly, deformed, bad anatomy" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>' +
-'      </div>' +
-'      <div class="space-y-2">' +
-'        <label class="text-sm font-medium leading-none">參考圖像 URL (可選)</label>' +
-'        <textarea id="referenceImages" rows="3" placeholder="多張圖片用逗號分隔\n\n例如：\nhttps://example.com/image1.jpg,\nhttps://example.com/image2.jpg" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>' +
-'        <p class="text-xs text-muted-foreground">📌 支持圖生圖的模型：Kontext</p>' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'  <div class="rounded-lg border border-purple-500/20 bg-purple-500/5 p-4">' +
-'    <div class="flex items-start gap-3">' +
-'      <div class="rounded-lg bg-purple-500/10 p-2"><span class="text-2xl">🎨</span></div>' +
-'      <div class="flex-1 space-y-1">' +
-'        <h4 class="text-sm font-semibold text-purple-400">風格提示</h4>' +
-'        <p class="text-xs text-muted-foreground">當前已選: <span id="currentStyleName" class="text-foreground font-medium">無風格</span></p>' +
-'        <p id="styleDescription" class="text-xs text-muted-foreground/80">使用原始提示詞</p>' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">' +
-'    <div class="flex flex-col space-y-1.5 p-6 pb-4">' +
-'      <h3 class="text-sm font-semibold leading-none tracking-tight flex items-center gap-2">' +
-'        <span>📋</span><span>當前配置</span>' +
-'      </h3>' +
-'    </div>' +
-'    <div class="p-6 pt-0 space-y-3">' +
-'      <div class="space-y-1">' +
-'        <div class="text-xs font-medium text-muted-foreground">模型</div>' +
-'        <div id="previewModel" class="text-sm font-medium">Z-Image Turbo</div>' +
-'      </div>' +
-'      <div class="h-px bg-border"></div>' +
-'      <div class="space-y-1">' +
-'        <div class="text-xs font-medium text-muted-foreground">尺寸</div>' +
-'        <div id="previewSize" class="text-sm font-medium">1024x1024</div>' +
-'      </div>' +
-'      <div class="h-px bg-border"></div>' +
-'      <div class="space-y-1">' +
-'        <div class="text-xs font-medium text-muted-foreground">風格</div>' +
-'        <div id="previewStyle" class="text-sm font-medium">無風格</div>' +
-'      </div>' +
-'      <div class="h-px bg-border"></div>' +
-'      <div class="space-y-1">' +
-'        <div class="text-xs font-medium text-muted-foreground">API 端點</div>' +
-'        <div class="text-xs font-mono text-muted-foreground/80 break-all">' + apiEndpoint + '</div>' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'</aside>' +
-'      </div>' +
-'    </div>' +
-'  </div>';
+  return '<aside class="lg:col-span-3 space-y-4">\n' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
+'      <h3 class="text-xl font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
+'        <span>💬</span><span>提示詞</span>\n' +
+'      </h3>\n' +
+'    </div>\n' +
+'    <div class="p-6 pt-0 space-y-4">\n' +
+'      <div class="space-y-2">\n' +
+'        <label class="text-sm font-medium leading-none">正面提示詞</label>\n' +
+'        <textarea id="prompt" rows="6" placeholder="描述你想生成的圖像...\n\n例如：\n• A beautiful sunset over mountains\n• 一隻可愛的貓咪在花園裡玩耍\n• Cyberpunk city at night, neon lights\n• Anime girl with blue hair" class="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y" required></textarea>\n' +
+'        <p class="text-xs text-primary font-medium">✅ 支持中文自動翻譯</p>\n' +
+'      </div>\n' +
+'      <div class="space-y-2">\n' +
+'        <label class="text-sm font-medium leading-none">負面提示詞 (可選)</label>\n' +
+'        <textarea id="negativePrompt" rows="3" placeholder="描述不想要的內容...\n\n例如：\n• blurry, low quality, distorted\n• ugly, deformed, bad anatomy" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>\n' +
+'      </div>\n' +
+'      <div class="space-y-2">\n' +
+'        <label class="text-sm font-medium leading-none">參考圖像 URL (可選)</label>\n' +
+'        <textarea id="referenceImages" rows="3" placeholder="多張圖片用逗號分隔\n\n例如：\nhttps://example.com/image1.jpg,\nhttps://example.com/image2.jpg" class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"></textarea>\n' +
+'        <p class="text-xs text-muted-foreground">📌 支持圖生圖的模型：Kontext</p>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'  <div class="rounded-lg border border-purple-500/20 bg-purple-500/5 p-4">\n' +
+'    <div class="flex items-start gap-3">\n' +
+'      <div class="rounded-lg bg-purple-500/10 p-2"><span class="text-2xl">🎨</span></div>\n' +
+'      <div class="flex-1 space-y-1">\n' +
+'        <h4 class="text-sm font-semibold text-purple-400">風格提示</h4>\n' +
+'        <p class="text-xs text-muted-foreground">當前已選: <span id="currentStyleName" class="text-foreground font-medium">無風格</span></p>\n' +
+'        <p id="styleDescription" class="text-xs text-muted-foreground/80">使用原始提示詞</p>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm">\n' +
+'    <div class="flex flex-col space-y-1.5 p-6 pb-4">\n' +
+'      <h3 class="text-sm font-semibold leading-none tracking-tight flex items-center gap-2">\n' +
+'        <span>📋</span><span>當前配置</span>\n' +
+'      </h3>\n' +
+'    </div>\n' +
+'    <div class="p-6 pt-0 space-y-3">\n' +
+'      <div class="space-y-1">\n' +
+'        <div class="text-xs font-medium text-muted-foreground">模型</div>\n' +
+'        <div id="previewModel" class="text-sm font-medium">Z-Image Turbo</div>\n' +
+'      </div>\n' +
+'      <div class="h-px bg-border"></div>\n' +
+'      <div class="space-y-1">\n' +
+'        <div class="text-xs font-medium text-muted-foreground">尺寸</div>\n' +
+'        <div id="previewSize" class="text-sm font-medium">1024x1024</div>\n' +
+'      </div>\n' +
+'      <div class="h-px bg-border"></div>\n' +
+'      <div class="space-y-1">\n' +
+'        <div class="text-xs font-medium text-muted-foreground">風格</div>\n' +
+'        <div id="previewStyle" class="text-sm font-medium">無風格</div>\n' +
+'      </div>\n' +
+'      <div class="h-px bg-border"></div>\n' +
+'      <div class="space-y-1">\n' +
+'        <div class="text-xs font-medium text-muted-foreground">API 端點</div>\n' +
+'        <div class="text-xs font-mono text-muted-foreground/80 break-all">' + apiEndpoint + '</div>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</aside>\n';
 }
 
 function getHistoryPage() {
-  return '<div id="historyPage" class="page hidden">' +
-'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">' +
-'      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm mb-6">' +
-'        <div class="p-6">' +
-'          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">' +
-'            <div class="flex flex-wrap items-center gap-6">' +
-'              <div class="space-y-1">' +
-'                <div class="text-xs font-medium text-muted-foreground">📊 總記錄數</div>' +
-'                <div id="historyTotal" class="text-3xl font-bold text-primary">0</div>' +
-'              </div>' +
-'              <div class="hidden sm:block h-12 w-px bg-border"></div>' +
-'              <div class="space-y-1">' +
-'                <div class="text-xs font-medium text-muted-foreground">💾 存儲空間</div>' +
-'                <div id="storageSize" class="text-2xl font-bold">0 KB</div>' +
-'              </div>' +
-'              <div class="hidden sm:block h-12 w-px bg-border"></div>' +
-'              <div class="space-y-1">' +
-'                <div class="text-xs font-medium text-muted-foreground">🎨 最近風格</div>' +
-'                <div id="recentStyle" class="text-sm font-medium">-</div>' +
-'              </div>' +
-'            </div>' +
-'            <div class="flex items-center gap-2">' +
-'              <button id="exportBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">' +
-'                <span>📥</span><span>導出</span>' +
-'              </button>' +
-'              <button id="clearBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 gap-2">' +
-'                <span>🗑️</span><span>清空</span>' +
-'              </button>' +
-'            </div>' +
-'          </div>' +
-'        </div>' +
-'      </div>' +
-'      <div id="historyList">' +
-'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">' +
-'          <div class="rounded-full bg-muted/50 p-6 mb-4">' +
-'            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-'              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>' +
-'            </svg>' +
-'          </div>' +
-'          <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>' +
-'          <p class="text-sm text-muted-foreground max-w-sm">生成的圖像會自動保存在這裡</p>' +
-'        </div>' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'</main>';
+  return '<div id="historyPage" class="page hidden">\n' +
+'    <div class="container max-w-screen-2xl mx-auto p-4 lg:p-6">\n' +
+'      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm mb-6">\n' +
+'        <div class="p-6">\n' +
+'          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">\n' +
+'            <div class="flex flex-wrap items-center gap-6">\n' +
+'              <div class="space-y-1">\n' +
+'                <div class="text-xs font-medium text-muted-foreground">📊 總記錄數</div>\n' +
+'                <div id="historyTotal" class="text-3xl font-bold text-primary">0</div>\n' +
+'              </div>\n' +
+'              <div class="hidden sm:block h-12 w-px bg-border"></div>\n' +
+'              <div class="space-y-1">\n' +
+'                <div class="text-xs font-medium text-muted-foreground">💾 存儲空間</div>\n' +
+'                <div id="storageSize" class="text-2xl font-bold">0 KB</div>\n' +
+'              </div>\n' +
+'              <div class="hidden sm:block h-12 w-px bg-border"></div>\n' +
+'              <div class="space-y-1">\n' +
+'                <div class="text-xs font-medium text-muted-foreground">🎨 最近風格</div>\n' +
+'                <div id="recentStyle" class="text-sm font-medium">-</div>\n' +
+'              </div>\n' +
+'            </div>\n' +
+'            <div class="flex items-center gap-2">\n' +
+'              <button id="exportBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 gap-2">\n' +
+'                <span>📥</span><span>導出</span>\n' +
+'              </button>\n' +
+'              <button id="clearBtn" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 h-10 px-4 gap-2">\n' +
+'                <span>🗑️</span><span>清空</span>\n' +
+'              </button>\n' +
+'            </div>\n' +
+'          </div>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'      <div id="historyList">\n' +
+'        <div class="flex flex-col items-center justify-center py-16 px-4 text-center">\n' +
+'          <div class="rounded-full bg-muted/50 p-6 mb-4">\n' +
+'            <svg class="w-16 h-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
+'              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>\n' +
+'            </svg>\n' +
+'          </div>\n' +
+'          <h4 class="text-lg font-semibold mb-2">暫無歷史記錄</h4>\n' +
+'          <p class="text-sm text-muted-foreground max-w-sm">生成的圖像會自動保存在這裡</p>\n' +
+'        </div>\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n';
 }
-function getModalAndScripts() {
-  return '<div id="imageModal" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">' +
-'  <div class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl p-4">' +
-'    <div class="relative">' +
-'      <button id="modalCloseBtn" class="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm p-2 text-foreground transition-all hover:bg-background hover:rotate-90 focus:outline-none focus:ring-2 focus:ring-ring">' +
-'        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">' +
-'          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>' +
-'        </svg>' +
-'      </button>' +
-'      <div class="rounded-lg overflow-hidden border border-border shadow-2xl">' +
-'        <img id="modalImage" src="" alt="Preview" class="w-full h-auto max-h-[85vh] object-contain bg-black">' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'</div>' +
-'</div>' +
-'<' + 'script>' +
-'const STYLE_PRESETS = ' + JSON.stringify(CONFIG.STYLE_PRESETS) + ';' +
-'const PRESET_SIZES = ' + JSON.stringify(CONFIG.PRESET_SIZES) + ';' +
-'const STORAGE_KEY = "flux_ai_history";' +
-'const MAX_HISTORY = 100;' +
-'document.querySelectorAll(".nav-btn").forEach(btn => {' +
-'  btn.addEventListener("click", function() {' +
-'    const pageName = this.dataset.page;' +
-'    document.querySelectorAll(".page").forEach(p => {' +
-'      p.classList.remove("active");' +
-'      p.classList.add("hidden");' +
-'    });' +
-'    document.querySelectorAll(".nav-btn").forEach(b => {' +
-'      b.classList.remove("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");' +
-'      b.classList.add("border", "border-input", "bg-background", "hover:bg-accent");' +
-'    });' +
-'    document.getElementById(pageName + "Page").classList.remove("hidden");' +
-'    document.getElementById(pageName + "Page").classList.add("active");' +
-'    this.classList.add("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");' +
-'    this.classList.remove("border", "border-input", "bg-background", "hover:bg-accent");' +
-'    if (pageName === "history") updateHistoryDisplay();' +
-'  });' +
-'});' +
-'document.getElementById("advancedToggle").addEventListener("click", function() {' +
-'  const section = document.getElementById("advancedSection");' +
-'  const icon = document.getElementById("advancedToggleIcon");' +
-'  if (section.classList.contains("hidden")) {' +
-'    section.classList.remove("hidden");' +
-'    icon.textContent = "▲";' +
-'  } else {' +
-'    section.classList.add("hidden");' +
-'    icon.textContent = "▼";' +
-'  }' +
-'});' +
-'function updateStyleDescription() {' +
-'  const styleSelect = document.getElementById("style");' +
-'  const selectedStyle = styleSelect.value;' +
-'  const styleConfig = STYLE_PRESETS[selectedStyle];' +
-'  if (styleConfig) {' +
-'    document.getElementById("currentStyleName").textContent = styleConfig.name;' +
-'    document.getElementById("styleDescription").textContent = styleConfig.description || "無描述";' +
-'  }' +
-'}' +
-'function updatePreview() {' +
-'  const model = document.getElementById("model").value;' +
-'  const sizePreset = document.getElementById("size").value;' +
-'  const style = document.getElementById("style").value;' +
-'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];' +
-'  const styleConfig = STYLE_PRESETS[style];' +
-'  const modelNames = {' +
-'    "zimage": "Z-Image Turbo ⚡",' +
-'    "flux": "Flux 標準版",' +
-'    "turbo": "Flux Turbo ⚡",' +
-'    "kontext": "Kontext 🎨"' +
-'  };' +
-'  document.getElementById("previewModel").textContent = modelNames[model] || model;' +
-'  document.getElementById("previewSize").textContent = sizeConfig.name + " (" + sizeConfig.width + "x" + sizeConfig.height + ")";' +
-'  document.getElementById("previewStyle").textContent = styleConfig ? styleConfig.icon + " " + styleConfig.name : "無風格";' +
-'  updateStyleDescription();' +
-'}' +
-'document.getElementById("model").addEventListener("change", updatePreview);' +
-'document.getElementById("size").addEventListener("change", updatePreview);' +
-'document.getElementById("style").addEventListener("change", updatePreview);' +
-'updatePreview();' +
-'function getHistory() {' +
-'  try {' +
-'    const data = localStorage.getItem(STORAGE_KEY);' +
-'    return data ? JSON.parse(data) : [];' +
-'  } catch (e) {' +
-'    console.error("Failed to load history:", e);' +
-'    return [];' +
-'  }' +
-'}' +
-'function saveHistory(history) {' +
-'  try {' +
-'    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));' +
-'    updateHistoryStats();' +
-'  } catch (e) {' +
-'    console.error("Failed to save history:", e);' +
-'  }' +
-'}' +
-'function addToHistory(item) {' +
-'  let history = getHistory();' +
-'  history.unshift({' +
-'    ...item,' +
-'    id: Date.now() + Math.random(),' +
-'    timestamp: new Date().toISOString()' +
-'  });' +
-'  if (history.length > MAX_HISTORY) {' +
-'    history = history.slice(0, MAX_HISTORY);' +
-'  }' +
-'  saveHistory(history);' +
-'}' +
-'function deleteFromHistory(id) {' +
-'  if (!confirm("確定要刪除這條記錄嗎？")) return;' +
-'  let history = getHistory();' +
-'  history = history.filter(item => item.id !== id);' +
-'  saveHistory(history);' +
-'  updateHistoryDisplay();' +
-'}' +
-'function clearHistory() {' +
-'  if (!confirm("確定要清空所有歷史記錄嗎？此操作不可恢復！")) return;' +
-'  localStorage.removeItem(STORAGE_KEY);' +
-'  updateHistoryDisplay();' +
-'  updateHistoryStats();' +
-'}' +
-'function exportHistory() {' +
-'  const history = getHistory();' +
-'  const dataStr = JSON.stringify(history, null, 2);' +
-'  const dataBlob = new Blob([dataStr], { type: "application/json" });' +
-'  const url = URL.createObjectURL(dataBlob);' +
-'  const link = document.createElement("a");' +
-'  link.href = url;' +
-'  link.download = "flux-ai-history-" + new Date().toISOString().split("T")[0] + ".json";' +
-'  link.click();' +
-'  URL.revokeObjectURL(url);' +
-'}' +
-'function updateHistoryStats() {' +
-'  const history = getHistory();' +
-'  document.getElementById("historyCount").textContent = history.length;' +
-'  document.getElementById("historyTotal").textContent = history.length;' +
-'  const sizeKB = new Blob([JSON.stringify(history)]).size / 1024;' +
-'  document.getElementById("storageSize").textContent = sizeKB.toFixed(1) + " KB";' +
-'  if (history.length > 0) {' +
-'    const styleConfig = STYLE_PRESETS[history[0].style];' +
-'    document.getElementById("recentStyle").textContent = styleConfig ? styleConfig.name : history[0].style;' +
-'  } else {' +
-'    document.getElementById("recentStyle").textContent = "-";' +
-'  }' +
-'}' +
-'function updateHistoryDisplay() {' +
-'  const history = getHistory();' +
-'  const historyList = document.getElementById("historyList");' +
-'  if (history.length === 0) {' +
-'    historyList.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"rounded-full bg-muted/50 p-6 mb-4\\"><svg class=\\"w-16 h-16 text-muted-foreground\\" fill=\\"none\\" stroke=\\"currentColor\\" viewBox=\\"0 0 24 24\\"><path stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" stroke-width=\\"2\\" d=\\"M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z\\"></path></svg></div><h4 class=\\"text-lg font-semibold mb-2\\">暫無歷史記錄</h4><p class=\\"text-sm text-muted-foreground max-w-sm\\">生成的圖像會自動保存在這裡</p></div>";' +
-'    updateHistoryStats();' +
-'    return;' +
-'  }' +
-'  const galleryDiv = document.createElement("div");' +
-'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";' +
-'  history.forEach(item => {' +
-'    const date = new Date(item.timestamp);' +
-'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });' +
-'    const styleConfig = STYLE_PRESETS[item.style];' +
-'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;' +
-'    const itemDiv = document.createElement("div");' +
-'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group";' +
-'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"History\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300\\"></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"delete-btn inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-8 px-3\\"><span>🗑️</span></button></div></div>";' +
-'    const img = itemDiv.querySelector("img");' +
-'    img.addEventListener("click", () => openModal(item.url));' +
-'    const reuseBtn = itemDiv.querySelector(".reuse-btn");' +
-'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));' +
-'    const downloadBtn = itemDiv.querySelector(".download-btn");' +
-'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));' +
-'    const deleteBtn = itemDiv.querySelector(".delete-btn");' +
-'    deleteBtn.addEventListener("click", () => deleteFromHistory(item.id));' +
-'    galleryDiv.appendChild(itemDiv);' +
-'  });' +
-'  historyList.innerHTML = "";' +
-'  historyList.appendChild(galleryDiv);' +
-'  updateHistoryStats();' +
-'}' +
-'function reusePrompt(id) {' +
-'  const history = getHistory();' +
-'  const item = history.find(h => h.id === id);' +
-'  if (!item) return;' +
-'  document.getElementById("prompt").value = item.prompt || "";' +
-'  document.getElementById("model").value = item.model || "zimage";' +
-'  document.getElementById("seed").value = item.seed || -1;' +
-'  document.getElementById("style").value = item.style || "none";' +
-'  document.getElementById("negativePrompt").value = item.negative_prompt || "";' +
-'  document.getElementById("referenceImages").value = (item.reference_images || []).join(", ");' +
-'  updatePreview();' +
-'  document.querySelector("[data-page=\\"generate\\"]").click();' +
-'  document.getElementById("prompt").focus();' +
-'}' +
-'function downloadImage(url, seed) {' +
-'  const link = document.createElement("a");' +
-'  link.href = url;' +
-'  link.download = "flux-ai-" + seed + "-" + Date.now() + ".png";' +
-'  link.click();' +
-'}' +
-'function openModal(url) {' +
-'  document.getElementById("modalImage").src = url;' +
-'  document.getElementById("imageModal").classList.remove("hidden");' +
-'}' +
-'function closeModal() {' +
-'  document.getElementById("imageModal").classList.add("hidden");' +
-'}' +
-'document.getElementById("exportBtn").addEventListener("click", exportHistory);' +
-'document.getElementById("clearBtn").addEventListener("click", clearHistory);' +
-'document.getElementById("modalCloseBtn").addEventListener("click", closeModal);' +
-'document.getElementById("imageModal").addEventListener("click", function(e) {' +
-'  if (e.target === this) closeModal();' +
-'});' +
-getFormSubmitScript() +
-'<' + '/script>' +
-'<' + '/body>' +
-'<' + '/html>';
+
+function getModal() {
+  return '<div id="imageModal" class="hidden fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">\n' +
+'  <div class="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl p-4">\n' +
+'    <div class="relative">\n' +
+'      <button id="modalCloseBtn" class="absolute -top-12 right-0 rounded-full bg-background/80 backdrop-blur-sm p-2 text-foreground transition-all hover:bg-background hover:rotate-90 focus:outline-none focus:ring-2 focus:ring-ring">\n' +
+'        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">\n' +
+'          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>\n' +
+'        </svg>\n' +
+'      </button>\n' +
+'      <div class="rounded-lg overflow-hidden border border-border shadow-2xl">\n' +
+'        <img id="modalImage" src="" alt="Preview" class="w-full h-auto max-h-[85vh] object-contain bg-black">\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</div>\n';
 }
-function getFormSubmitScript() {
-  return 'function displayGeneratedImages(images) {' +
-'  const history = getHistory();' +
-'  const galleryDiv = document.createElement("div");' +
-'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn";' +
-'  const newImages = history.slice(0, images.length);' +
-'  newImages.forEach((item, index) => {' +
-'    const date = new Date(item.timestamp);' +
-'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });' +
-'    const styleConfig = STYLE_PRESETS[item.style];' +
-'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;' +
-'    const itemDiv = document.createElement("div");' +
-'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group";' +
-'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"Generated " + (index + 1) + "\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute top-2 left-2\\"><span class=\\"inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg\\">✅ 剛剛生成</span></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + (item.generation_mode ? " | " + item.generation_mode : "") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1\\"><span>📚</span><span>歷史</span></button></div></div>";' +
-'    const img = itemDiv.querySelector("img");' +
-'    img.addEventListener("click", () => openModal(item.url));' +
-'    const reuseBtn = itemDiv.querySelector(".reuse-result-btn");' +
-'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));' +
-'    const downloadBtn = itemDiv.querySelector(".download-result-btn");' +
-'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));' +
-'    const viewBtn = itemDiv.querySelector(".view-history-btn");' +
-'    viewBtn.addEventListener("click", () => {' +
-'      document.querySelector("[data-page=\\"history\\"]").click();' +
-'    });' +
-'    galleryDiv.appendChild(itemDiv);' +
-'  });' +
-'  const resultsDiv = document.getElementById("results");' +
-'  resultsDiv.innerHTML = "";' +
-'  const successDiv = document.createElement("div");' +
-'  successDiv.className = "rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4";' +
-'  successDiv.innerHTML = "<div class=\\"flex items-center gap-3\\"><div class=\\"rounded-lg bg-green-500/20 p-2\\"><span class=\\"text-2xl\\">✅</span></div><div><h4 class=\\"text-sm font-semibold text-green-400\\">生成成功！</h4><p class=\\"text-xs text-muted-foreground\\">已生成 " + images.length + " 張圖片並保存到歷史記錄</p></div></div>";' +
-'  resultsDiv.appendChild(successDiv);' +
-'  resultsDiv.appendChild(galleryDiv);' +
-'}' +
-'const form = document.getElementById("generateForm");' +
-'const resultsDiv = document.getElementById("results");' +
-'const generateBtn = document.getElementById("generateBtn");' +
-'form.addEventListener("submit", async (e) => {' +
-'  e.preventDefault();' +
-'  const prompt = document.getElementById("prompt").value;' +
-'  if (!prompt.trim()) {' +
-'    alert("請輸入提示詞");' +
-'    document.getElementById("prompt").focus();' +
-'    return;' +
-'  }' +
-'  const model = document.getElementById("model").value;' +
-'  const sizePreset = document.getElementById("size").value;' +
-'  const style = document.getElementById("style").value;' +
-'  const qualityMode = document.getElementById("qualityMode").value;' +
-'  const seed = parseInt(document.getElementById("seed").value);' +
-'  const numOutputs = parseInt(document.getElementById("numOutputs").value);' +
-'  const negativePrompt = document.getElementById("negativePrompt").value;' +
-'  const autoOptimize = document.getElementById("autoOptimize").checked;' +
-'  const autoHD = document.getElementById("autoHD").checked;' +
-'  const refImagesInput = document.getElementById("referenceImages").value;' +
-'  let referenceImages = [];' +
-'  if (refImagesInput.trim()) {' +
-'    referenceImages = refImagesInput.split(",").map(url => url.trim()).filter(url => url);' +
-'  }' +
-'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];' +
-'  generateBtn.disabled = true;' +
-'  generateBtn.innerHTML = "<div class=\\"spinner\\"></div><span>生成中...</span>";' +
-'  resultsDiv.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"spinner mb-4\\"></div><p class=\\"text-sm font-medium mb-2\\">正在生成圖像，請稍候...</p><p class=\\"text-xs text-muted-foreground\\">這可能需要幾秒鐘到一分鐘</p></div>";' +
-'  try {' +
-'    const response = await fetch("/_internal/generate", {' +
-'      method: "POST",' +
-'      headers: { "Content-Type": "application/json" },' +
-'      body: JSON.stringify({' +
-'        prompt,' +
-'        model,' +
-'        width: sizeConfig.width,' +
-'        height: sizeConfig.height,' +
-'        style,' +
-'        quality_mode: qualityMode,' +
-'        seed: seed,' +
-'        n: numOutputs,' +
-'        negative_prompt: negativePrompt,' +
-'        auto_optimize: autoOptimize,' +
-'        auto_hd: autoHD,' +
-'        reference_images: referenceImages' +
-'      })' +
-'    });' +
-'    const contentType = response.headers.get("content-type");' +
-'    if (!response.ok) {' +
-'      const errorText = await response.text();' +
-'      let errorMsg = "生成失敗";' +
-'      try {' +
-'        const errorJson = JSON.parse(errorText);' +
-'        errorMsg = errorJson.error?.message || errorMsg;' +
-'      } catch (e) {' +
-'        errorMsg = errorText.substring(0, 200);' +
-'      }' +
-'      resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + errorMsg + "</p></div></div></div>";' +
-'      if (response.status === 401 || response.status === 403) {' +
-'        resultsDiv.innerHTML += "<div class=\\"rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-amber-500/20 p-2\\"><span class=\\"text-2xl\\">⚠️</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-amber-400 mb-1\\">認證問題</h4><p class=\\"text-xs text-muted-foreground mb-2\\">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p><code class=\\"text-xs bg-background/50 px-2 py-1 rounded\\">wrangler secret put POLLINATIONS_API_KEY</code></div></div></div>";' +
-'      }' +
-'      return;' +
-'    }' +
-'    if (contentType && contentType.startsWith("image/")) {' +
-'      const imageBlob = await response.blob();' +
-'      const imageUrl = URL.createObjectURL(imageBlob);' +
-'      const modelUsed = response.headers.get("X-Model") || model;' +
-'      const seedUsed = parseInt(response.headers.get("X-Seed")) || seed;' +
-'      const widthUsed = parseInt(response.headers.get("X-Width")) || sizeConfig.width;' +
-'      const heightUsed = parseInt(response.headers.get("X-Height")) || sizeConfig.height;' +
-'      const qualityUsed = response.headers.get("X-Quality-Mode") || qualityMode;' +
-'      const styleUsed = response.headers.get("X-Style") || style;' +
-'      const genMode = response.headers.get("X-Generation-Mode") || "文生圖";' +
-'      addToHistory({' +
-'        url: imageUrl,' +
-'        prompt: prompt,' +
-'        model: modelUsed,' +
-'        seed: seedUsed,' +
-'        width: widthUsed,' +
-'        height: heightUsed,' +
-'        style: styleUsed,' +
-'        quality_mode: qualityUsed,' +
-'        negative_prompt: negativePrompt,' +
-'        reference_images: referenceImages,' +
-'        generation_mode: genMode' +
-'      });' +
-'      displayGeneratedImages([{' +
-'        url: imageUrl,' +
-'        model: modelUsed,' +
-'        seed: seedUsed,' +
-'        width: widthUsed,' +
-'        height: heightUsed,' +
-'        quality_mode: qualityUsed,' +
-'        style: styleUsed' +
-'      }]);' +
-'    } else if (contentType && contentType.includes("application/json")) {' +
-'      const data = await response.json();' +
-'      if (data.error) {' +
-'        resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + data.error.message + "</p></div></div></div>";' +
-'      } else {' +
-'        const images = data.data.map(item => {' +
-'          addToHistory({' +
-'            url: item.image,' +
-'            prompt: prompt,' +
-'            model: item.model,' +
-'            seed: item.seed,' +
-'            width: item.width,' +
-'            height: item.height,' +
-'            style: item.style,' +
-'            quality_mode: item.quality_mode,' +
-'            negative_prompt: negativePrompt,' +
-'            reference_images: referenceImages,' +
-'            generation_mode: item.generation_mode' +
-'          });' +
-'          return item;' +
-'        });' +
-'        displayGeneratedImages(images);' +
-'      }' +
-'    }' +
-'  } catch (error) {' +
-'    resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">網路錯誤</h4><p class=\\"text-xs text-muted-foreground\\">" + error.message + "</p></div></div></div>";' +
-'  } finally {' +
-'    generateBtn.disabled = false;' +
-'    generateBtn.innerHTML = "<span class=\\"text-lg\\">🎨</span><span class=\\"font-bold\\">開始生成</span>";' +
-'  }' +
-'});' +
-'window.addEventListener("DOMContentLoaded", () => {' +
-'  updateHistoryStats();' +
-'  updatePreview();' +
-'  console.log("✅ Flux AI Pro 已加載完成");' +
-'  console.log("📊 風格數量:", Object.keys(STYLE_PRESETS).length);' +
-'  console.log("🎨 Shadcn UI 風格已應用");' +
+function getJavaScript() {
+  // ⚠️ 關鍵修復：使用 \x3C 和 \x3E 來避免 </script> 標籤問題
+  return '\x3Cscript\x3E\n' +
+'const STYLE_PRESETS = ' + JSON.stringify(CONFIG.STYLE_PRESETS) + ';\n' +
+'const PRESET_SIZES = ' + JSON.stringify(CONFIG.PRESET_SIZES) + ';\n' +
+'const STORAGE_KEY = "flux_ai_history";\n' +
+'const MAX_HISTORY = 100;\n' +
+'\n' +
+'// 頁面切換\n' +
+'document.querySelectorAll(".nav-btn").forEach(btn => {\n' +
+'  btn.addEventListener("click", function() {\n' +
+'    const pageName = this.dataset.page;\n' +
+'    document.querySelectorAll(".page").forEach(p => {\n' +
+'      p.classList.remove("active");\n' +
+'      p.classList.add("hidden");\n' +
+'    });\n' +
+'    document.querySelectorAll(".nav-btn").forEach(b => {\n' +
+'      b.classList.remove("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");\n' +
+'      b.classList.add("border", "border-input", "bg-background", "hover:bg-accent");\n' +
+'    });\n' +
+'    document.getElementById(pageName + "Page").classList.remove("hidden");\n' +
+'    document.getElementById(pageName + "Page").classList.add("active");\n' +
+'    this.classList.add("bg-primary", "text-primary-foreground", "shadow", "hover:bg-primary/90");\n' +
+'    this.classList.remove("border", "border-input", "bg-background", "hover:bg-accent");\n' +
+'    if (pageName === "history") updateHistoryDisplay();\n' +
+'  });\n' +
+'});\n' +
+'\n' +
+'// 進階選項切換\n' +
+'document.getElementById("advancedToggle").addEventListener("click", function() {\n' +
+'  const section = document.getElementById("advancedSection");\n' +
+'  const icon = document.getElementById("advancedToggleIcon");\n' +
+'  if (section.classList.contains("hidden")) {\n' +
+'    section.classList.remove("hidden");\n' +
+'    icon.textContent = "▲";\n' +
+'  } else {\n' +
+'    section.classList.add("hidden");\n' +
+'    icon.textContent = "▼";\n' +
+'  }\n' +
+'});\n' +
+'\n' +
+'// 更新風格描述\n' +
+'function updateStyleDescription() {\n' +
+'  const styleSelect = document.getElementById("style");\n' +
+'  const selectedStyle = styleSelect.value;\n' +
+'  const styleConfig = STYLE_PRESETS[selectedStyle];\n' +
+'  if (styleConfig) {\n' +
+'    document.getElementById("currentStyleName").textContent = styleConfig.name;\n' +
+'    document.getElementById("styleDescription").textContent = styleConfig.description || "無描述";\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'// 更新預覽\n' +
+'function updatePreview() {\n' +
+'  const model = document.getElementById("model").value;\n' +
+'  const sizePreset = document.getElementById("size").value;\n' +
+'  const style = document.getElementById("style").value;\n' +
+'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];\n' +
+'  const styleConfig = STYLE_PRESETS[style];\n' +
+'  const modelNames = {\n' +
+'    "zimage": "Z-Image Turbo ⚡",\n' +
+'    "flux": "Flux 標準版",\n' +
+'    "turbo": "Flux Turbo ⚡",\n' +
+'    "kontext": "Kontext 🎨"\n' +
+'  };\n' +
+'  document.getElementById("previewModel").textContent = modelNames[model] || model;\n' +
+'  document.getElementById("previewSize").textContent = sizeConfig.name + " (" + sizeConfig.width + "x" + sizeConfig.height + ")";\n' +
+'  document.getElementById("previewStyle").textContent = styleConfig ? styleConfig.icon + " " + styleConfig.name : "無風格";\n' +
+'  updateStyleDescription();\n' +
+'}\n' +
+'\n' +
+'document.getElementById("model").addEventListener("change", updatePreview);\n' +
+'document.getElementById("size").addEventListener("change", updatePreview);\n' +
+'document.getElementById("style").addEventListener("change", updatePreview);\n' +
+'updatePreview();\n' +
+'\n' +
+'// 歷史記錄功能\n' +
+'function getHistory() {\n' +
+'  try {\n' +
+'    const data = localStorage.getItem(STORAGE_KEY);\n' +
+'    return data ? JSON.parse(data) : [];\n' +
+'  } catch (e) {\n' +
+'    console.error("Failed to load history:", e);\n' +
+'    return [];\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function saveHistory(history) {\n' +
+'  try {\n' +
+'    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));\n' +
+'    updateHistoryStats();\n' +
+'  } catch (e) {\n' +
+'    console.error("Failed to save history:", e);\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function addToHistory(item) {\n' +
+'  let history = getHistory();\n' +
+'  history.unshift({\n' +
+'    ...item,\n' +
+'    id: Date.now() + Math.random(),\n' +
+'    timestamp: new Date().toISOString()\n' +
+'  });\n' +
+'  if (history.length > MAX_HISTORY) {\n' +
+'    history = history.slice(0, MAX_HISTORY);\n' +
+'  }\n' +
+'  saveHistory(history);\n' +
+'}\n' +
+'\n' +
+'function deleteFromHistory(id) {\n' +
+'  if (!confirm("確定要刪除這條記錄嗎？")) return;\n' +
+'  let history = getHistory();\n' +
+'  history = history.filter(item => item.id !== id);\n' +
+'  saveHistory(history);\n' +
+'  updateHistoryDisplay();\n' +
+'}\n' +
+'\n' +
+'function clearHistory() {\n' +
+'  if (!confirm("確定要清空所有歷史記錄嗎？此操作不可恢復！")) return;\n' +
+'  localStorage.removeItem(STORAGE_KEY);\n' +
+'  updateHistoryDisplay();\n' +
+'  updateHistoryStats();\n' +
+'}\n' +
+'\n' +
+'function exportHistory() {\n' +
+'  const history = getHistory();\n' +
+'  const dataStr = JSON.stringify(history, null, 2);\n' +
+'  const dataBlob = new Blob([dataStr], { type: "application/json" });\n' +
+'  const url = URL.createObjectURL(dataBlob);\n' +
+'  const link = document.createElement("a");\n' +
+'  link.href = url;\n' +
+'  link.download = "flux-ai-history-" + new Date().toISOString().split("T")[0] + ".json";\n' +
+'  link.click();\n' +
+'  URL.revokeObjectURL(url);\n' +
+'}\n' +
+'\n' +
+'function updateHistoryStats() {\n' +
+'  const history = getHistory();\n' +
+'  document.getElementById("historyCount").textContent = history.length;\n' +
+'  document.getElementById("historyTotal").textContent = history.length;\n' +
+'  const sizeKB = new Blob([JSON.stringify(history)]).size / 1024;\n' +
+'  document.getElementById("storageSize").textContent = sizeKB.toFixed(1) + " KB";\n' +
+'  if (history.length > 0) {\n' +
+'    const styleConfig = STYLE_PRESETS[history[0].style];\n' +
+'    document.getElementById("recentStyle").textContent = styleConfig ? styleConfig.name : history[0].style;\n' +
+'  } else {\n' +
+'    document.getElementById("recentStyle").textContent = "-";\n' +
+'  }\n' +
+'}\n' +
+'\n' +
+'function updateHistoryDisplay() {\n' +
+'  const history = getHistory();\n' +
+'  const historyList = document.getElementById("historyList");\n' +
+'  if (history.length === 0) {\n' +
+'    historyList.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"rounded-full bg-muted/50 p-6 mb-4\\"><svg class=\\"w-16 h-16 text-muted-foreground\\" fill=\\"none\\" stroke=\\"currentColor\\" viewBox=\\"0 0 24 24\\"><path stroke-linecap=\\"round\\" stroke-linejoin=\\"round\\" stroke-width=\\"2\\" d=\\"M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z\\"></path></svg></div><h4 class=\\"text-lg font-semibold mb-2\\">暫無歷史記錄</h4><p class=\\"text-sm text-muted-foreground max-w-sm\\">生成的圖像會自動保存在這裡</p></div>";\n' +
+'    updateHistoryStats();\n' +
+'    return;\n' +
+'  }\n' +
+'  const galleryDiv = document.createElement("div");\n' +
+'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";\n' +
+'  history.forEach(item => {\n' +
+'    const date = new Date(item.timestamp);\n' +
+'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });\n' +
+'    const styleConfig = STYLE_PRESETS[item.style];\n' +
+'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;\n' +
+'    const itemDiv = document.createElement("div");\n' +
+'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group";\n' +
+'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"History\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300\\"></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"delete-btn inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground h-8 px-3\\"><span>🗑️</span></button></div></div>";\n' +
+'    const img = itemDiv.querySelector("img");\n' +
+'    img.addEventListener("click", () => openModal(item.url));\n' +
+'    const reuseBtn = itemDiv.querySelector(".reuse-btn");\n' +
+'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));\n' +
+'    const downloadBtn = itemDiv.querySelector(".download-btn");\n' +
+'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));\n' +
+'    const deleteBtn = itemDiv.querySelector(".delete-btn");\n' +
+'    deleteBtn.addEventListener("click", () => deleteFromHistory(item.id));\n' +
+'    galleryDiv.appendChild(itemDiv);\n' +
+'  });\n' +
+'  historyList.innerHTML = "";\n' +
+'  historyList.appendChild(galleryDiv);\n' +
+'  updateHistoryStats();\n' +
+'}\n' +
+'\n' +
+'function reusePrompt(id) {\n' +
+'  const history = getHistory();\n' +
+'  const item = history.find(h => h.id === id);\n' +
+'  if (!item) return;\n' +
+'  document.getElementById("prompt").value = item.prompt || "";\n' +
+'  document.getElementById("model").value = item.model || "zimage";\n' +
+'  document.getElementById("seed").value = item.seed || -1;\n' +
+'  document.getElementById("style").value = item.style || "none";\n' +
+'  document.getElementById("negativePrompt").value = item.negative_prompt || "";\n' +
+'  document.getElementById("referenceImages").value = (item.reference_images || []).join(", ");\n' +
+'  updatePreview();\n' +
+'  document.querySelector("[data-page=\\"generate\\"]").click();\n' +
+'  document.getElementById("prompt").focus();\n' +
+'}\n' +
+'\n' +
+'function downloadImage(url, seed) {\n' +
+'  const link = document.createElement("a");\n' +
+'  link.href = url;\n' +
+'  link.download = "flux-ai-" + seed + "-" + Date.now() + ".png";\n' +
+'  link.click();\n' +
+'}\n' +
+'\n' +
+'function openModal(url) {\n' +
+'  document.getElementById("modalImage").src = url;\n' +
+'  document.getElementById("imageModal").classList.remove("hidden");\n' +
+'}\n' +
+'\n' +
+'function closeModal() {\n' +
+'  document.getElementById("imageModal").classList.add("hidden");\n' +
+'}\n' +
+'\n' +
+'document.getElementById("exportBtn").addEventListener("click", exportHistory);\n' +
+'document.getElementById("clearBtn").addEventListener("click", clearHistory);\n' +
+'document.getElementById("modalCloseBtn").addEventListener("click", closeModal);\n' +
+'document.getElementById("imageModal").addEventListener("click", function(e) {\n' +
+'  if (e.target === this) closeModal();\n' +
+'});\n' +
+'\n' +
+getFormSubmitHandler() +
+'\n' +
+'window.addEventListener("DOMContentLoaded", () => {\n' +
+'  updateHistoryStats();\n' +
+'  updatePreview();\n' +
+'  console.log("✅ Flux AI Pro 已加載完成");\n' +
+'  console.log("📊 風格數量:", Object.keys(STYLE_PRESETS).length);\n' +
+'  console.log("🎨 Shadcn UI 風格已應用");\n' +
+'});\n' +
+'\x3C/script\x3E\n';
+}
+function getFormSubmitHandler() {
+  return '// 顯示生成的圖像\n' +
+'function displayGeneratedImages(images) {\n' +
+'  const history = getHistory();\n' +
+'  const galleryDiv = document.createElement("div");\n' +
+'  galleryDiv.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fadeIn";\n' +
+'  const newImages = history.slice(0, images.length);\n' +
+'  newImages.forEach((item, index) => {\n' +
+'    const date = new Date(item.timestamp);\n' +
+'    const timeStr = date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });\n' +
+'    const styleConfig = STYLE_PRESETS[item.style];\n' +
+'    const styleName = styleConfig ? styleConfig.icon + " " + styleConfig.name : item.style;\n' +
+'    const itemDiv = document.createElement("div");\n' +
+'    itemDiv.className = "rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group";\n' +
+'    itemDiv.innerHTML = "<div class=\\"relative overflow-hidden aspect-square\\"><img src=\\"" + item.url + "\\" alt=\\"Generated " + (index + 1) + "\\" loading=\\"lazy\\" class=\\"w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105\\"><div class=\\"absolute top-2 left-2\\"><span class=\\"inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg\\">✅ 剛剛生成</span></div></div><div class=\\"p-4 space-y-3\\"><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20\\">" + item.model + "</span><span class=\\"inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20\\">Seed: " + item.seed + "</span></div><div class=\\"flex flex-wrap gap-2\\"><span class=\\"inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20\\">" + styleName + "</span><span class=\\"inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20\\">" + timeStr + "</span></div><div class=\\"text-xs text-muted-foreground\\">" + item.width + "x" + item.height + " | " + (item.quality_mode || "standard") + (item.generation_mode ? " | " + item.generation_mode : "") + "</div><div class=\\"flex gap-2 pt-2\\"><button class=\\"reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>🔄</span><span>重用</span></button><button class=\\"download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1\\"><span>💾</span><span>下載</span></button><button class=\\"view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1\\"><span>📚</span><span>歷史</span></button></div></div>";\n' +
+'    const img = itemDiv.querySelector("img");\n' +
+'    img.addEventListener("click", () => openModal(item.url));\n' +
+'    const reuseBtn = itemDiv.querySelector(".reuse-result-btn");\n' +
+'    reuseBtn.addEventListener("click", () => reusePrompt(item.id));\n' +
+'    const downloadBtn = itemDiv.querySelector(".download-result-btn");\n' +
+'    downloadBtn.addEventListener("click", () => downloadImage(item.url, item.seed));\n' +
+'    const viewBtn = itemDiv.querySelector(".view-history-btn");\n' +
+'    viewBtn.addEventListener("click", () => {\n' +
+'      document.querySelector("[data-page=\\"history\\"]").click();\n' +
+'    });\n' +
+'    galleryDiv.appendChild(itemDiv);\n' +
+'  });\n' +
+'  const resultsDiv = document.getElementById("results");\n' +
+'  resultsDiv.innerHTML = "";\n' +
+'  const successDiv = document.createElement("div");\n' +
+'  successDiv.className = "rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4";\n' +
+'  successDiv.innerHTML = "<div class=\\"flex items-center gap-3\\"><div class=\\"rounded-lg bg-green-500/20 p-2\\"><span class=\\"text-2xl\\">✅</span></div><div><h4 class=\\"text-sm font-semibold text-green-400\\">生成成功！</h4><p class=\\"text-xs text-muted-foreground\\">已生成 " + images.length + " 張圖片並保存到歷史記錄</p></div></div>";\n' +
+'  resultsDiv.appendChild(successDiv);\n' +
+'  resultsDiv.appendChild(galleryDiv);\n' +
+'}\n' +
+'\n' +
+'// 表單提交處理\n' +
+'const form = document.getElementById("generateForm");\n' +
+'const resultsDiv = document.getElementById("results");\n' +
+'const generateBtn = document.getElementById("generateBtn");\n' +
+'form.addEventListener("submit", async (e) => {\n' +
+'  e.preventDefault();\n' +
+'  const prompt = document.getElementById("prompt").value;\n' +
+'  if (!prompt.trim()) {\n' +
+'    alert("請輸入提示詞");\n' +
+'    document.getElementById("prompt").focus();\n' +
+'    return;\n' +
+'  }\n' +
+'  const model = document.getElementById("model").value;\n' +
+'  const sizePreset = document.getElementById("size").value;\n' +
+'  const style = document.getElementById("style").value;\n' +
+'  const qualityMode = document.getElementById("qualityMode").value;\n' +
+'  const seed = parseInt(document.getElementById("seed").value);\n' +
+'  const numOutputs = parseInt(document.getElementById("numOutputs").value);\n' +
+'  const negativePrompt = document.getElementById("negativePrompt").value;\n' +
+'  const autoOptimize = document.getElementById("autoOptimize").checked;\n' +
+'  const autoHD = document.getElementById("autoHD").checked;\n' +
+'  const refImagesInput = document.getElementById("referenceImages").value;\n' +
+'  let referenceImages = [];\n' +
+'  if (refImagesInput.trim()) {\n' +
+'    referenceImages = refImagesInput.split(",").map(url => url.trim()).filter(url => url);\n' +
+'  }\n' +
+'  const sizeConfig = PRESET_SIZES[sizePreset] || PRESET_SIZES["square-1k"];\n' +
+'  generateBtn.disabled = true;\n' +
+'  generateBtn.innerHTML = "<div class=\\"spinner\\"></div><span>生成中...</span>";\n' +
+'  resultsDiv.innerHTML = "<div class=\\"flex flex-col items-center justify-center py-16 px-4 text-center\\"><div class=\\"spinner mb-4\\"></div><p class=\\"text-sm font-medium mb-2\\">正在生成圖像，請稍候...</p><p class=\\"text-xs text-muted-foreground\\">這可能需要幾秒鐘到一分鐘</p></div>";\n' +
+'  try {\n' +
+'    const response = await fetch("/_internal/generate", {\n' +
+'      method: "POST",\n' +
+'      headers: { "Content-Type": "application/json" },\n' +
+'      body: JSON.stringify({\n' +
+'        prompt,\n' +
+'        model,\n' +
+'        width: sizeConfig.width,\n' +
+'        height: sizeConfig.height,\n' +
+'        style,\n' +
+'        quality_mode: qualityMode,\n' +
+'        seed: seed,\n' +
+'        n: numOutputs,\n' +
+'        negative_prompt: negativePrompt,\n' +
+'        auto_optimize: autoOptimize,\n' +
+'        auto_hd: autoHD,\n' +
+'        reference_images: referenceImages\n' +
+'      })\n' +
+'    });\n' +
+'    const contentType = response.headers.get("content-type");\n' +
+'    if (!response.ok) {\n' +
+'      const errorText = await response.text();\n' +
+'      let errorMsg = "生成失敗";\n' +
+'      try {\n' +
+'        const errorJson = JSON.parse(errorText);\n' +
+'        errorMsg = errorJson.error?.message || errorMsg;\n' +
+'      } catch (e) {\n' +
+'        errorMsg = errorText.substring(0, 200);\n' +
+'      }\n' +
+'      resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + errorMsg + "</p></div></div></div>";\n' +
+'      if (response.status === 401 || response.status === 403) {\n' +
+'        resultsDiv.innerHTML += "<div class=\\"rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-amber-500/20 p-2\\"><span class=\\"text-2xl\\">⚠️</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-amber-400 mb-1\\">認證問題</h4><p class=\\"text-xs text-muted-foreground mb-2\\">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p><code class=\\"text-xs bg-background/50 px-2 py-1 rounded\\">wrangler secret put POLLINATIONS_API_KEY</code></div></div></div>";\n' +
+'      }\n' +
+'      return;\n' +
+'    }\n' +
+'    if (contentType && contentType.startsWith("image/")) {\n' +
+'      const imageBlob = await response.blob();\n' +
+'      const imageUrl = URL.createObjectURL(imageBlob);\n' +
+'      const modelUsed = response.headers.get("X-Model") || model;\n' +
+'      const seedUsed = parseInt(response.headers.get("X-Seed")) || seed;\n' +
+'      const widthUsed = parseInt(response.headers.get("X-Width")) || sizeConfig.width;\n' +
+'      const heightUsed = parseInt(response.headers.get("X-Height")) || sizeConfig.height;\n' +
+'      const qualityUsed = response.headers.get("X-Quality-Mode") || qualityMode;\n' +
+'      const styleUsed = response.headers.get("X-Style") || style;\n' +
+'      const genMode = response.headers.get("X-Generation-Mode") || "文生圖";\n' +
+'      addToHistory({\n' +
+'        url: imageUrl,\n' +
+'        prompt: prompt,\n' +
+'        model: modelUsed,\n' +
+'        seed: seedUsed,\n' +
+'        width: widthUsed,\n' +
+'        height: heightUsed,\n' +
+'        style: styleUsed,\n' +
+'        quality_mode: qualityUsed,\n' +
+'        negative_prompt: negativePrompt,\n' +
+'        reference_images: referenceImages,\n' +
+'        generation_mode: genMode\n' +
+'      });\n' +
+'      displayGeneratedImages([{\n' +
+'        url: imageUrl,\n' +
+'        model: modelUsed,\n' +
+'        seed: seedUsed,\n' +
+'        width: widthUsed,\n' +
+'        height: heightUsed,\n' +
+'        quality_mode: qualityUsed,\n' +
+'        style: styleUsed\n' +
+'      }]);\n' +
+'    } else if (contentType && contentType.includes("application/json")) {\n' +
+'      const data = await response.json();\n' +
+'      if (data.error) {\n' +
+'        resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">生成失敗</h4><p class=\\"text-xs text-muted-foreground\\">" + data.error.message + "</p></div></div></div>";\n' +
+'      } else {\n' +
+'        const images = data.data.map(item => {\n' +
+'          addToHistory({\n' +
+'            url: item.image,\n' +
+'            prompt: prompt,\n' +
+'            model: item.model,\n' +
+'            seed: item.seed,\n' +
+'            width: item.width,\n' +
+'            height: item.height,\n' +
+'            style: item.style,\n' +
+'            quality_mode: item.quality_mode,\n' +
+'            negative_prompt: negativePrompt,\n' +
+'            reference_images: referenceImages,\n' +
+'            generation_mode: item.generation_mode\n' +
+'          });\n' +
+'          return item;\n' +
+'        });\n' +
+'        displayGeneratedImages(images);\n' +
+'      }\n' +
+'    }\n' +
+'  } catch (error) {\n' +
+'    resultsDiv.innerHTML = "<div class=\\"rounded-lg border border-destructive/20 bg-destructive/10 p-4\\"><div class=\\"flex items-start gap-3\\"><div class=\\"rounded-lg bg-destructive/20 p-2\\"><span class=\\"text-2xl\\">❌</span></div><div class=\\"flex-1\\"><h4 class=\\"text-sm font-semibold text-destructive mb-1\\">網路錯誤</h4><p class=\\"text-xs text-muted-foreground\\">" + error.message + "</p></div></div></div>";\n' +
+'  } finally {\n' +
+'    generateBtn.disabled = false;\n' +
+'    generateBtn.innerHTML = "<span class=\\"text-lg\\">🎨</span><span class=\\"font-bold\\">開始生成</span>";\n' +
+'  }\n' +
 '});';
 }
