@@ -2429,51 +2429,29 @@ function displayGeneratedImages(images) {
     
     const itemDiv = document.createElement('div');
     itemDiv.className = 'rounded-lg border border-border bg-card overflow-hidden shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 group';
-    itemDiv.innerHTML = \`
-      <div class="relative overflow-hidden aspect-square">
-        <img src="\${item.url}" alt="Generated \${index + 1}" loading="lazy" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105">
-        <div class="absolute top-2 left-2">
-          <span class="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg">
-            ✅ 剛剛生成
-          </span>
-        </div>
-      </div>
-      <div class="p-4 space-y-3">
-        <div class="flex flex-wrap gap-2">
-          <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
-            \${item.model}
-          </span>
-          <span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
-            Seed: \${item.seed}
-          </span>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">
-            \${styleName}
-          </span>
-          <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
-            \${timeStr}
-          </span>
-        </div>
-        <div class="text-xs text-muted-foreground">
-          \${item.width}x\${item.height} | \${item.quality_mode || 'standard'}\${item.generation_mode ? ' | ' + item.generation_mode : ''}
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button class="reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
-            <span>🔄</span>
-            <span>重用</span>
-          </button>
-          <button class="download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">
-            <span>💾</span>
-            <span>下載</span>
-          </button>
-          <button class="view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1">
-            <span>📚</span>
-            <span>歷史</span>
-          </button>
-        </div>
-      </div>
-    \`;
+    itemDiv.innerHTML = '<div class="relative overflow-hidden aspect-square">' +
+      '<img src="' + item.url + '" alt="Generated ' + (index + 1) + '" loading="lazy" class="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105">' +
+      '<div class="absolute top-2 left-2">' +
+      '<span class="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white shadow-lg">✅ 剛剛生成</span>' +
+      '</div></div>' +
+      '<div class="p-4 space-y-3">' +
+      '<div class="flex flex-wrap gap-2">' +
+      '<span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">' + item.model + '</span>' +
+      '<span class="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">Seed: ' + item.seed + '</span>' +
+      '</div>' +
+      '<div class="flex flex-wrap gap-2">' +
+      '<span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">' + styleName + '</span>' +
+      '<span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">' + timeStr + '</span>' +
+      '</div>' +
+      '<div class="text-xs text-muted-foreground">' + item.width + 'x' + item.height + ' | ' + (item.quality_mode || 'standard') + (item.generation_mode ? ' | ' + item.generation_mode : '') + '</div>' +
+      '<div class="flex gap-2 pt-2">' +
+      '<button class="reuse-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">' +
+      '<span>🔄</span><span>重用</span></button>' +
+      '<button class="download-result-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 px-3 gap-1">' +
+      '<span>💾</span><span>下載</span></button>' +
+      '<button class="view-history-btn flex-1 inline-flex items-center justify-center rounded-md text-xs font-medium transition-colors bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground h-8 px-3 gap-1">' +
+      '<span>📚</span><span>歷史</span></button>' +
+      '</div></div>';
     
     const img = itemDiv.querySelector('img');
     img.addEventListener('click', () => openModal(item.url));
@@ -2497,17 +2475,10 @@ function displayGeneratedImages(images) {
   
   const successDiv = document.createElement('div');
   successDiv.className = 'rounded-lg border border-green-500/20 bg-green-500/10 p-4 mb-4';
-  successDiv.innerHTML = \`
-    <div class="flex items-center gap-3">
-      <div class="rounded-lg bg-green-500/20 p-2">
-        <span class="text-2xl">✅</span>
-      </div>
-      <div>
-        <h4 class="text-sm font-semibold text-green-400">生成成功！</h4>
-        <p class="text-xs text-muted-foreground">已生成 \${images.length} 張圖片並保存到歷史記錄</p>
-      </div>
-    </div>
-  \`;
+  successDiv.innerHTML = '<div class="flex items-center gap-3">' +
+    '<div class="rounded-lg bg-green-500/20 p-2"><span class="text-2xl">✅</span></div>' +
+    '<div><h4 class="text-sm font-semibold text-green-400">生成成功！</h4>' +
+    '<p class="text-xs text-muted-foreground">已生成 ' + images.length + ' 張圖片並保存到歷史記錄</p></div></div>';
   resultsDiv.appendChild(successDiv);
   resultsDiv.appendChild(galleryDiv);
 }
@@ -2547,13 +2518,10 @@ form.addEventListener('submit', async (e) => {
   
   generateBtn.disabled = true;
   generateBtn.innerHTML = '<div class="spinner"></div><span>生成中...</span>';
-  resultsDiv.innerHTML = \`
-    <div class="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div class="spinner mb-4"></div>
-      <p class="text-sm font-medium mb-2">正在生成圖像，請稍候...</p>
-      <p class="text-xs text-muted-foreground">這可能需要幾秒鐘到一分鐘</p>
-    </div>
-  \`;
+  resultsDiv.innerHTML = '<div class="flex flex-col items-center justify-center py-16 px-4 text-center">' +
+    '<div class="spinner mb-4"></div>' +
+    '<p class="text-sm font-medium mb-2">正在生成圖像，請稍候...</p>' +
+    '<p class="text-xs text-muted-foreground">這可能需要幾秒鐘到一分鐘</p></div>';
   
   try {
     const response = await fetch('/_internal/generate', {
@@ -2587,35 +2555,22 @@ form.addEventListener('submit', async (e) => {
         errorMsg = errorText.substring(0, 200);
       }
       
-      resultsDiv.innerHTML = \`
-        <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
-          <div class="flex items-start gap-3">
-            <div class="rounded-lg bg-destructive/20 p-2">
-              <span class="text-2xl">❌</span>
-            </div>
-            <div class="flex-1">
-              <h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>
-              <p class="text-xs text-muted-foreground">\${errorMsg}</p>
-            </div>
-          </div>
-        </div>
-      \`;
+      resultsDiv.innerHTML = '<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">' +
+        '<div class="flex items-start gap-3">' +
+        '<div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div>' +
+        '<div class="flex-1">' +
+        '<h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>' +
+        '<p class="text-xs text-muted-foreground">' + errorMsg + '</p></div></div></div>';
       
       if (response.status === 401 || response.status === 403) {
-        resultsDiv.innerHTML += \`
-          <div class="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4">
-            <div class="flex items-start gap-3">
-              <div class="rounded-lg bg-amber-500/20 p-2">
-                <span class="text-2xl">⚠️</span>
-              </div>
-              <div class="flex-1">
-                <h4 class="text-sm font-semibold text-amber-400 mb-1">認證問題</h4>
-                <p class="text-xs text-muted-foreground mb-2">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p>
-                <code class="text-xs bg-background/50 px-2 py-1 rounded">wrangler secret put POLLINATIONS_API_KEY</code>
-              </div>
-            </div>
-          </div>
-        \`;
+        resultsDiv.innerHTML += '<div class="rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 mt-4">' +
+          '<div class="flex items-start gap-3">' +
+          '<div class="rounded-lg bg-amber-500/20 p-2"><span class="text-2xl">⚠️</span></div>' +
+          '<div class="flex-1">' +
+          '<h4 class="text-sm font-semibold text-amber-400 mb-1">認證問題</h4>' +
+          '<p class="text-xs text-muted-foreground mb-2">請確保已設置有效的 POLLINATIONS_API_KEY 環境變量</p>' +
+          '<code class="text-xs bg-background/50 px-2 py-1 rounded">wrangler secret put POLLINATIONS_API_KEY</code>' +
+          '</div></div></div>';
       }
       return;
     }
@@ -2659,19 +2614,12 @@ form.addEventListener('submit', async (e) => {
       const data = await response.json();
       
       if (data.error) {
-        resultsDiv.innerHTML = \`
-          <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
-            <div class="flex items-start gap-3">
-              <div class="rounded-lg bg-destructive/20 p-2">
-                <span class="text-2xl">❌</span>
-              </div>
-              <div class="flex-1">
-                <h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>
-                <p class="text-xs text-muted-foreground">\${data.error.message}</p>
-              </div>
-            </div>
-          </div>
-        \`;
+        resultsDiv.innerHTML = '<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">' +
+          '<div class="flex items-start gap-3">' +
+          '<div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div>' +
+          '<div class="flex-1">' +
+          '<h4 class="text-sm font-semibold text-destructive mb-1">生成失敗</h4>' +
+          '<p class="text-xs text-muted-foreground">' + data.error.message + '</p></div></div></div>';
       } else {
         const images = data.data.map(item => {
           addToHistory({
@@ -2693,19 +2641,12 @@ form.addEventListener('submit', async (e) => {
       }
     }
   } catch (error) {
-    resultsDiv.innerHTML = \`
-      <div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
-        <div class="flex items-start gap-3">
-          <div class="rounded-lg bg-destructive/20 p-2">
-            <span class="text-2xl">❌</span>
-          </div>
-          <div class="flex-1">
-            <h4 class="text-sm font-semibold text-destructive mb-1">網路錯誤</h4>
-            <p class="text-xs text-muted-foreground">\${error.message}</p>
-          </div>
-        </div>
-      </div>
-    \`;
+    resultsDiv.innerHTML = '<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4">' +
+      '<div class="flex items-start gap-3">' +
+      '<div class="rounded-lg bg-destructive/20 p-2"><span class="text-2xl">❌</span></div>' +
+      '<div class="flex-1">' +
+      '<h4 class="text-sm font-semibold text-destructive mb-1">網路錯誤</h4>' +
+      '<p class="text-xs text-muted-foreground">' + error.message + '</p></div></div></div>';
   } finally {
     generateBtn.disabled = false;
     generateBtn.innerHTML = '<span class="text-lg">🎨</span><span class="font-bold">開始生成</span>';
