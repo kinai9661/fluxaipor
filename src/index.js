@@ -1,9 +1,3 @@
-// ============================================================
-// Flux AI Pro - Cloudflare Workers 版本
-// 版本: 3.0.0
-// 描述: 專業 AI 圖像生成平台
-// ============================================================
-
 const CONFIG = {
   PROJECT_NAME: 'Flux AI Pro',
   PROJECT_VERSION: '3.0.0',
@@ -434,7 +428,6 @@ const CONFIG = {
   MAX_HISTORY: 100,
   DEFAULT_QUALITY: 'standard'
 };
-
 const TRANSLATIONS = {
   'zh-TW': {
     title: 'Flux AI Pro',
@@ -569,14 +562,14 @@ const TRANSLATIONS = {
       categories: 'Categories',
       qualityMode: 'Quality',
       economy: 'Economy',
-      economyDesc: 'Fast',
+      economyDesc: 'Fast generation',
       standard: 'Standard',
-      standardDesc: 'Balanced',
+      standardDesc: 'Balanced quality',
       ultra: 'Ultra',
       ultraDesc: 'High quality',
       advancedOptions: 'Advanced',
       seed: 'Seed',
-      seedPlaceholder: '-1 random',
+      seedPlaceholder: '-1 for random',
       numOutputs: 'Count',
       autoOptimize: 'Auto optimize',
       autoHD: 'Auto HD',
@@ -602,9 +595,9 @@ const TRANSLATIONS = {
     prompt: {
       title: 'Prompt',
       positive: 'Positive',
-      positivePlaceholder: 'Describe your image...',
+      positivePlaceholder: 'Describe your image...\n\nExample:\nA cute orange cat sitting by the window, sunlight, soft lighting, high quality',
       negative: 'Negative',
-      negativePlaceholder: 'Unwanted elements...',
+      negativePlaceholder: 'Unwanted elements...\n\nExample:\nblurry, low quality, distorted, extra limbs',
       negativeOptional: '(Optional)',
       referenceImages: 'Reference',
       referenceImagesPlaceholder: 'https://example.com/image.jpg',
@@ -612,7 +605,13 @@ const TRANSLATIONS = {
       autoTranslate: 'Auto translate',
       supportImageToImage: 'Image-to-Image: Kontext',
       styleHints: 'Hints',
-      hints: ['Detailed descriptions work better', 'Use art styles', 'Auto translation', 'Use negative prompts', 'Reference images for Kontext'],
+      hints: [
+        'Detailed descriptions work better',
+        'Use art styles for enhanced visuals',
+        'Auto translation supported',
+        'Use negative prompts to exclude elements',
+        'Reference images work with Kontext model'
+      ],
       currentStyle: 'Style',
       noStyle: 'None',
       styleDescription: 'Description'
@@ -631,14 +630,31 @@ const TRANSLATIONS = {
       close: 'Close'
     },
     styleCategories: {
-      none: 'None', realistic: 'Realistic', anime: 'Anime', art: 'Art', digital: 'Digital',
-      cinematic: 'Cinematic', fantasy: 'Fantasy', scifi: 'Sci-Fi', abstract: 'Abstract',
-      traditional: 'Traditional', modern: 'Modern', retro: 'Retro', minimal: 'Minimal', other: 'Other'
+      none: 'None',
+      realistic: 'Realistic',
+      anime: 'Anime',
+      art: 'Art',
+      digital: 'Digital',
+      cinematic: 'Cinematic',
+      fantasy: 'Fantasy',
+      scifi: 'Sci-Fi',
+      abstract: 'Abstract',
+      traditional: 'Traditional',
+      modern: 'Modern',
+      retro: 'Retro',
+      minimal: 'Minimal',
+      other: 'Other'
     },
     status: { online: 'Online', apiConfigured: 'Configured', ready: 'Ready' },
-    errors: { promptRequired: 'Prompt required', generationFailed: 'Failed', networkError: 'Network error', apiError: 'API Error' }
+    errors: {
+      promptRequired: 'Prompt required',
+      generationFailed: 'Generation failed',
+      networkError: 'Network error',
+      apiError: 'API Error'
+    }
   }
 };
+
 function corsHeaders(additionalHeaders = {}) {
   return {
     'Access-Control-Allow-Origin': '*',
@@ -711,7 +727,6 @@ function log(level, message, data = {}) {
   };
   console.log(JSON.stringify(logEntry));
 }
-
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -2126,5 +2141,3 @@ body {
 </body>
 </html>`;
 }
-// getHTML 函數結束
-// 所有代碼完成
