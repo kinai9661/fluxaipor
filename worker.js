@@ -4,7 +4,6 @@ const CONFIG = {
   PROVIDERS: {
     pollinations: {
       endpoint: 'https://gen.pollinations.ai',
-      pathPrefix: '/image',
       apiKey: '',
       models: [
         { 
@@ -115,7 +114,7 @@ const LANG = {
     advanced: '進階選項', seed: '隨機種子', seedPh: '-1 為隨機', autoOpt: '⚡ 參數自動優化', autoHD: '🔍 HD 自動增強', generate: '開始生成',
     results: '生成結果', empty: '尚未生成任何圖像', emptyDesc: '填寫左側參數並輸入提示詞後點擊生成按鈕', loading: 'AI 正在創作中', loadDesc: '這可能需要幾秒鐘到一分鐘',
     elapsed: '已用時', sec: '秒', success: '生成成功！', generated: '已生成', images: '張圖片', modelLabel: '模型', sizeLabel: '尺寸', timeLabel: '耗時',
-    download: '下載圖像', regenerate: '再次生成', reuse: '重用參數', failed: '生成失敗', error: '發生未知錯誤', retry: '重試',
+    download: '下載圖像', regenerate: '再次生成', reuse: '重用參數', failed: '生成失敗', error: '發生未知錯誤', retry: '重試', copyUrl: '複製永久連接',
     prompt: '提示詞', positive: '正面提示詞', posPh: '描述你想生成的圖像...', negative: '負面提示詞', negOpt: '（可選）', negPh: '描述不想要的元素...',
     tips: '風格提示', tip1: '詳細的描述可以獲得更好的效果', tip2: '使用藝術風格可以增強視覺效果', tip3: '中文提示詞會自動翻譯為英文', tip4: '負面提示詞幫助排除不想要的元素',
     examples: '快速範例', ex1: '🐱 可愛貓咪', ex1p: '一隻可愛的橘色貓咪坐在窗邊，陽光灑在它身上，柔和的光影效果，高清攝影',
@@ -124,6 +123,7 @@ const LANG = {
     ex4: '🚀 太空站', ex4p: '太空站內部，科幻風格，宇航員，地球窗外，高科技設備，電影級光效',
     histTitle: '生成歷史', total: '總共', clear: '清空歷史', histEmpty: '你生成的圖像將會顯示在這裡', reuseBtn: '♻️ 重用', deleteBtn: '🗑️',
     confirmClear: '確定要清空所有歷史記錄嗎？', confirmDel: '確定要刪除這個歷史記錄嗎？', loaded: '✅ 參數已載入！', reused: '✅ 參數已重用，您可以修改提示詞後再次生成！', needPrompt: '請輸入提示詞',
+    urlCopied: '✅ 永久連接已複製！', permanentUrl: '永久連接',
     sizeStandard: '📐 標準尺寸 (1K)', size2k: '🔥 2K 高清', size4k: '💎 4K 超高清', sizeSocial: '🌐 社交媒體', highRes: '高分辨率圖像生成時間較長（約 30-60 秒）'
   },
   'en': {
@@ -132,7 +132,7 @@ const LANG = {
     advanced: 'Advanced', seed: 'Seed', seedPh: '-1 for random', autoOpt: '⚡ Auto Optimize', autoHD: '🔍 Auto HD', generate: 'Generate',
     results: 'Results', empty: 'No images yet', emptyDesc: 'Fill in parameters and prompt, then generate', loading: 'AI Creating', loadDesc: 'This may take a few seconds',
     elapsed: 'Elapsed', sec: 'sec', success: 'Success!', generated: 'Generated', images: 'image(s)', modelLabel: 'Model', sizeLabel: 'Size', timeLabel: 'Time',
-    download: 'Download', regenerate: 'Regenerate', reuse: 'Reuse', failed: 'Failed', error: 'Unknown error', retry: 'Retry',
+    download: 'Download', regenerate: 'Regenerate', reuse: 'Reuse', failed: 'Failed', error: 'Unknown error', retry: 'Retry', copyUrl: 'Copy Permanent URL',
     prompt: 'Prompt', positive: 'Positive', posPh: 'Describe the image...', negative: 'Negative', negOpt: '(Optional)', negPh: 'Unwanted elements...',
     tips: 'Tips', tip1: 'Detailed descriptions yield better results', tip2: 'Art styles enhance visual effects', tip3: 'Chinese prompts auto-translated', tip4: 'Negative prompts exclude unwanted elements',
     examples: 'Examples', ex1: '🐱 Cute Cat', ex1p: 'A cute orange cat sitting by window, sunlight, soft lighting, HD photography',
@@ -141,6 +141,7 @@ const LANG = {
     ex4: '🚀 Space Station', ex4p: 'Space station interior, sci-fi, astronaut, Earth view, cinematic',
     histTitle: 'History', total: 'Total', clear: 'Clear', histEmpty: 'Your images will appear here', reuseBtn: '♻️ Reuse', deleteBtn: '🗑️',
     confirmClear: 'Clear all history?', confirmDel: 'Delete this record?', loaded: '✅ Loaded!', reused: '✅ Reused! Modify prompt and generate.', needPrompt: 'Please enter prompt',
+    urlCopied: '✅ Permanent URL copied!', permanentUrl: 'Permanent URL',
     sizeStandard: '📐 Standard (1K)', size2k: '🔥 2K HD', size4k: '💎 4K Ultra HD', sizeSocial: '🌐 Social Media', highRes: 'High resolution takes longer (30-60s)'
   }
 };
@@ -309,49 +310,43 @@ async function handleGen(request) {
     console.log('🎨 Final prompt:', finalPrompt);
     if (finalNeg) console.log('🚫 Final negative:', finalNeg);
     
+    // 構建永久 URL
     const enc = encodeURIComponent(finalPrompt);
-    const apiUrl = CONFIG.PROVIDERS.pollinations.endpoint + 
-                   CONFIG.PROVIDERS.pollinations.pathPrefix + '/' + enc + 
+    const permanentUrl = CONFIG.PROVIDERS.pollinations.endpoint + 
+                   '/prompt/' + enc + 
                    '?model=' + p.model + 
                    '&width=' + p.width + 
                    '&height=' + p.height + 
                    '&seed=' + seed + 
                    '&nologo=true&enhance=true';
     
-    console.log('🌐 API URL:', apiUrl);
+    console.log('🌐 Permanent URL:', permanentUrl);
     
-    const headers = {
-      'User-Agent': 'Mozilla/5.0',
-      'Accept': 'image/*'
-    };
+    // 驗證圖片是否可訪問
+    const testRes = await fetch(permanentUrl, {
+      method: 'HEAD',
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
     
-    if (CONFIG.PROVIDERS.pollinations.apiKey) {
-      headers['Authorization'] = 'Bearer ' + CONFIG.PROVIDERS.pollinations.apiKey;
-      console.log('🔑 Using API Key authentication');
-    } else {
-      console.log('🆓 Using free service (no API Key)');
-    }
+    if (!testRes.ok) throw new Error('Image generation failed');
     
-    const res = await fetch(apiUrl, { headers: headers });
-    
-    if (!res.ok) throw new Error('API error ' + res.status);
-    
-    const blob = await res.blob();
-    const buf = await blob.arrayBuffer();
     const time = ((Date.now() - start) / 1000).toFixed(2);
     
-    return new Response(buf, {
+    // 返回 JSON 響應，包含永久 URL
+    return new Response(JSON.stringify({
+      success: true,
+      url: permanentUrl,
+      model: p.model,
+      seed: seed,
+      width: p.width,
+      height: p.height,
+      time: time,
+      translated: wasTranslated,
+      originalPrompt: wasTranslated ? originalPrompt : '',
+      translatedPrompt: wasTranslated ? prompt : ''
+    }), {
       status: 200,
-      headers: corsHeaders({
-        'Content-Type': 'image/png',
-        'X-Model': p.model,
-        'X-Seed': seed.toString(),
-        'X-Generation-Time': time,
-        'X-Translated': wasTranslated ? 'true' : 'false',
-        'X-Original-Prompt': wasTranslated ? encodeURIComponent(originalPrompt) : '',
-        'X-Translated-Prompt': wasTranslated ? encodeURIComponent(prompt) : '',
-        'X-API-Endpoint': 'gen.pollinations.ai'
-      })
+      headers: corsHeaders({ 'Content-Type': 'application/json' })
     });
   } catch (e) {
     console.error('❌ Generation error:', e);
@@ -539,11 +534,13 @@ function buildHTML(lang) {
   h += '<span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">📐 ' + t.sizeLabel + ': <span id="resultSize"></span></span>';
   h += '<span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">🎲 Seed: <span id="resultSeed"></span></span>';
   h += '<span class="px-2 py-1 rounded bg-gray-800 border border-gray-700">⏱️ ' + t.timeLabel + ': <span id="resultTime"></span>s</span></div>';
-  h += '<div id="translationInfo"></div></div>';
+  h += '<div id="translationInfo"></div>';
+  h += '<div id="permanentUrlInfo" class="mt-3"></div></div>';
   h += '<div id="resultGrid" class="result-grid"></div>';
-  h += '<div class="flex gap-3 mt-4"><button onclick="downloadAll()" class="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition font-medium">📥 ' + t.download + '</button>';
-  h += '<button onclick="regenerate()" class="flex-1 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition font-medium">🔄 ' + t.regenerate + '</button>';
-  h += '<button onclick="reuseParams()" class="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition font-medium">♻️ ' + t.reuse + '</button></div></div>';
+  h += '<div class="flex gap-3 mt-4">';
+  h += '<button onclick="copyPermanentUrl()" class="flex-1 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition font-medium">🔗 ' + t.copyUrl + '</button>';
+  h += '<button onclick="downloadImg()" class="flex-1 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition font-medium">📥 ' + t.download + '</button>';
+  h += '<button onclick="regenerate()" class="flex-1 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition font-medium">🔄 ' + t.regenerate + '</button></div></div>';
   h += '<div id="errorState" class="hidden glass-card p-6 rounded-xl border border-red-500/30 bg-red-500/5 text-center">';
   h += '<div class="text-4xl mb-3">❌</div><h3 class="text-xl font-bold text-red-400 mb-2">' + t.failed + '</h3>';
   h += '<p id="errorMsg" class="text-gray-300 text-sm mb-4">' + t.error + '</p>';
@@ -593,40 +590,16 @@ function getScripts(t, lang) {
   
   s += '<script>';
   
-  s += 'function blobToBase64(blob){';
-  s += 'return new Promise((resolve,reject)=>{';
-  s += 'const reader=new FileReader();';
-  s += 'reader.onloadend=()=>resolve(reader.result);';
-  s += 'reader.onerror=reject;';
-  s += 'reader.readAsDataURL(blob);';
-  s += '});';
-  s += '}';
-  
-  s += 'function base64ToBlob(base64){';
-  s += 'const arr=base64.split(",");';
-  s += 'const mime=arr[0].match(/:(.*?);/)[1];';
-  s += 'const bstr=atob(arr[1]);';
-  s += 'let n=bstr.length;';
-  s += 'const u8arr=new Uint8Array(n);';
-  s += 'while(n--){u8arr[n]=bstr.charCodeAt(n);}';
-  s += 'return new Blob([u8arr],{type:mime});';
-  s += '}';
-  
   s += 'const EX={1:"' + t.ex1p + '",2:"' + t.ex2p + '",3:"' + t.ex3p + '",4:"' + t.ex4p + '"};';
   s += 'const T={loaded:"' + t.loaded + '",reused:"' + t.reused + '",needPrompt:"' + t.needPrompt + '",';
   s += 'confirmClear:"' + t.confirmClear + '",confirmDel:"' + t.confirmDel + '",';
-  s += 'generated:"' + t.generated + '",images:"' + t.images + '"};';
+  s += 'generated:"' + t.generated + '",images:"' + t.images + '",urlCopied:"' + t.urlCopied + '",permanentUrl:"' + t.permanentUrl + '"};';
   s += 'const LANG="' + lang + '";';
-  s += 'let hist=[],curParams={},curImgs=[],timer=null;';
+  s += 'let hist=[],curParams={},curUrl="",timer=null;';
   
   s += 'window.onload=function(){';
   s += 'loadHist();updateHistCount();';
   s += 'document.getElementById("genForm").onsubmit=function(e){e.preventDefault();gen();};';
-  s += 'document.getElementById("sizePreset").onchange=function(){';
-  s += 'const v=this.value;';
-  s += 'const sizes=' + JSON.stringify(CONFIG.PRESET_SIZES) + ';';
-  s += 'if(sizes[v]){document.getElementById("width").value=sizes[v].width;';
-  s += 'document.getElementById("height").value=sizes[v].height;}};';
   s += '};';
   
   s += 'function changeLang(l){window.location.href="/?lang="+l;}';
@@ -657,24 +630,15 @@ function getScripts(t, lang) {
   s += 'showState("loading");';
   s += 'let elapsed=0;';
   s += 'timer=setInterval(()=>{elapsed++;document.getElementById("elapsedTime").textContent=elapsed;},1000);';
-  s += 'const start=Date.now();';
   s += 'try{';
   s += 'const res=await fetch("/_internal/generate",{method:"POST",headers:{"Content-Type":"application/json"},';
   s += 'body:JSON.stringify(curParams)});';
   s += 'clearInterval(timer);';
   s += 'if(!res.ok)throw new Error("HTTP "+res.status);';
-  s += 'const blob=await res.blob();';
-  s += 'const base64=await blobToBase64(blob);';
-  s += 'const time=((Date.now()-start)/1000).toFixed(2);';
-  s += 'const model=res.headers.get("X-Model")||m;';
-  s += 'const seed=res.headers.get("X-Seed")||sd;';
-  s += 'const translated=res.headers.get("X-Translated")==="true";';
-  s += 'const originalPrompt=translated?decodeURIComponent(res.headers.get("X-Original-Prompt")||""):"";';
-  s += 'const translatedPrompt=translated?decodeURIComponent(res.headers.get("X-Translated-Prompt")||""):"";';
-  s += 'curImgs=[{url:base64,model:model,seed:seed,size:sz.width+"×"+sz.height,time:time,';
-  s += 'translated:translated,originalPrompt:originalPrompt,translatedPrompt:translatedPrompt}];';
-  s += 'showResults();';
-  s += 'saveHist({prompt:p,params:curParams,result:curImgs[0],timestamp:Date.now()});';
+  s += 'const data=await res.json();';
+  s += 'curUrl=data.url;';
+  s += 'showResults(data);';
+  s += 'saveHist({prompt:p,params:curParams,result:data,timestamp:Date.now()});';
   s += '}catch(e){clearInterval(timer);showError(e.message);}}';
   
   s += 'function showState(s){';
@@ -683,33 +647,37 @@ function getScripts(t, lang) {
   s += 'document.getElementById("successState").classList.toggle("hidden",s!=="success");';
   s += 'document.getElementById("errorState").classList.toggle("hidden",s!=="error");}';
   
-  s += 'function showResults(){';
+  s += 'function showResults(data){';
   s += 'showState("success");';
-  s += 'document.getElementById("resultSummary").textContent=T.generated+" "+curImgs.length+" "+T.images;';
-  s += 'document.getElementById("resultModel").textContent=curImgs[0].model;';
-  s += 'document.getElementById("resultSize").textContent=curImgs[0].size;';
-  s += 'document.getElementById("resultSeed").textContent=curImgs[0].seed;';
-  s += 'document.getElementById("resultTime").textContent=curImgs[0].time;';
+  s += 'document.getElementById("resultSummary").textContent=T.generated+" 1 "+T.images;';
+  s += 'document.getElementById("resultModel").textContent=data.model;';
+  s += 'document.getElementById("resultSize").textContent=data.width+"×"+data.height;';
+  s += 'document.getElementById("resultSeed").textContent=data.seed;';
+  s += 'document.getElementById("resultTime").textContent=data.time;';
   
   s += 'const transInfo=document.getElementById("translationInfo");';
-  s += 'if(curImgs[0].translated){';
+  s += 'if(data.translated){';
   s += 'transInfo.innerHTML=\'<div class="mt-3 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-sm">\';';
   s += 'transInfo.innerHTML+=\'<div class="flex items-center gap-2 mb-1"><span>🌐</span><span class="text-blue-400 font-medium">\';';
   s += 'transInfo.innerHTML+=(LANG==="zh"?"已自動翻譯":"Auto-translated")+\'</span></div>\';';
   s += 'transInfo.innerHTML+=\'<div class="text-gray-400 text-xs"><span class="font-medium">\';';
-  s += 'transInfo.innerHTML+=(LANG==="zh"?"原文: ":"Original: ")+\'</span>\'+curImgs[0].originalPrompt+\'</div>\';';
+  s += 'transInfo.innerHTML+=(LANG==="zh"?"原文: ":"Original: ")+\'</span>\'+data.originalPrompt+\'</div>\';';
   s += 'transInfo.innerHTML+=\'<div class="text-gray-400 text-xs"><span class="font-medium">\';';
-  s += 'transInfo.innerHTML+=(LANG==="zh"?"翻譯: ":"Translation: ")+\'</span>\'+curImgs[0].translatedPrompt+\'</div></div>\';';
+  s += 'transInfo.innerHTML+=(LANG==="zh"?"翻譯: ":"Translation: ")+\'</span>\'+data.translatedPrompt+\'</div></div>\';';
   s += '}else{transInfo.innerHTML="";}';
+  
+  s += 'const urlInfo=document.getElementById("permanentUrlInfo");';
+  s += 'urlInfo.innerHTML=\'<div class="px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-sm">\';';
+  s += 'urlInfo.innerHTML+=\'<div class="flex items-center gap-2 mb-1"><span>🔗</span><span class="text-purple-400 font-medium">' + t.permanentUrl + '</span></div>\';';
+  s += 'urlInfo.innerHTML+=\'<div class="text-gray-400 text-xs break-all">\'+data.url+\'</div></div>\';';
   
   s += 'const grid=document.getElementById("resultGrid");';
   s += 'grid.innerHTML="";';
-  s += 'curImgs.forEach((img,i)=>{';
   s += 'const card=document.createElement("div");';
   s += 'card.className="glass-card rounded-xl overflow-hidden hover:scale-105 transition cursor-pointer border border-gray-700";';
-  s += 'card.innerHTML=\'<img src="\'+img.url+\'" class="w-full aspect-square object-cover">\';';
-  s += 'card.onclick=()=>showImg(img.url);';
-  s += 'grid.appendChild(card);});}';
+  s += 'card.innerHTML=\'<img src="\'+data.url+\'" class="w-full aspect-square object-cover">\';';
+  s += 'card.onclick=()=>showImg(data.url);';
+  s += 'grid.appendChild(card);}';
   
   s += 'function showError(msg){showState("error");document.getElementById("errorMsg").textContent=msg;}';
   
@@ -717,15 +685,14 @@ function getScripts(t, lang) {
   
   s += 'function retry(){gen();}';
   
-  s += 'function reuseParams(){if(curParams.seed!==-1)document.getElementById("seed").value=curParams.seed;alert(T.reused);}';
+  s += 'function copyPermanentUrl(){';
+  s += 'if(!curUrl){alert("No image generated yet");return;}';
+  s += 'navigator.clipboard.writeText(curUrl).then(()=>alert(T.urlCopied)).catch(err=>alert("Failed to copy: "+err));}';
   
-  s += 'function downloadAll(){curImgs.forEach((img,i)=>{setTimeout(()=>{';
-  s += 'const blob=base64ToBlob(img.url);';
-  s += 'const url=URL.createObjectURL(blob);';
-  s += 'const a=document.createElement("a");a.href=url;';
-  s += 'a.download="flux-"+Date.now()+"-"+i+".png";a.click();';
-  s += 'setTimeout(()=>URL.revokeObjectURL(url),100);';
-  s += '},i*500);});}';
+  s += 'function downloadImg(){';
+  s += 'if(!curUrl){alert("No image to download");return;}';
+  s += 'const a=document.createElement("a");a.href=curUrl;';
+  s += 'a.download="flux-"+Date.now()+".png";a.click();}';
   
   s += 'function loadHist(){try{';
   s += 'const saved=localStorage.getItem("flux_hist");';
@@ -756,7 +723,7 @@ function getScripts(t, lang) {
   s += 'card.innerHTML+=\'<img src="\'+item.result.url+\'" class="w-full h-full object-cover"></div>\';';
   s += 'card.innerHTML+=\'<div class="text-xs space-y-1"><p class="text-gray-400 truncate">\'+item.prompt+\'</p>\';';
   s += 'card.innerHTML+=\'<div class="flex items-center justify-between text-gray-500">\';';
-  s += 'card.innerHTML+=\'<span>🤖 \'+item.result.model+\'</span><span>📐 \'+item.result.size+\'</span></div>\';';
+  s += 'card.innerHTML+=\'<span>🤖 \'+item.result.model+\'</span><span>📐 \'+item.result.width+\'×\'+item.result.height+\'</span></div>\';';
   s += 'card.innerHTML+=\'<div class="flex items-center justify-between text-gray-500">\';';
   s += 'card.innerHTML+=\'<span>⏱️ \'+item.result.time+\'s</span>\';';
   s += 'card.innerHTML+=\'<span>\'+new Date(item.timestamp).toLocaleDateString()+\'</span></div></div>\';';
@@ -794,4 +761,3 @@ function getScripts(t, lang) {
   
   return s;
 }
- 
