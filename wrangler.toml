@@ -21,3 +21,4 @@ PROJECT_VERSION = "9.2.0"
 name = "flux-ai-pro-staging"
 [env.staging.vars]
 PROJECT_VERSION = "9.2.0-beta"
+
