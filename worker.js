@@ -1,25 +1,61 @@
 const CONFIG = {
   PROJECT_NAME: 'Flux AI Pro',
-  PROJECT_VERSION: '3.1.0',
+  PROJECT_VERSION: '3.4.0',
   PROVIDERS: {
     pollinations: {
-      endpoint: 'https://image.pollinations.ai',
-      pathPrefix: '/prompt',
+      endpoint: 'https://gen.pollinations.ai',
+      pathPrefix: '/image',
+      apiKey: '',
       models: [
-        { id: 'zimage', name: 'Zimage (極速)', category: 'fast', speed: 'fast', parameters: '6B', pricing: { standard: '$0.0002' } },
-        { id: 'flux', name: 'Flux Pro', category: 'balanced', speed: 'medium', parameters: '12B', pricing: { standard: '$0.05' } },
-        { id: 'flux-realism', name: 'Flux Realism', category: 'quality', speed: 'medium', parameters: '12B', pricing: { standard: '$0.05' } },
-        { id: 'flux-anime', name: 'Flux Anime', category: 'quality', speed: 'medium', parameters: '12B', pricing: { standard: '$0.05' } },
-        { id: 'flux-3d', name: 'Flux 3D', category: 'quality', speed: 'medium', parameters: '12B', pricing: { standard: '$0.05' } },
-        { id: 'turbo', name: 'Turbo', category: 'fast', speed: 'fast', parameters: '8B', pricing: { standard: '$0.001' } }
+        { 
+          id: 'flux', 
+          name: 'Flux', 
+          description: 'Fast and high-quality image generation',
+          category: 'balanced', 
+          speed: 'fast',
+          pricing: { pollen: 0.00012 },
+          icon: '⚡'
+        },
+        { 
+          id: 'kontext', 
+          name: 'Kontext', 
+          description: 'Context-aware image generation',
+          category: 'quality', 
+          speed: 'medium',
+          pricing: { pollen: 0.04 },
+          icon: '🎨'
+        },
+        { 
+          id: 'zimage', 
+          name: 'Z-Image Turbo', 
+          description: 'Fast 6B parameter image generation (alpha)',
+          category: 'fast', 
+          speed: 'ultra-fast',
+          pricing: { pollen: 0.0002 },
+          icon: '🚀'
+        }
       ]
     }
   },
   PRESET_SIZES: {
-    'square_1024': { name: 'Square 1:1', width: 1024, height: 1024, icon: '⬛' },
-    'portrait_768': { name: 'Portrait 3:4', width: 768, height: 1024, icon: '📱' },
-    'landscape_1024': { name: 'Landscape 4:3', width: 1024, height: 768, icon: '🖥️' },
-    'wide_1280': { name: 'Wide 16:9', width: 1280, height: 720, icon: '📺' }
+    'square_1024': { name: 'Square 1:1 (1K)', width: 1024, height: 1024, icon: '⬛', category: 'standard' },
+    'portrait_768': { name: 'Portrait 3:4', width: 768, height: 1024, icon: '📱', category: 'standard' },
+    'landscape_1024': { name: 'Landscape 4:3', width: 1024, height: 768, icon: '🖥️', category: 'standard' },
+    'wide_1280': { name: 'Wide 16:9', width: 1280, height: 720, icon: '📺', category: 'standard' },
+    'square_2k': { name: 'Square 1:1 (2K)', width: 2048, height: 2048, icon: '🔲', category: '2k' },
+    'portrait_2k': { name: 'Portrait 3:4 (2K)', width: 1536, height: 2048, icon: '📲', category: '2k' },
+    'landscape_2k': { name: 'Landscape 4:3 (2K)', width: 2048, height: 1536, icon: '🖼️', category: '2k' },
+    'wide_2k': { name: 'Wide 16:9 (2K)', width: 2048, height: 1152, icon: '📽️', category: '2k' },
+    'ultrawide_2k': { name: 'Ultra Wide 21:9 (2K)', width: 2048, height: 878, icon: '🎬', category: '2k' },
+    'square_4k': { name: 'Square 1:1 (4K)', width: 2048, height: 2048, icon: '💎', category: '4k' },
+    'portrait_4k': { name: 'Portrait 9:16 (4K)', width: 1152, height: 2048, icon: '📱', category: '4k' },
+    'landscape_4k': { name: 'Landscape 16:9 (4K)', width: 2048, height: 1152, icon: '🖥️', category: '4k' },
+    'cinema_4k': { name: 'Cinema 2.39:1 (4K)', width: 2048, height: 858, icon: '🎥', category: '4k' },
+    'instagram_square': { name: 'Instagram Square', width: 1080, height: 1080, icon: '📷', category: 'social' },
+    'instagram_portrait': { name: 'Instagram Portrait', width: 1080, height: 1350, icon: '📸', category: 'social' },
+    'twitter_card': { name: 'Twitter Card', width: 1200, height: 675, icon: '🐦', category: 'social' },
+    'facebook_cover': { name: 'Facebook Cover', width: 1640, height: 924, icon: '👥', category: 'social' },
+    'youtube_thumb': { name: 'YouTube Thumbnail', width: 1280, height: 720, icon: '▶️', category: 'social' }
   },
   STYLE_PRESETS: {
     'none': { name: { zh: '🔲 無風格', en: '🔲 None' }, prompt: '', negative: '' },
@@ -87,7 +123,8 @@ const LANG = {
     ex3: '🧚 奇幻森林', ex3p: '奇幻森林，魔法光芒，精靈，蘑菇，夢幻色彩，高清細節',
     ex4: '🚀 太空站', ex4p: '太空站內部，科幻風格，宇航員，地球窗外，高科技設備，電影級光效',
     histTitle: '生成歷史', total: '總共', clear: '清空歷史', histEmpty: '你生成的圖像將會顯示在這裡', reuseBtn: '♻️ 重用', deleteBtn: '🗑️',
-    confirmClear: '確定要清空所有歷史記錄嗎？', confirmDel: '確定要刪除這個歷史記錄嗎？', loaded: '✅ 參數已載入！', reused: '✅ 參數已重用，您可以修改提示詞後再次生成！', needPrompt: '請輸入提示詞', speed: '極快'
+    confirmClear: '確定要清空所有歷史記錄嗎？', confirmDel: '確定要刪除這個歷史記錄嗎？', loaded: '✅ 參數已載入！', reused: '✅ 參數已重用，您可以修改提示詞後再次生成！', needPrompt: '請輸入提示詞',
+    sizeStandard: '📐 標準尺寸 (1K)', size2k: '🔥 2K 高清', size4k: '💎 4K 超高清', sizeSocial: '🌐 社交媒體', highRes: '高分辨率圖像生成時間較長（約 30-60 秒）'
   },
   'en': {
     title: 'Flux AI Pro', version: 'Version', history: 'History', records: 'Records', settings: 'Settings', model: 'Model', size: 'Size', style: 'Style', quality: 'Quality',
@@ -103,7 +140,8 @@ const LANG = {
     ex3: '🧚 Fantasy Forest', ex3p: 'Fantasy forest, magical glow, elves, mushrooms, dreamy colors, HD',
     ex4: '🚀 Space Station', ex4p: 'Space station interior, sci-fi, astronaut, Earth view, cinematic',
     histTitle: 'History', total: 'Total', clear: 'Clear', histEmpty: 'Your images will appear here', reuseBtn: '♻️ Reuse', deleteBtn: '🗑️',
-    confirmClear: 'Clear all history?', confirmDel: 'Delete this record?', loaded: '✅ Loaded!', reused: '✅ Reused! Modify prompt and generate.', needPrompt: 'Please enter prompt', speed: 'Fast'
+    confirmClear: 'Clear all history?', confirmDel: 'Delete this record?', loaded: '✅ Loaded!', reused: '✅ Reused! Modify prompt and generate.', needPrompt: 'Please enter prompt',
+    sizeStandard: '📐 Standard (1K)', size2k: '🔥 2K HD', size4k: '💎 4K Ultra HD', sizeSocial: '🌐 Social Media', highRes: 'High resolution takes longer (30-60s)'
   }
 };
 
@@ -181,6 +219,7 @@ async function smartTranslate(text) {
   
   return translatedSegments.join(' ').replace(/\s+/g, ' ').trim();
 }
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -279,12 +318,21 @@ async function handleGen(request) {
                    '&seed=' + seed + 
                    '&nologo=true&enhance=true';
     
-    const res = await fetch(apiUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0',
-        'Accept': 'image/*'
-      }
-    });
+    console.log('🌐 API URL:', apiUrl);
+    
+    const headers = {
+      'User-Agent': 'Mozilla/5.0',
+      'Accept': 'image/*'
+    };
+    
+    if (CONFIG.PROVIDERS.pollinations.apiKey) {
+      headers['Authorization'] = 'Bearer ' + CONFIG.PROVIDERS.pollinations.apiKey;
+      console.log('🔑 Using API Key authentication');
+    } else {
+      console.log('🆓 Using free service (no API Key)');
+    }
+    
+    const res = await fetch(apiUrl, { headers: headers });
     
     if (!res.ok) throw new Error('API error ' + res.status);
     
@@ -301,7 +349,8 @@ async function handleGen(request) {
         'X-Generation-Time': time,
         'X-Translated': wasTranslated ? 'true' : 'false',
         'X-Original-Prompt': wasTranslated ? encodeURIComponent(originalPrompt) : '',
-        'X-Translated-Prompt': wasTranslated ? encodeURIComponent(prompt) : ''
+        'X-Translated-Prompt': wasTranslated ? encodeURIComponent(prompt) : '',
+        'X-API-Endpoint': 'gen.pollinations.ai'
       })
     });
   } catch (e) {
@@ -314,13 +363,30 @@ function buildHTML(lang) {
   const t = LANG[lang] || LANG['zh'];
   
   const models = CONFIG.PROVIDERS.pollinations.models.map(m => {
-    const e = m.category === 'fast' ? '⚡' : '🖼️';
-    return '<option value="' + m.id + '">' + e + ' ' + m.name + '</option>';
+    const selected = m.id === 'zimage' ? ' selected' : '';
+    return '<option value="' + m.id + '"' + selected + '>' + m.icon + ' ' + m.name + ' - ' + m.description + '</option>';
   }).join('');
   
-  const sizes = Object.entries(CONFIG.PRESET_SIZES).map(([k, s]) => {
-    return '<option value="' + k + '">' + s.icon + ' ' + s.name + ' (' + s.width + '×' + s.height + ')</option>';
-  }).join('');
+  const sizeGroups = {
+    standard: { zh: '📐 標準尺寸 (1K)', en: '📐 Standard (1K)' },
+    '2k': { zh: '🔥 2K 高清', en: '🔥 2K HD' },
+    '4k': { zh: '💎 4K 超高清', en: '💎 4K Ultra HD' },
+    social: { zh: '🌐 社交媒體', en: '🌐 Social Media' }
+  };
+  
+  let sizes = '';
+  Object.entries(sizeGroups).forEach(([category, labels]) => {
+    const groupLabel = labels[lang] || labels.zh;
+    sizes += '<optgroup label="' + groupLabel + '">';
+    
+    Object.entries(CONFIG.PRESET_SIZES).forEach(([k, s]) => {
+      if (s.category === category) {
+        sizes += '<option value="' + k + '">' + s.icon + ' ' + s.name + ' (' + s.width + '×' + s.height + ')</option>';
+      }
+    });
+    
+    sizes += '</optgroup>';
+  });
   
   const styleGroups = {
     zh: {
@@ -426,7 +492,8 @@ function buildHTML(lang) {
   h += '<select id="model" name="model" class="w-full">' + models + '</select></div>';
   h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
   h += '<span>📐</span><span>' + t.size + '</span></label>';
-  h += '<select id="sizePreset" class="w-full">' + sizes + '</select></div>';
+  h += '<select id="sizePreset" class="w-full">' + sizes + '</select>';
+  h += '<p class="text-xs text-yellow-400 mt-1">⚡ ' + t.highRes + '</p></div>';
   h += '<div><label class="block text-sm font-medium mb-2 flex items-center gap-2">';
   h += '<span>🎨</span><span>' + t.style + '</span></label>';
   h += '<select id="style" name="style" class="w-full">' + styles + '</select></div>';
@@ -508,6 +575,7 @@ function buildHTML(lang) {
   
   return h + getScripts(t, lang);
 }
+
 function getScripts(t, lang) {
   let s = '<div id="histModal" class="modal"><div class="modal-content w-full max-w-6xl">';
   s += '<div class="p-6"><div class="flex items-center justify-between mb-6">';
@@ -524,10 +592,30 @@ function getScripts(t, lang) {
   s += '<div id="viewerContent"></div></div></div>';
   
   s += '<script>';
+  
+  s += 'function blobToBase64(blob){';
+  s += 'return new Promise((resolve,reject)=>{';
+  s += 'const reader=new FileReader();';
+  s += 'reader.onloadend=()=>resolve(reader.result);';
+  s += 'reader.onerror=reject;';
+  s += 'reader.readAsDataURL(blob);';
+  s += '});';
+  s += '}';
+  
+  s += 'function base64ToBlob(base64){';
+  s += 'const arr=base64.split(",");';
+  s += 'const mime=arr[0].match(/:(.*?);/)[1];';
+  s += 'const bstr=atob(arr[1]);';
+  s += 'let n=bstr.length;';
+  s += 'const u8arr=new Uint8Array(n);';
+  s += 'while(n--){u8arr[n]=bstr.charCodeAt(n);}';
+  s += 'return new Blob([u8arr],{type:mime});';
+  s += '}';
+  
   s += 'const EX={1:"' + t.ex1p + '",2:"' + t.ex2p + '",3:"' + t.ex3p + '",4:"' + t.ex4p + '"};';
   s += 'const T={loaded:"' + t.loaded + '",reused:"' + t.reused + '",needPrompt:"' + t.needPrompt + '",';
   s += 'confirmClear:"' + t.confirmClear + '",confirmDel:"' + t.confirmDel + '",';
-  s += 'generated:"' + t.generated + '",images:"' + t.images + '",speed:"' + t.speed + '"};';
+  s += 'generated:"' + t.generated + '",images:"' + t.images + '"};';
   s += 'const LANG="' + lang + '";';
   s += 'let hist=[],curParams={},curImgs=[],timer=null;';
   
@@ -575,14 +663,15 @@ function getScripts(t, lang) {
   s += 'body:JSON.stringify(curParams)});';
   s += 'clearInterval(timer);';
   s += 'if(!res.ok)throw new Error("HTTP "+res.status);';
-  s += 'const blob=await res.blob();const url=URL.createObjectURL(blob);';
+  s += 'const blob=await res.blob();';
+  s += 'const base64=await blobToBase64(blob);';
   s += 'const time=((Date.now()-start)/1000).toFixed(2);';
   s += 'const model=res.headers.get("X-Model")||m;';
   s += 'const seed=res.headers.get("X-Seed")||sd;';
   s += 'const translated=res.headers.get("X-Translated")==="true";';
   s += 'const originalPrompt=translated?decodeURIComponent(res.headers.get("X-Original-Prompt")||""):"";';
   s += 'const translatedPrompt=translated?decodeURIComponent(res.headers.get("X-Translated-Prompt")||""):"";';
-  s += 'curImgs=[{url:url,model:model,seed:seed,size:sz.width+"×"+sz.height,time:time,';
+  s += 'curImgs=[{url:base64,model:model,seed:seed,size:sz.width+"×"+sz.height,time:time,';
   s += 'translated:translated,originalPrompt:originalPrompt,translatedPrompt:translatedPrompt}];';
   s += 'showResults();';
   s += 'saveHist({prompt:p,params:curParams,result:curImgs[0],timestamp:Date.now()});';
@@ -631,8 +720,12 @@ function getScripts(t, lang) {
   s += 'function reuseParams(){if(curParams.seed!==-1)document.getElementById("seed").value=curParams.seed;alert(T.reused);}';
   
   s += 'function downloadAll(){curImgs.forEach((img,i)=>{setTimeout(()=>{';
-  s += 'const a=document.createElement("a");a.href=img.url;';
-  s += 'a.download="flux-"+Date.now()+"-"+i+".png";a.click();},i*500);});}';
+  s += 'const blob=base64ToBlob(img.url);';
+  s += 'const url=URL.createObjectURL(blob);';
+  s += 'const a=document.createElement("a");a.href=url;';
+  s += 'a.download="flux-"+Date.now()+"-"+i+".png";a.click();';
+  s += 'setTimeout(()=>URL.revokeObjectURL(url),100);';
+  s += '},i*500);});}';
   
   s += 'function loadHist(){try{';
   s += 'const saved=localStorage.getItem("flux_hist");';
@@ -640,7 +733,7 @@ function getScripts(t, lang) {
   
   s += 'function saveHist(item){hist.unshift(item);';
   s += 'if(hist.length>100)hist=hist.slice(0,100);';
-  s += 'try{localStorage.setItem("flux_hist",JSON.stringify(hist));updateHistCount();}catch(e){}}';
+  s += 'try{localStorage.setItem("flux_hist",JSON.stringify(hist));updateHistCount();}catch(e){console.error("Storage error:",e);}}';
   
   s += 'function updateHistCount(){const c=hist.length;';
   s += 'document.getElementById("histCount").textContent=c;';
