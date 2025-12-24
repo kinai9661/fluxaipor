@@ -1,4 +1,4 @@
-name = "fluxaipor1"
+name = "fluxaipor"
 main = "src/index.js"
 compatibility_date = "2024-12-24"
 compatibility_flags = ["nodejs_compat"]
