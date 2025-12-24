@@ -1,476 +1,487 @@
-// =================================================================================
-// Flux AI Pro - 完整功能版本 v9.7.0
-// 三欄佈局 + 45+ 風格 + 歷史記錄 + 多語言
-// =================================================================================
+// ============================================================
+// Flux AI Pro - Cloudflare Workers 版本
+// 版本: 3.0.0
+// 作者: Your Name
+// 描述: 專業 AI 圖像生成平台，基於 Pollinations.ai API
+// ============================================================
 
 // ============================================================
-// 配置常量
+// 全局配置
 // ============================================================
 const CONFIG = {
-  PROJECT_NAME: "Flux-AI-Pro",
-  PROJECT_VERSION: "9.7.0",
-  API_MASTER_KEY: "1",
-  FETCH_TIMEOUT: 120000,
-  MAX_RETRIES: 3,
+  PROJECT_NAME: 'Flux AI Pro',
+  PROJECT_VERSION: '3.0.0',
   
-  POLLINATIONS_AUTH: {
-    enabled: false,
-    token: "",
-    method: "Bearer"
-  },
-  
+  // API 配置
   PROVIDERS: {
     pollinations: {
-      name: "Pollinations.AI",
-      enabled: true,
-      endpoint: "https://image.pollinations.ai",
-      pathPrefix: "/prompt",
+      name: 'Pollinations AI',
+      endpoint: 'https://image.pollinations.ai',
+      pathPrefix: '/prompt',
       models: [
-        { 
-          id: "zimage", 
-          name: "Z-Image Turbo", 
-          category: "fast",
-          price: "$0.0002",
-          speed: "極快",
-          params: "6B 參數"
+        {
+          id: 'zimage',
+          name: 'Zimage (極速)',
+          category: 'fast',
+          speed: 'fast',
+          parameters: '6B',
+          pricing: { standard: '$0.0002' },
+          description: '極快速度，適合快速測試'
         },
-        { 
-          id: "flux", 
-          name: "Flux Standard", 
-          category: "balanced",
-          price: "$0.00012",
-          speed: "標準",
-          params: "12B 參數"
+        {
+          id: 'flux',
+          name: 'Flux Pro',
+          category: 'balanced',
+          speed: 'medium',
+          parameters: '12B',
+          pricing: { standard: '$0.05' },
+          description: '平衡質量與速度，推薦使用'
         },
-        { 
-          id: "turbo", 
-          name: "Flux Turbo", 
-          category: "fast",
-          price: "$0.0003",
-          speed: "超快",
-          params: "優化版"
+        {
+          id: 'flux-realism',
+          name: 'Flux Realism',
+          category: 'quality',
+          speed: 'medium',
+          parameters: '12B',
+          pricing: { standard: '$0.05' },
+          description: '專注寫實風格的高質量模型'
         },
-        { 
-          id: "kontext", 
-          name: "Kontext", 
-          category: "image-to-image",
-          price: "$0.00012",
-          speed: "標準",
-          params: "支持圖生圖"
+        {
+          id: 'flux-cablyai',
+          name: 'Flux CablyAI',
+          category: 'quality',
+          speed: 'medium',
+          parameters: '12B',
+          pricing: { standard: '$0.05' },
+          description: 'CablyAI 優化版本'
+        },
+        {
+          id: 'flux-anime',
+          name: 'Flux Anime',
+          category: 'quality',
+          speed: 'medium',
+          parameters: '12B',
+          pricing: { standard: '$0.05' },
+          description: '動漫風格專用模型'
+        },
+        {
+          id: 'flux-3d',
+          name: 'Flux 3D',
+          category: 'quality',
+          speed: 'medium',
+          parameters: '12B',
+          pricing: { standard: '$0.05' },
+          description: '3D 渲染風格模型'
+        },
+        {
+          id: 'turbo',
+          name: 'Turbo',
+          category: 'fast',
+          speed: 'fast',
+          parameters: '8B',
+          pricing: { standard: '$0.001' },
+          description: '快速生成，質量較好'
+        },
+        {
+          id: 'kontext',
+          name: 'Kontext (圖生圖)',
+          category: 'image-to-image',
+          speed: 'medium',
+          parameters: '10B',
+          pricing: { standard: '$0.03' },
+          description: '支持參考圖像的圖生圖模型'
         }
       ]
     }
   },
   
-  // 尺寸預設
-  PRESET_SIZES: {
-    "square-1k": { name: "方形 1K", width: 1024, height: 1024, icon: "◼️" },
-    "square-1.5k": { name: "方形 1.5K", width: 1536, height: 1536, icon: "◼️" },
-    "square-2k": { name: "方形 2K", width: 2048, height: 2048, icon: "◼️" },
-    "portrait-9-16": { name: "豎屏 9:16", width: 768, height: 1344, icon: "📱" },
-    "portrait-9-16-hd": { name: "豎屏 9:16 HD", width: 1080, height: 1920, icon: "📱" },
-    "landscape-16-9": { name: "橫屏 16:9", width: 1344, height: 768, icon: "🖥️" },
-    "landscape-16-9-hd": { name: "橫屏 16:9 HD", width: 1920, height: 1080, icon: "🖥️" },
-    "instagram-square": { name: "Instagram 方形", width: 1080, height: 1080, icon: "📷" },
-    "instagram-portrait": { name: "Instagram 豎屏", width: 1080, height: 1350, icon: "📷" },
-    "wallpaper-fhd": { name: "桌布 Full HD", width: 1920, height: 1080, icon: "🖼️" },
-    "wallpaper-2k": { name: "桌布 2K", width: 2560, height: 1440, icon: "🖼️" },
-    "phone-wallpaper": { name: "手機桌布", width: 1170, height: 2532, icon: "📱" }
+  // API 認證
+  POLLINATIONS_AUTH: {
+    enabled: false,
+    token: '',
+    method: 'Bearer'
   },
   
-  // 風格預設（45+ 種風格）
+  // 預設尺寸
+  PRESET_SIZES: {
+    'square_1024': { name: '方形 1:1', width: 1024, height: 1024, icon: '⬛' },
+    'portrait_768': { name: '豎屏 3:4', width: 768, height: 1024, icon: '📱' },
+    'landscape_1024': { name: '橫屏 4:3', width: 1024, height: 768, icon: '🖥️' },
+    'wide_1280': { name: '寬屏 16:9', width: 1280, height: 720, icon: '📺' },
+    'ultrawide_1536': { name: '超寬 21:9', width: 1536, height: 640, icon: '🎬' },
+    'instagram_1080': { name: 'Instagram', width: 1080, height: 1080, icon: '📷' },
+    'story_1080': { name: 'Story 9:16', width: 1080, height: 1920, icon: '📲' },
+    'custom': { name: '自定義', width: 1024, height: 1024, icon: '⚙️' }
+  },
+  
+  // 風格預設 (45+ 種風格)
   STYLE_PRESETS: {
-    // 無風格
-    none: {
-      name: "無風格",
-      icon: "⚪",
-      category: "none",
-      prompt: "",
-      negative: "",
-      description: "不使用任何預設風格"
+    'none': {
+      name: '無風格',
+      icon: '⚪',
+      category: 'none',
+      description: '不使用任何預設風格',
+      prompt: '',
+      negative: ''
     },
     
-    // ========== 寫實風格 ==========
-    photorealistic: {
-      name: "攝影級寫實",
-      icon: "📸",
-      category: "realistic",
-      prompt: "photorealistic, ultra detailed, 8k uhd, high quality, professional photography, sharp focus, vivid colors, natural lighting",
-      negative: "cartoon, anime, painting, illustration, low quality, blurry",
-      description: "極致寫實的攝影效果"
+    // 寫實風格
+    'photorealistic': {
+      name: '照片寫實',
+      icon: '📷',
+      category: 'realistic',
+      description: '極致寫實的照片效果',
+      prompt: 'photorealistic, highly detailed, 8k uhd, professional photography, realistic lighting',
+      negative: 'cartoon, anime, painting, illustration, drawing'
     },
-    portrait: {
-      name: "人像攝影",
-      icon: "👤",
-      category: "realistic",
-      prompt: "portrait photography, professional lighting, shallow depth of field, bokeh background, 85mm lens, sharp focus on eyes",
-      negative: "cartoon, anime, multiple people, group photo",
-      description: "專業人像攝影風格"
+    'portrait': {
+      name: '人像攝影',
+      icon: '👤',
+      category: 'realistic',
+      description: '專業人像攝影風格',
+      prompt: 'portrait photography, professional lighting, bokeh, sharp focus, high quality',
+      negative: 'full body, landscape, wide angle'
     },
-    
-    // ========== 動漫風格 ==========
-    anime: {
-      name: "動漫風格",
-      icon: "🎌",
-      category: "anime",
-      prompt: "anime style, manga art, vibrant colors, detailed character design, expressive eyes, clean lineart",
-      negative: "realistic, photo, 3d render",
-      description: "日式動漫畫風"
+    'cinematic': {
+      name: '電影質感',
+      icon: '🎬',
+      category: 'cinematic',
+      description: '電影級畫面質感',
+      prompt: 'cinematic lighting, film grain, dramatic atmosphere, movie scene, color grading',
+      negative: 'amateur, low quality, snapshot'
     },
-    manga: {
-      name: "漫畫風格",
-      icon: "📚",
-      category: "anime",
-      prompt: "manga style, black and white, screentone, dynamic composition, speed lines, dramatic shadows",
-      negative: "color, realistic, photo",
-      description: "黑白漫畫風格"
-    },
-    chibi: {
-      name: "Q版可愛",
-      icon: "🧸",
-      category: "anime",
-      prompt: "chibi style, cute, kawaii, super deformed, big head, small body, adorable",
-      negative: "realistic, detailed, serious",
-      description: "Q版可愛風格"
+    'studio': {
+      name: '攝影棚',
+      icon: '💡',
+      category: 'realistic',
+      description: '專業攝影棚光效',
+      prompt: 'studio lighting, professional setup, clean background, high key lighting',
+      negative: 'outdoor, natural light, messy'
     },
     
-    // ========== 藝術風格 ==========
-    oil_painting: {
-      name: "油畫",
-      icon: "🖌️",
-      category: "art",
-      prompt: "oil painting, canvas texture, brush strokes, impasto technique, rich colors, artistic",
-      negative: "photo, digital, smooth",
-      description: "古典油畫風格"
+    // 動漫風格
+    'anime': {
+      name: '日系動漫',
+      icon: '🎌',
+      category: 'anime',
+      description: '日本動漫畫風',
+      prompt: 'anime style, manga, japanese animation, vibrant colors, cel shaded',
+      negative: 'realistic, photorealistic, 3d'
     },
-    watercolor: {
-      name: "水彩畫",
-      icon: "💧",
-      category: "art",
-      prompt: "watercolor painting, soft colors, paper texture, flowing pigments, translucent layers, artistic",
-      negative: "photo, sharp, digital",
-      description: "水彩藝術風格"
+    'anime_portrait': {
+      name: '動漫人物',
+      icon: '👧',
+      category: 'anime',
+      description: '動漫角色肖像',
+      prompt: 'anime character, detailed eyes, colorful hair, expressive face, manga style',
+      negative: 'realistic, photographic'
     },
-    sketch: {
-      name: "素描",
-      icon: "✏️",
-      category: "art",
-      prompt: "pencil sketch, graphite drawing, detailed shading, crosshatching, rough paper texture",
-      negative: "color, photo, painting",
-      description: "鉛筆素描風格"
+    'chibi': {
+      name: 'Q版可愛',
+      icon: '🧸',
+      category: 'anime',
+      description: '可愛 Q 版風格',
+      prompt: 'chibi style, cute, kawaii, small body big head, adorable',
+      negative: 'realistic, mature, serious'
     },
-    
-    // ========== 數位藝術 ==========
-    digital_art: {
-      name: "數位藝術",
-      icon: "💻",
-      category: "digital",
-      prompt: "digital art, digital painting, concept art, highly detailed, vibrant colors, smooth rendering",
-      negative: "photo, traditional media",
-      description: "現代數位繪畫"
-    },
-    "3d_render": {
-      name: "3D 渲染",
-      icon: "🎲",
-      category: "digital",
-      prompt: "3d render, octane render, cinema 4d, detailed model, ray tracing, volumetric lighting",
-      negative: "2d, flat, sketch",
-      description: "專業3D渲染效果"
-    },
-    pixel_art: {
-      name: "像素藝術",
-      icon: "👾",
-      category: "digital",
-      prompt: "pixel art, 8-bit, retro game style, pixelated, limited color palette",
-      negative: "smooth, realistic, high resolution",
-      description: "復古像素風格"
-    },
-    low_poly: {
-      name: "低多邊形",
-      icon: "🔷",
-      category: "digital",
-      prompt: "low poly, geometric, polygonal art, faceted, minimalist 3d",
-      negative: "realistic, detailed, organic",
-      description: "幾何低面建模"
+    'ghibli': {
+      name: '吉卜力',
+      icon: '🌿',
+      category: 'anime',
+      description: '宮崎駿吉卜力風格',
+      prompt: 'studio ghibli style, hayao miyazaki, watercolor, dreamy atmosphere',
+      negative: 'dark, horror, realistic'
     },
     
-    // ========== 電影風格 ==========
-    cinematic: {
-      name: "電影級質感",
-      icon: "🎬",
-      category: "cinematic",
-      prompt: "cinematic lighting, movie scene, dramatic composition, film grain, anamorphic lens, color grading",
-      negative: "amateur, snapshot, low quality",
-      description: "好萊塢電影質感"
+    // 藝術風格
+    'oil_painting': {
+      name: '油畫',
+      icon: '🎨',
+      category: 'art',
+      description: '古典油畫風格',
+      prompt: 'oil painting, classical art, textured brushstrokes, rich colors, masterpiece',
+      negative: 'digital, modern, photograph'
     },
-    film_noir: {
-      name: "黑色電影",
-      icon: "🎩",
-      category: "cinematic",
-      prompt: "film noir, black and white, high contrast, dramatic shadows, 1940s style, moody",
-      negative: "color, bright, cheerful",
-      description: "經典黑白電影"
+    'watercolor': {
+      name: '水彩畫',
+      icon: '💧',
+      category: 'art',
+      description: '水彩藝術風格',
+      prompt: 'watercolor painting, soft edges, transparent colors, artistic, delicate',
+      negative: 'sharp, digital, photorealistic'
     },
-    
-    // ========== 奇幻風格 ==========
-    fantasy: {
-      name: "奇幻風格",
-      icon: "🔮",
-      category: "fantasy",
-      prompt: "fantasy art, magical, mystical, epic scene, detailed world, imaginative",
-      negative: "realistic, mundane, modern",
-      description: "奇幻魔法世界"
+    'impressionism': {
+      name: '印象派',
+      icon: '🌅',
+      category: 'art',
+      description: '印象派藝術',
+      prompt: 'impressionism, monet style, loose brushwork, light effects, artistic',
+      negative: 'realistic, detailed, sharp'
     },
-    dark_fantasy: {
-      name: "黑暗奇幻",
-      icon: "🌑",
-      category: "fantasy",
-      prompt: "dark fantasy, gothic, ominous atmosphere, dramatic lighting, mysterious, dark colors",
-      negative: "bright, cheerful, cute",
-      description: "黑暗神秘風格"
+    'van_gogh': {
+      name: '梵高風格',
+      icon: '🌻',
+      category: 'art',
+      description: '梵高的繪畫風格',
+      prompt: 'van gogh style, starry night, swirling brushstrokes, expressive, vibrant',
+      negative: 'realistic, modern, digital'
     },
-    gothic: {
-      name: "哥德風格",
-      icon: "🦇",
-      category: "fantasy",
-      prompt: "gothic style, victorian, ornate details, dark aesthetic, dramatic, elaborate",
-      negative: "modern, minimalist, bright",
-      description: "維多利亞哥德"
+    'ukiyo_e': {
+      name: '浮世繪',
+      icon: '🗾',
+      category: 'traditional',
+      description: '日本浮世繪',
+      prompt: 'ukiyo-e, japanese woodblock print, hokusai style, traditional japanese art',
+      negative: 'modern, realistic, western'
     },
-    
-    // ========== 科幻風格 ==========
-    cyberpunk: {
-      name: "賽博朋克",
-      icon: "🌃",
-      category: "scifi",
-      prompt: "cyberpunk style, neon lights, futuristic city, tech noir, dystopian, high tech low life",
-      negative: "natural, historical, low tech",
-      description: "霓虹未來都市"
+    // 數位藝術
+    'digital_art': {
+      name: '數位藝術',
+      icon: '💻',
+      category: 'digital',
+      description: '現代數位繪畫',
+      prompt: 'digital art, digital painting, concept art, artstation, detailed',
+      negative: 'traditional, photograph, sketch'
     },
-    steampunk: {
-      name: "蒸汽朋克",
-      icon: "⚙️",
-      category: "scifi",
-      prompt: "steampunk style, victorian era, brass and copper, gears and cogs, steam powered, retro futuristic",
-      negative: "modern, digital, clean",
-      description: "維多利亞蒸汽機械"
+    'concept_art': {
+      name: '概念設計',
+      icon: '🎭',
+      category: 'digital',
+      description: '遊戲概念藝術',
+      prompt: 'concept art, game design, detailed illustration, professional',
+      negative: 'amateur, simple, sketch'
     },
-    scifi: {
-      name: "科幻風格",
-      icon: "🚀",
-      category: "scifi",
-      prompt: "science fiction, futuristic, advanced technology, space age, sleek design",
-      negative: "historical, primitive, natural",
-      description: "未來科技感"
+    'vector': {
+      name: '向量插畫',
+      icon: '📐',
+      category: 'digital',
+      description: '扁平向量風格',
+      prompt: 'vector art, flat design, clean lines, minimalist, geometric',
+      negative: 'realistic, textured, 3d'
     },
-    biomechanical: {
-      name: "生物機械",
-      icon: "🦾",
-      category: "scifi",
-      prompt: "biomechanical, H.R. Giger style, organic meets mechanical, alien technology, detailed",
-      negative: "natural, simple, clean",
-      description: "生物與機械融合"
-    },
-    holographic: {
-      name: "全息投影",
-      icon: "🌈",
-      category: "scifi",
-      prompt: "holographic, neon glow, translucent, futuristic display, digital projection",
-      negative: "solid, opaque, natural",
-      description: "全息科技效果"
+    'pixel_art': {
+      name: '像素藝術',
+      icon: '🕹️',
+      category: 'digital',
+      description: '復古像素風格',
+      prompt: 'pixel art, 8bit, retro game style, pixelated, nostalgic',
+      negative: 'realistic, smooth, high resolution'
     },
     
-    // ========== 抽象風格 ==========
-    surreal: {
-      name: "超現實主義",
-      icon: "🌀",
-      category: "abstract",
-      prompt: "surrealism, dreamlike, Salvador Dali style, impossible geometry, mind-bending, symbolic",
-      negative: "realistic, ordinary, logical",
-      description: "超現實夢境"
+    // 3D 風格
+    '3d_render': {
+      name: '3D 渲染',
+      icon: '🎲',
+      category: 'digital',
+      description: '3D 建模渲染',
+      prompt: '3d render, octane render, blender, detailed model, ray tracing',
+      negative: '2d, flat, sketch'
     },
-    abstract: {
-      name: "抽象藝術",
-      icon: "🎨",
-      category: "abstract",
-      prompt: "abstract art, non-representational, bold colors, geometric shapes, expressive",
-      negative: "realistic, detailed, representational",
-      description: "現代抽象藝術"
+    'low_poly': {
+      name: '低多邊形',
+      icon: '🔷',
+      category: 'digital',
+      description: '低面數 3D 風格',
+      prompt: 'low poly, geometric, stylized 3d, minimal polygons, clean shapes',
+      negative: 'realistic, high detail, organic'
     },
-    psychedelic: {
-      name: "迷幻藝術",
-      icon: "🍄",
-      category: "abstract",
-      prompt: "psychedelic art, vibrant colors, swirling patterns, kaleidoscopic, trippy, fractal",
-      negative: "muted, simple, static",
-      description: "迷幻色彩"
-    },
-    
-    // ========== 傳統藝術 ==========
-    ink_wash: {
-      name: "水墨畫",
-      icon: "🖋️",
-      category: "traditional",
-      prompt: "Chinese ink wash painting, sumi-e, brush strokes, minimalist, black ink, traditional",
-      negative: "color, western, detailed",
-      description: "中國水墨畫"
-    },
-    art_nouveau: {
-      name: "新藝術風格",
-      icon: "🌺",
-      category: "traditional",
-      prompt: "art nouveau, organic forms, flowing lines, decorative, Alphonse Mucha style, elegant",
-      negative: "geometric, modern, minimalist",
-      description: "新藝術運動"
-    },
-    impressionism: {
-      name: "印象派",
-      icon: "🌅",
-      category: "traditional",
-      prompt: "impressionism, loose brushwork, light effects, Claude Monet style, atmospheric, soft colors",
-      negative: "detailed, sharp, realistic",
-      description: "印象派繪畫"
-    },
-    stained_glass: {
-      name: "彩繪玻璃",
-      icon: "🪟",
-      category: "traditional",
-      prompt: "stained glass window, colorful glass pieces, lead lines, gothic cathedral style, luminous",
-      negative: "opaque, modern, simple",
-      description: "教堂彩繪玻璃"
-    },
-    ukiyo_e: {
-      name: "浮世繪",
-      icon: "🗾",
-      category: "traditional",
-      prompt: "ukiyo-e, Japanese woodblock print, Hokusai style, bold outlines, flat colors, traditional",
-      negative: "realistic, 3d, western",
-      description: "日本浮世繪"
-    },
-    baroque: {
-      name: "巴洛克風格",
-      icon: "👑",
-      category: "traditional",
-      prompt: "baroque style, ornate details, dramatic lighting, rich colors, grand composition, classical",
-      negative: "minimalist, modern, simple",
-      description: "巴洛克藝術"
+    'clay': {
+      name: '黏土質感',
+      icon: '🧱',
+      category: 'digital',
+      description: '黏土建模風格',
+      prompt: 'clay render, claymation, soft shapes, tactile, playful',
+      negative: 'realistic, sharp, metallic'
     },
     
-    // ========== 現代風格 ==========
-    pop_art: {
-      name: "普普藝術",
-      icon: "🎪",
-      category: "modern",
-      prompt: "pop art, Andy Warhol style, bold colors, screen printing effect, commercial imagery, retro",
-      negative: "subtle, realistic, classical",
-      description: "波普藝術"
+    // 奇幻風格
+    'fantasy': {
+      name: '奇幻藝術',
+      icon: '🧙',
+      category: 'fantasy',
+      description: '奇幻魔法世界',
+      prompt: 'fantasy art, magical, ethereal, enchanted, mystical atmosphere',
+      negative: 'realistic, modern, mundane'
     },
-    vaporwave: {
-      name: "蒸汽波",
-      icon: "🌊",
-      category: "modern",
-      prompt: "vaporwave aesthetic, 80s 90s nostalgia, pastel colors, glitch art, retro computer graphics",
-      negative: "modern, realistic, muted",
-      description: "復古未來主義"
+    'dark_fantasy': {
+      name: '黑暗奇幻',
+      icon: '🦇',
+      category: 'fantasy',
+      description: '黑暗哥特風格',
+      prompt: 'dark fantasy, gothic, mysterious, dramatic lighting, ominous',
+      negative: 'bright, cheerful, cute'
     },
-    graffiti: {
-      name: "塗鴉藝術",
-      icon: "🎨",
-      category: "modern",
-      prompt: "graffiti art, street art, spray paint, urban, bold colors, stylized letters",
-      negative: "classical, refined, subtle",
-      description: "街頭塗鴉"
-    },
-    neon: {
-      name: "霓虹燈光",
-      icon: "💡",
-      category: "modern",
-      prompt: "neon lighting, glowing signs, vibrant colors, night scene, luminous, electric",
-      negative: "natural light, muted, daytime",
-      description: "霓虹燈效果"
+    'fairy_tale': {
+      name: '童話風格',
+      icon: '🏰',
+      category: 'fantasy',
+      description: '童話故事風格',
+      prompt: 'fairy tale, storybook illustration, whimsical, dreamy, magical',
+      negative: 'realistic, dark, modern'
     },
     
-    // ========== 復古風格 ==========
-    vintage: {
-      name: "復古風格",
-      icon: "📻",
-      category: "retro",
-      prompt: "vintage style, retro aesthetic, aged paper, nostalgic, old photograph, faded colors",
-      negative: "modern, sharp, digital",
-      description: "懷舊復古感"
+    // 科幻風格
+    'cyberpunk': {
+      name: '賽博朋克',
+      icon: '🌃',
+      category: 'scifi',
+      description: '未來霓虹都市',
+      prompt: 'cyberpunk, neon lights, futuristic city, high tech low life, dystopian',
+      negative: 'nature, traditional, ancient'
     },
-    art_deco: {
-      name: "裝飾藝術",
-      icon: "🏛️",
-      category: "retro",
-      prompt: "art deco, 1920s style, geometric patterns, luxurious, gold accents, elegant",
-      negative: "modern, minimalist, rough",
-      description: "1920年代裝飾藝術"
+    'sci_fi': {
+      name: '科幻未來',
+      icon: '🚀',
+      category: 'scifi',
+      description: '科幻科技風格',
+      prompt: 'sci-fi, futuristic, high tech, space age, advanced technology',
+      negative: 'fantasy, medieval, traditional'
     },
-    
-    // ========== 極簡風格 ==========
-    minimalist: {
-      name: "極簡主義",
-      icon: "⬜",
-      category: "minimal",
-      prompt: "minimalist design, clean lines, simple composition, negative space, limited colors",
-      negative: "detailed, ornate, busy",
-      description: "極簡設計"
-    },
-    line_art: {
-      name: "線條藝術",
-      icon: "➰",
-      category: "minimal",
-      prompt: "line art, continuous line drawing, minimalist, black and white, simple elegant lines",
-      negative: "shading, color, detailed",
-      description: "純線條繪畫"
+    'steampunk': {
+      name: '蒸汽朋克',
+      icon: '⚙️',
+      category: 'scifi',
+      description: '維多利亞蒸汽時代',
+      prompt: 'steampunk, victorian era, brass, gears, steam powered, retro futuristic',
+      negative: 'modern, digital, clean'
     },
     
-    // ========== 其他風格 ==========
-    comic_book: {
-      name: "美式漫畫",
-      icon: "💥",
-      category: "other",
-      prompt: "comic book style, bold outlines, halftone dots, speech bubbles, dynamic action, vibrant colors",
-      negative: "realistic, photo, subtle",
-      description: "美式漫畫風格"
+    // 抽象風格
+    'abstract': {
+      name: '抽象藝術',
+      icon: '🎨',
+      category: 'abstract',
+      description: '抽象表現主義',
+      prompt: 'abstract art, non representational, expressive, bold colors, artistic',
+      negative: 'realistic, detailed, photographic'
     },
-    papercraft: {
-      name: "剪紙藝術",
-      icon: "✂️",
-      category: "other",
-      prompt: "paper craft, paper cutting art, layered paper, shadow box effect, handmade",
-      negative: "digital, smooth, realistic",
-      description: "立體剪紙"
+    'geometric': {
+      name: '幾何抽象',
+      icon: '🔶',
+      category: 'abstract',
+      description: '幾何圖形藝術',
+      prompt: 'geometric abstract, shapes, patterns, mathematical, clean lines',
+      negative: 'organic, realistic, messy'
     },
-    isometric: {
-      name: "等角視圖",
-      icon: "📐",
-      category: "other",
-      prompt: "isometric view, isometric perspective, architectural diagram, clean geometric shapes",
-      negative: "perspective, realistic viewpoint",
-      description: "等角投影視圖"
+    'psychedelic': {
+      name: '迷幻藝術',
+      icon: '🌈',
+      category: 'abstract',
+      description: '迷幻視覺效果',
+      prompt: 'psychedelic art, trippy, vibrant colors, surreal, kaleidoscopic',
+      negative: 'realistic, muted, simple'
+    },
+    
+    // 復古風格
+    'vintage': {
+      name: '復古照片',
+      icon: '📻',
+      category: 'retro',
+      description: '懷舊復古質感',
+      prompt: 'vintage photography, retro, aged, nostalgic, film grain, faded colors',
+      negative: 'modern, digital, clean'
+    },
+    'polaroid': {
+      name: '寶麗來',
+      icon: '📸',
+      category: 'retro',
+      description: '拍立得風格',
+      prompt: 'polaroid style, instant camera, vintage look, soft focus, faded',
+      negative: 'modern, sharp, digital'
+    },
+    'vaporwave': {
+      name: '蒸汽波',
+      icon: '🌸',
+      category: 'retro',
+      description: '80年代美學',
+      prompt: 'vaporwave aesthetic, 80s 90s nostalgia, pastel colors, glitch art',
+      negative: 'realistic, modern, natural'
+    },
+    
+    // 極簡風格
+    'minimalist': {
+      name: '極簡主義',
+      icon: '⚪',
+      category: 'minimal',
+      description: '簡約設計',
+      prompt: 'minimalist, simple, clean, negative space, elegant, less is more',
+      negative: 'complex, detailed, busy'
+    },
+    'line_art': {
+      name: '線條藝術',
+      icon: '✏️',
+      category: 'minimal',
+      description: '簡潔線條畫',
+      prompt: 'line art, simple lines, black and white, clean strokes, elegant',
+      negative: 'colored, textured, complex'
+    },
+    
+    // 其他特殊風格
+    'comic': {
+      name: '漫畫風格',
+      icon: '💥',
+      category: 'other',
+      description: '美式漫畫',
+      prompt: 'comic book style, bold lines, halftone, pop art, graphic novel',
+      negative: 'realistic, soft, watercolor'
+    },
+    'noir': {
+      name: '黑色電影',
+      icon: '🎩',
+      category: 'other',
+      description: '黑白電影風格',
+      prompt: 'film noir, black and white, dramatic shadows, high contrast, mysterious',
+      negative: 'colorful, bright, cheerful'
+    },
+    'horror': {
+      name: '恐怖驚悚',
+      icon: '👻',
+      category: 'other',
+      description: '恐怖氛圍',
+      prompt: 'horror, creepy, dark atmosphere, unsettling, eerie, terrifying',
+      negative: 'cute, bright, cheerful'
+    },
+    'surreal': {
+      name: '超現實',
+      icon: '🌀',
+      category: 'other',
+      description: '超現實主義',
+      prompt: 'surrealism, dreamlike, bizarre, dali style, impossible, mind bending',
+      negative: 'realistic, normal, logical'
+    },
+    'pop_art': {
+      name: '波普藝術',
+      icon: '🎪',
+      category: 'other',
+      description: '波普藝術風格',
+      prompt: 'pop art, warhol style, bold colors, graphic, repetition, commercial',
+      negative: 'subtle, realistic, classical'
     }
-  }
+  },
+  
+  // 請求超時設置
+  FETCH_TIMEOUT: 120000,
+  
+  // 其他配置
+  MAX_HISTORY: 100,
+  DEFAULT_QUALITY: 'standard'
 };
+
 // ============================================================
 // 語言包
 // ============================================================
 const TRANSLATIONS = {
   'zh-TW': {
-    // 頁面標題
     title: 'Flux AI Pro',
     subtitle: '專業 AI 圖像生成平台',
     version: '版本',
     
-    // 導航
     nav: {
       generate: '生成',
       history: '歷史',
       settings: '設置'
     },
     
-    // 左側欄 - 生成參數
     params: {
       title: '生成參數',
       modelSelection: '模型選擇',
@@ -497,7 +508,6 @@ const TRANSLATIONS = {
       generateBtn: '開始生成'
     },
     
-    // 中間欄 - 生成結果
     results: {
       title: '生成結果',
       waiting: '尚未生成任何圖像',
@@ -516,7 +526,6 @@ const TRANSLATIONS = {
       reuse: '重用參數'
     },
     
-    // 右側欄 - 提示詞
     prompt: {
       title: '提示詞',
       positive: '正面提示詞',
@@ -542,7 +551,6 @@ const TRANSLATIONS = {
       styleDescription: '風格描述'
     },
     
-    // 歷史記錄
     history: {
       title: '生成歷史',
       count: '條記錄',
@@ -557,7 +565,6 @@ const TRANSLATIONS = {
       close: '關閉'
     },
     
-    // 風格類別
     styleCategories: {
       none: '無風格',
       realistic: '寫實風格',
@@ -575,14 +582,12 @@ const TRANSLATIONS = {
       other: '其他風格'
     },
     
-    // 狀態消息
     status: {
       online: '系統正常',
       apiConfigured: 'API 已配置',
       ready: '就緒'
     },
     
-    // 錯誤消息
     errors: {
       promptRequired: '請輸入提示詞',
       generationFailed: '生成失敗，請稍後重試',
@@ -649,12 +654,12 @@ const TRANSLATIONS = {
     prompt: {
       title: 'Prompt',
       positive: 'Positive Prompt',
-      positivePlaceholder: 'Describe the image you want to generate...\n\nExample:\nA cute orange cat sitting by the window, sunlight casting on it, soft lighting effects, high-definition photography',
+      positivePlaceholder: 'Describe the image you want to generate...',
       negative: 'Negative Prompt',
-      negativePlaceholder: 'Describe unwanted elements...\n\nExample:\nblurry, low quality, deformed, extra limbs',
+      negativePlaceholder: 'Describe unwanted elements...',
       negativeOptional: '(Optional)',
       referenceImages: 'Reference Images URL',
-      referenceImagesPlaceholder: 'https://example.com/image1.jpg, https://example.com/image2.jpg\n\nSupports multiple URLs, separated by commas\nUp to 3 reference images',
+      referenceImagesPlaceholder: 'https://example.com/image.jpg',
       referenceOptional: '(Image-to-Image - Optional)',
       autoTranslate: 'Auto translation supported',
       supportImageToImage: 'Image-to-Image model: Kontext',
@@ -662,9 +667,9 @@ const TRANSLATIONS = {
       hints: [
         'Detailed descriptions yield better results',
         'Art styles enhance visual effects',
-        'Chinese prompts are auto-translated to English',
+        'Chinese prompts are auto-translated',
         'Negative prompts help exclude unwanted elements',
-        'Reference images work only with Kontext model'
+        'Reference images work only with Kontext'
       ],
       currentStyle: 'Current Style',
       noStyle: 'No Style',
@@ -679,7 +684,7 @@ const TRANSLATIONS = {
       noHistoryDesc: 'Your generated images will appear here',
       export: 'Export',
       clear: 'Clear All',
-      confirmClear: 'Are you sure you want to clear all history? This cannot be undone.',
+      confirmClear: 'Clear all history? This cannot be undone.',
       delete: 'Delete',
       viewImage: 'View Image',
       close: 'Close'
@@ -710,18 +715,16 @@ const TRANSLATIONS = {
     
     errors: {
       promptRequired: 'Please enter a prompt',
-      generationFailed: 'Generation failed, please try again',
-      networkError: 'Network error, please check connection',
+      generationFailed: 'Generation failed',
+      networkError: 'Network error',
       apiError: 'API Error'
     }
   }
 };
-
 // ============================================================
 // 工具函數
 // ============================================================
 
-// CORS 標頭
 function corsHeaders(additionalHeaders = {}) {
   return {
     'Access-Control-Allow-Origin': '*',
@@ -732,7 +735,6 @@ function corsHeaders(additionalHeaders = {}) {
   };
 }
 
-// 獲取客戶端 IP
 function getClientIP(request) {
   return request.headers.get('cf-connecting-ip') || 
          request.headers.get('x-forwarded-for') || 
@@ -740,12 +742,10 @@ function getClientIP(request) {
          'unknown';
 }
 
-// 生成隨機 ID
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substring(2, 9);
 }
 
-// 獲取語言
 function getLanguage(request) {
   const url = new URL(request.url);
   const langParam = url.searchParams.get('lang');
@@ -764,10 +764,9 @@ function getLanguage(request) {
     return 'zh-TW';
   }
   
-  return 'zh-TW'; // 默認繁體中文
+  return 'zh-TW';
 }
 
-// 錯誤響應
 function errorResponse(message, status = 400) {
   return new Response(JSON.stringify({ 
     error: { 
@@ -781,7 +780,6 @@ function errorResponse(message, status = 400) {
   });
 }
 
-// 成功響應
 function successResponse(data) {
   return new Response(JSON.stringify(data), {
     status: 200,
@@ -789,7 +787,6 @@ function successResponse(data) {
   });
 }
 
-// 日誌函數
 function log(level, message, data = {}) {
   const timestamp = new Date().toISOString();
   const logEntry = {
@@ -800,6 +797,7 @@ function log(level, message, data = {}) {
   };
   console.log(JSON.stringify(logEntry));
 }
+
 // ============================================================
 // 主要 Worker 邏輯
 // ============================================================
@@ -811,13 +809,11 @@ export default {
     const clientIP = getClientIP(request);
     const lang = getLanguage(request);
     
-    // 設置 API 認證（如果環境變數存在）
     if (env.POLLINATIONS_API_KEY) {
       CONFIG.POLLINATIONS_AUTH.enabled = true;
       CONFIG.POLLINATIONS_AUTH.token = env.POLLINATIONS_API_KEY;
     }
     
-    // 處理 OPTIONS 請求（CORS 預檢）
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
@@ -826,10 +822,8 @@ export default {
     }
     
     try {
-      // 路由處理
       const path = url.pathname;
       
-      // 首頁
       if (path === '/' || path === '') {
         return new Response(getHTML(lang), {
           status: 200,
@@ -840,17 +834,14 @@ export default {
         });
       }
       
-      // 健康檢查
       if (path === '/health' || path === '/api/health') {
         return handleHealthCheck(env);
       }
       
-      // API: 獲取配置
       if (path === '/api/config') {
         return handleGetConfig();
       }
       
-      // API: 生成圖像
       if (path === '/_internal/generate' || path === '/api/generate') {
         if (request.method !== 'POST') {
           return errorResponse('Method not allowed', 405);
@@ -858,17 +849,14 @@ export default {
         return await handleGenerate(request, env, clientIP);
       }
       
-      // API: 獲取模型列表
       if (path === '/api/models') {
         return handleGetModels();
       }
       
-      // API: 獲取風格列表
       if (path === '/api/styles') {
         return handleGetStyles(lang);
       }
       
-      // 404
       return errorResponse('Not Found', 404);
       
     } catch (error) {
@@ -879,10 +867,7 @@ export default {
         ip: clientIP
       });
       
-      return errorResponse(
-        'Internal server error: ' + error.message,
-        500
-      );
+      return errorResponse('Internal server error: ' + error.message, 500);
     }
   }
 };
@@ -891,7 +876,6 @@ export default {
 // API 處理函數
 // ============================================================
 
-// 健康檢查
 function handleHealthCheck(env) {
   const health = {
     status: 'ok',
@@ -917,7 +901,6 @@ function handleHealthCheck(env) {
   return successResponse(health);
 }
 
-// 獲取配置
 function handleGetConfig() {
   return successResponse({
     project: CONFIG.PROJECT_NAME,
@@ -929,18 +912,15 @@ function handleGetConfig() {
   });
 }
 
-// 獲取模型列表
 function handleGetModels() {
   return successResponse({
     models: CONFIG.PROVIDERS.pollinations.models
   });
 }
 
-// 獲取風格列表
 function handleGetStyles(lang = 'zh-TW') {
   const t = TRANSLATIONS[lang] || TRANSLATIONS['zh-TW'];
   
-  // 按類別組織風格
   const stylesByCategory = {};
   
   Object.entries(CONFIG.STYLE_PRESETS).forEach(([key, style]) => {
@@ -975,15 +955,12 @@ async function handleGenerate(request, env, clientIP) {
   const startTime = Date.now();
   
   try {
-    // 解析請求體
     const body = await request.json();
     
-    // 驗證必需參數
     if (!body.prompt || !body.prompt.trim()) {
       return errorResponse('Prompt is required', 400);
     }
     
-    // 提取參數
     const params = {
       prompt: body.prompt.trim(),
       model: body.model || 'zimage',
@@ -999,12 +976,10 @@ async function handleGenerate(request, env, clientIP) {
       reference_images: body.reference_images || []
     };
     
-    // 生成隨機 seed（如果需要）
     const currentSeed = params.seed === -1 
       ? Math.floor(Math.random() * 1000000) 
       : params.seed;
     
-    // 應用風格
     let finalPrompt = params.prompt;
     let finalNegative = params.negative_prompt;
     
@@ -1022,7 +997,6 @@ async function handleGenerate(request, env, clientIP) {
       }
     }
     
-    // 質量模式調整
     if (params.auto_hd) {
       switch (params.quality_mode) {
         case 'ultra':
@@ -1034,16 +1008,13 @@ async function handleGenerate(request, env, clientIP) {
           finalNegative += ', low quality, blurry';
           break;
         case 'economy':
-          // 不添加額外質量描述
           break;
       }
     }
     
-    // 構建 API URL
     const encodedPrompt = encodeURIComponent(finalPrompt);
     const apiUrl = `${CONFIG.PROVIDERS.pollinations.endpoint}${CONFIG.PROVIDERS.pollinations.pathPrefix}/${encodedPrompt}?model=${params.model}&width=${params.width}&height=${params.height}&seed=${currentSeed}&nologo=true&enhance=true`;
     
-    // 準備請求標頭
     const headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       'Accept': 'image/*,*/*',
@@ -1051,7 +1022,6 @@ async function handleGenerate(request, env, clientIP) {
       'Origin': 'https://pollinations.ai'
     };
     
-    // 添加認證（如果啟用）
     if (CONFIG.POLLINATIONS_AUTH.enabled && CONFIG.POLLINATIONS_AUTH.token) {
       headers['Authorization'] = `${CONFIG.POLLINATIONS_AUTH.method} ${CONFIG.POLLINATIONS_AUTH.token}`;
     }
@@ -1064,7 +1034,6 @@ async function handleGenerate(request, env, clientIP) {
       ip: clientIP
     });
     
-    // 調用 API
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT);
     
@@ -1080,7 +1049,6 @@ async function handleGenerate(request, env, clientIP) {
       throw new Error(`API returned status ${response.status}: ${response.statusText}`);
     }
     
-    // 獲取圖像數據
     const imageBlob = await response.blob();
     const imageBuffer = await imageBlob.arrayBuffer();
     
@@ -1095,7 +1063,6 @@ async function handleGenerate(request, env, clientIP) {
       ip: clientIP
     });
     
-    // 返回圖像
     return new Response(imageBuffer, {
       status: 200,
       headers: corsHeaders({
@@ -1194,7 +1161,6 @@ body {
   overflow-x: hidden;
 }
 
-/* 毛玻璃卡片 */
 .glass-card {
   background: rgba(30, 35, 50, 0.7);
   backdrop-filter: blur(20px) saturate(180%);
@@ -1209,7 +1175,6 @@ body {
   box-shadow: 0 12px 40px 0 rgba(34, 197, 94, 0.15);
 }
 
-/* 輸入框樣式 */
 .input-field {
   background: rgba(30, 35, 50, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1228,7 +1193,6 @@ body {
   color: rgba(255, 255, 255, 0.4);
 }
 
-/* 按鈕樣式 */
 .btn-primary {
   position: relative;
   overflow: hidden;
@@ -1253,7 +1217,6 @@ body {
   cursor: not-allowed;
 }
 
-/* Spinner 動畫 */
 .spinner {
   border: 3px solid rgba(255, 255, 255, 0.1);
   border-top: 3px solid hsl(142.1 76.2% 36.3%);
@@ -1268,7 +1231,6 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* 摺疊內容 */
 .collapsible-content {
   max-height: 0;
   overflow: hidden;
@@ -1279,7 +1241,6 @@ body {
   max-height: 2000px;
 }
 
-/* 風格選項 */
 .style-option {
   cursor: pointer;
   padding: 0.5rem;
@@ -1301,7 +1262,6 @@ body {
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
 }
 
-/* 徽章樣式 */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -1319,7 +1279,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* 圖片容器 */
 .image-container {
   position: relative;
   overflow: hidden;
@@ -1338,7 +1297,6 @@ body {
   transform: scale(1.05);
 }
 
-/* 滾動條美化 */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1357,14 +1315,12 @@ body {
   background: rgba(34, 197, 94, 0.7);
 }
 
-/* 響應式調整 */
 @media (max-width: 1024px) {
   .glass-card {
     backdrop-filter: blur(15px) saturate(150%);
   }
 }
 
-/* 模態框 */
 .modal {
   display: none;
   position: fixed;
@@ -1388,7 +1344,6 @@ body {
   to { opacity: 1; }
 }
 
-/* 選擇高亮 */
 ::selection {
   background-color: rgba(34, 197, 94, 0.3);
   color: inherit;
@@ -1397,10 +1352,8 @@ body {
 </head>
 
 <body>
-  <!-- 頂部導航欄 -->
   <header class="glass-card border-b border-gray-800 sticky top-0 z-50">
     <div class="px-4 py-3 flex items-center justify-between max-w-screen-2xl mx-auto">
-      <!-- Logo 和標題 -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-2xl shadow-lg">
           🎨
@@ -1413,16 +1366,13 @@ body {
         </div>
       </div>
       
-      <!-- 右側控制 -->
       <div class="flex items-center gap-2">
-        <!-- 歷史記錄按鈕 -->
         <button id="historyBtn" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition text-sm flex items-center gap-2 border border-gray-700">
           <span>📚</span>
           <span class="hidden sm:inline">${t.nav.history}</span>
           <span id="historyCount" class="px-2 py-0.5 rounded-full bg-green-500 text-white text-xs font-bold min-w-[20px] text-center">0</span>
         </button>
         
-        <!-- 語言切換 -->
         <select id="langSwitch" class="px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm cursor-pointer input-field">
           <option value="zh-TW" ${lang === 'zh-TW' ? 'selected' : ''}>🇹🇼 繁中</option>
           <option value="en" ${lang === 'en' ? 'selected' : ''}>🇬🇧 EN</option>
@@ -1431,20 +1381,16 @@ body {
     </div>
   </header>
 
-  <!-- 主要內容區域 - 三欄布局 -->
   <div class="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] max-w-screen-2xl mx-auto">
     
-    <!-- 左側欄 - 生成參數 -->
     <aside id="leftPanel" class="w-full lg:w-80 xl:w-96 glass-card border-r border-gray-800 overflow-y-auto">
       <div class="p-4 space-y-4">
-        <!-- 標題 -->
         <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-700">
           <span class="text-2xl">⚙️</span>
           <h2 class="text-lg font-bold">${t.params.title}</h2>
         </div>
 
         <form id="generateForm" class="space-y-4">
-          <!-- 模型選擇 -->
           <div>
             <label class="block text-sm font-medium mb-2 flex items-center gap-2">
               <span>🤖</span>
@@ -1457,7 +1403,6 @@ body {
               }).join('')}
             </select>
             
-            <!-- 模型信息 -->
             <div class="mt-2 grid grid-cols-3 gap-2 text-xs">
               <div class="flex items-center gap-1 text-gray-400">
                 <span>💰</span>
@@ -1474,7 +1419,6 @@ body {
             </div>
           </div>
 
-          <!-- 尺寸預設 -->
           <div>
             <label class="block text-sm font-medium mb-2 flex items-center gap-2">
               <span>📐</span>
@@ -1487,7 +1431,6 @@ body {
             </select>
           </div>
 
-          <!-- 藝術風格 -->
           <div>
             <label class="block text-sm font-medium mb-2 flex items-center gap-2">
               <span>🎨</span>
@@ -1500,7 +1443,6 @@ body {
               }).join('')}
             </select>
             
-            <!-- 風格預覽 -->
             <div id="stylePreview" class="mt-3 p-3 rounded-lg bg-gray-800/50 border border-gray-700">
               <div class="text-xs font-semibold mb-1 flex items-center gap-2">
                 <span>${t.prompt.currentStyle}:</span>
@@ -1512,7 +1454,6 @@ body {
             </div>
           </div>
 
-          <!-- 質量模式 -->
           <div>
             <label class="block text-sm font-medium mb-2 flex items-center gap-2">
               <span>💎</span>
@@ -1526,7 +1467,6 @@ body {
             <p class="text-xs text-gray-400 mt-1.5" id="qualityDesc">${t.params.standardDesc}</p>
           </div>
 
-          <!-- 進階選項（可摺疊） -->
           <div class="border-t border-gray-700 pt-4">
             <button type="button" id="advancedToggle" class="w-full flex items-center justify-between text-sm font-medium py-2 px-3 rounded-lg hover:bg-gray-800/50 transition">
               <span class="flex items-center gap-2">
@@ -1537,7 +1477,6 @@ body {
             </button>
             
             <div id="advancedSection" class="collapsible-content mt-3 space-y-3">
-              <!-- Seed -->
               <div>
                 <label class="block text-xs font-medium mb-1.5 flex items-center gap-2">
                   <span>🎲</span>
@@ -1552,7 +1491,6 @@ body {
                 >
               </div>
               
-              <!-- 生成數量 -->
               <div>
                 <label class="block text-xs font-medium mb-1.5 flex items-center gap-2">
                   <span>🔢</span>
@@ -1568,7 +1506,6 @@ body {
                 >
               </div>
               
-              <!-- 自動優化選項 -->
               <div class="space-y-2">
                 <label class="flex items-center gap-2 text-xs cursor-pointer hover:text-green-400 transition">
                   <input type="checkbox" id="autoOptimize" checked class="rounded w-4 h-4 text-green-600 focus:ring-2 focus:ring-green-500">
@@ -1583,7 +1520,6 @@ body {
             </div>
           </div>
 
-          <!-- 生成按鈕 -->
           <button 
             type="submit" 
             id="generateBtn"
@@ -1599,6 +1535,7 @@ body {
       </div>
     </aside>
 `;
+}
     <main id="mainPanel" class="flex-1 glass-card overflow-y-auto">
       <div class="p-4 lg:p-6">
         <div class="flex items-center gap-2 mb-6 pb-3 border-b border-gray-700">
@@ -1625,7 +1562,6 @@ body {
             <span>${t.results.seconds}</span>
           </div>
           
-          <!-- 進度條 -->
           <div class="w-full max-w-md mt-6">
             <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
               <div id="progressBar" class="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
@@ -1633,9 +1569,7 @@ body {
           </div>
         </div>
 
-        <!-- 結果區域 -->
         <div id="resultsContainer" class="hidden">
-          <!-- 成功訊息 -->
           <div class="mb-6 p-4 bg-green-900/30 border border-green-700/50 rounded-xl">
             <div class="flex items-center gap-3 mb-2">
               <span class="text-2xl">✅</span>
@@ -1645,7 +1579,6 @@ body {
               </div>
             </div>
             
-            <!-- 生成信息 -->
             <div class="mt-3 pt-3 border-t border-green-800/30 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
               <div class="flex items-center gap-1.5">
                 <span class="text-gray-400">🤖</span>
@@ -1670,12 +1603,9 @@ body {
             </div>
           </div>
 
-          <!-- 圖片網格 -->
           <div id="imageGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <!-- 動態插入圖片 -->
           </div>
 
-          <!-- 操作按鈕 -->
           <div class="flex flex-wrap gap-3">
             <button id="downloadAllBtn" class="px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium flex items-center gap-2 transition shadow-lg">
               <span>⬇️</span>
@@ -1694,7 +1624,6 @@ body {
           </div>
         </div>
 
-        <!-- 錯誤狀態 -->
         <div id="errorState" class="hidden flex-col items-center justify-center py-16 px-4">
           <div class="w-32 h-32 rounded-full bg-gradient-to-br from-red-900 to-red-950 flex items-center justify-center mb-6 shadow-2xl">
             <span class="text-6xl">❌</span>
@@ -1709,16 +1638,13 @@ body {
       </div>
     </main>
 
-    <!-- 右側欄 - 提示詞輸入 -->
     <aside id="rightPanel" class="w-full lg:w-80 xl:w-96 glass-card border-l border-gray-800 overflow-y-auto">
       <div class="p-4 space-y-4">
-        <!-- 標題 -->
         <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-700">
           <span class="text-2xl">✍️</span>
           <h2 class="text-lg font-bold">${t.prompt.title}</h2>
         </div>
 
-        <!-- 正面提示詞 -->
         <div>
           <label class="block text-sm font-medium mb-2 flex items-center gap-2">
             <span>✨</span>
@@ -1733,7 +1659,6 @@ body {
           ></textarea>
         </div>
 
-        <!-- 負面提示詞 -->
         <div>
           <label class="block text-sm font-medium mb-2 flex items-center gap-2">
             <span>🚫</span>
@@ -1748,7 +1673,6 @@ body {
           ></textarea>
         </div>
 
-        <!-- 參考圖像 URL (圖生圖) -->
         <div>
           <label class="block text-sm font-medium mb-2 flex items-center gap-2">
             <span>🖼️</span>
@@ -1767,7 +1691,6 @@ body {
           </p>
         </div>
 
-        <!-- 風格提示 -->
         <div class="border-t border-gray-700 pt-4">
           <div class="text-sm font-medium mb-3 flex items-center gap-2">
             <span>💡</span>
@@ -1783,7 +1706,6 @@ body {
           </div>
         </div>
 
-        <!-- 快速範例 -->
         <div class="border-t border-gray-700 pt-4">
           <div class="text-sm font-medium mb-3 flex items-center gap-2">
             <span>📝</span>
@@ -1808,10 +1730,8 @@ body {
     </aside>
   </div>
 
-  <!-- 歷史記錄模態框 -->
   <div id="historyModal" class="modal">
     <div class="glass-card rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-      <!-- 模態框標題 -->
       <div class="p-4 border-b border-gray-700 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <span class="text-2xl">📚</span>
@@ -1835,39 +1755,29 @@ body {
         </div>
       </div>
       
-      <!-- 歷史記錄列表 -->
       <div id="historyList" class="flex-1 overflow-y-auto p-4">
-        <!-- 空狀態 -->
         <div id="historyEmpty" class="flex flex-col items-center justify-center py-16">
           <span class="text-6xl mb-4 opacity-50">📭</span>
           <p class="text-gray-400 text-center">${t.history.noHistoryDesc}</p>
         </div>
         
-        <!-- 歷史項目網格 -->
         <div id="historyGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- 動態插入歷史項目 -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 圖片查看器模態框 -->
   <div id="imageViewerModal" class="modal">
     <div class="relative max-w-7xl w-full mx-auto">
       <button id="closeViewerBtn" class="absolute top-4 right-4 z-10 w-12 h-12 rounded-full bg-black/50 backdrop-blur-lg hover:bg-black/70 flex items-center justify-center text-2xl transition border border-white/20">
         ✖️
       </button>
       <div id="viewerContent" class="bg-black/30 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-        <!-- 動態插入圖片 -->
       </div>
     </div>
   </div>
 
-  <!-- JavaScript -->
   <script>
-    // ============================================================
-    // 全局變數
-    // ============================================================
     const CONFIG = ${JSON.stringify(CONFIG)};
     const TRANSLATIONS = ${JSON.stringify(TRANSLATIONS)};
     let currentLang = '${lang}';
@@ -1877,9 +1787,6 @@ body {
     let timerInterval = null;
     let history = [];
 
-    // ============================================================
-    // 初始化
-    // ============================================================
     document.addEventListener('DOMContentLoaded', () => {
       initializeApp();
       loadHistory();
@@ -1887,7 +1794,6 @@ body {
     });
 
     function initializeApp() {
-      // 事件監聽器
       document.getElementById('generateForm').addEventListener('submit', handleGenerate);
       document.getElementById('model').addEventListener('change', updateModelInfo);
       document.getElementById('style').addEventListener('change', updateStylePreview);
@@ -1903,14 +1809,12 @@ body {
         showState('empty');
       });
 
-      // 快速範例按鈕
       document.querySelectorAll('.example-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           document.getElementById('prompt').value = e.target.dataset.prompt;
         });
       });
 
-      // 點擊模態框外部關閉
       document.getElementById('historyModal').addEventListener('click', (e) => {
         if (e.target.id === 'historyModal') hideHistory();
       });
@@ -1918,16 +1822,12 @@ body {
         if (e.target.id === 'imageViewerModal') hideImageViewer();
       });
 
-      // 初始化顯示
       updateModelInfo();
       updateStylePreview();
       updateQualityDesc();
     }
 `;
-    // ============================================================
-    // 核心功能
-    // ============================================================
-    
+}
     async function handleGenerate(e) {
       e.preventDefault();
       
@@ -1937,7 +1837,6 @@ body {
         return;
       }
 
-      // 收集參數
       const sizeKey = document.getElementById('size').value;
       const sizeConfig = CONFIG.PRESET_SIZES[sizeKey];
       
@@ -1959,7 +1858,6 @@ body {
           .filter(url => url.length > 0)
       };
 
-      // 顯示生成中
       showState('loading');
       startTimer();
 
@@ -1977,17 +1875,14 @@ body {
           throw new Error(error.error?.message || 'Generation failed');
         }
 
-        // 獲取響應頭信息
         const usedSeed = response.headers.get('X-Seed');
         const genTime = response.headers.get('X-Generation-Time');
         const usedModel = response.headers.get('X-Model');
         const styleName = response.headers.get('X-Style-Name');
 
-        // 轉換圖片為 blob
         const blob = await response.blob();
         const imageUrl = URL.createObjectURL(blob);
 
-        // 顯示結果
         displayResults([{
           url: imageUrl,
           seed: usedSeed,
@@ -1997,7 +1892,6 @@ body {
           style: styleName
         }]);
 
-        // 保存到歷史
         saveToHistory({
           timestamp: Date.now(),
           prompt: currentParams.prompt,
@@ -2047,7 +1941,6 @@ body {
         imageGrid.appendChild(card);
       });
 
-      // 下載按鈕
       document.querySelectorAll('.download-single').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -2055,14 +1948,12 @@ body {
         });
       });
 
-      // 更新信息
       document.getElementById('imageCount').textContent = images.length;
       document.getElementById('usedModel').textContent = images[0].model;
       document.getElementById('usedSize').textContent = images[0].size;
       document.getElementById('usedSeed').textContent = images[0].seed;
       document.getElementById('generationTime').textContent = images[0].time + 's';
 
-      // 操作按鈕
       document.getElementById('downloadAllBtn').onclick = () => downloadAllImages(images);
       document.getElementById('regenerateBtn').onclick = () => document.getElementById('generateForm').dispatchEvent(new Event('submit'));
       document.getElementById('reuseBtn').onclick = () => reuseParameters();
@@ -2087,10 +1978,6 @@ body {
       document.getElementById('errorMessage').textContent = message;
     }
 
-    // ============================================================
-    // 計時器
-    // ============================================================
-    
     function startTimer() {
       generationStartTime = Date.now();
       document.getElementById('elapsedTime').textContent = '0';
@@ -2099,7 +1986,6 @@ body {
         const elapsed = Math.floor((Date.now() - generationStartTime) / 1000);
         document.getElementById('elapsedTime').textContent = elapsed;
         
-        // 進度條動畫（模擬）
         const progress = Math.min(95, elapsed * 3);
         document.getElementById('progressBar').style.width = progress + '%';
       }, 1000);
@@ -2113,10 +1999,6 @@ body {
       document.getElementById('progressBar').style.width = '100%';
     }
 
-    // ============================================================
-    // UI 更新函數
-    // ============================================================
-    
     function updateModelInfo() {
       const modelId = document.getElementById('model').value;
       const model = CONFIG.PROVIDERS.pollinations.models.find(m => m.id === modelId);
@@ -2158,10 +2040,6 @@ body {
       icon.style.transform = section.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
     }
 
-    // ============================================================
-    // 歷史記錄
-    // ============================================================
-    
     function loadHistory() {
       try {
         const saved = localStorage.getItem('flux_ai_history');
@@ -2307,10 +2185,6 @@ body {
       URL.revokeObjectURL(url);
     }
 
-    // ============================================================
-    // 圖片查看器
-    // ============================================================
-    
     function showImageViewer(url) {
       const modal = document.getElementById('imageViewerModal');
       const content = document.getElementById('viewerContent');
@@ -2326,10 +2200,6 @@ body {
       document.getElementById('imageViewerModal').classList.remove('show');
     }
 
-    // ============================================================
-    // 下載功能
-    // ============================================================
-    
     function downloadImage(url, idx) {
       const a = document.createElement('a');
       a.href = url;
@@ -2350,10 +2220,6 @@ body {
       alert('✅ 參數已重用，您可以修改提示詞後再次生成！');
     }
 
-    // ============================================================
-    // 語言切換
-    // ============================================================
-    
     function switchLanguage(e) {
       const newLang = e.target.value;
       const url = new URL(window.location.href);
@@ -2364,6 +2230,11 @@ body {
 </body>
 </html>`;
 }
+// HTML 生成函數結束，getHTML() 已完成
 
+// ============================================================
+// 文件結束
+// ============================================================
 
-
+// 注意：export default 已在文件前面定義
+// 所有代碼到此結束
