@@ -1614,7 +1614,6 @@ body {
           <p class="text-gray-400 text-center max-w-md">${t.results.waitingDesc}</p>
         </div>
 
-        <!-- 生成中狀態 -->
         <div id="loadingState" class="hidden flex-col items-center justify-center py-16 px-4">
           <div class="spinner mb-6"></div>
           <h3 class="text-xl font-bold mb-2 text-green-400">${t.results.generating}</h3>
