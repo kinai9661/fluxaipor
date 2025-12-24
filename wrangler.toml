@@ -1,19 +1,14 @@
 name = "fluxaipor1"
 main = "src/index.js"
-compatibility_date = "2024-12-01"
+compatibility_date = "2024-12-24"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-PROJECT_NAME = "Flux-AI-Pro"
-PROJECT_VERSION = "9.6.1"
+PROJECT_NAME = "Flux AI Pro"
+PROJECT_VERSION = "3.4.0"
 
-[[r2_buckets]]
-binding = "IMAGES_BUCKET"
-bucket_name = "flux-ai-images"
+# API Configuration (可選配置)
+# POLLINATIONS_API_KEY = ""  # 如需使用 API Key，請取消註釋並填入
 
-[[kv_namespaces]]
-binding = "IMAGE_METADATA"
-id = "b6ace939ffbc4bcbbde6ddf02a67a4d7"
-
-[ai]
-binding = "AI"
+# 移除不需要的綁定（當前版本不使用 R2/KV/AI）
+# 如果將來需要持久化存儲，可以重新啟用這些配置
