@@ -134,14 +134,6 @@ const CONFIG = {
       prompt: 'cinematic lighting, film grain, dramatic atmosphere, movie scene, color grading',
       negative: 'amateur, low quality, snapshot'
     },
-    'studio': {
-      name: '攝影棚',
-      icon: '💡',
-      category: 'realistic',
-      description: '專業攝影棚光效',
-      prompt: 'studio lighting, professional setup, clean background, high key lighting',
-      negative: 'outdoor, natural light, messy'
-    },
     'anime': {
       name: '日系動漫',
       icon: '🎌',
@@ -149,30 +141,6 @@ const CONFIG = {
       description: '日本動漫畫風',
       prompt: 'anime style, manga, japanese animation, vibrant colors, cel shaded',
       negative: 'realistic, photorealistic, 3d'
-    },
-    'anime_portrait': {
-      name: '動漫人物',
-      icon: '👧',
-      category: 'anime',
-      description: '動漫角色肖像',
-      prompt: 'anime character, detailed eyes, colorful hair, expressive face, manga style',
-      negative: 'realistic, photographic'
-    },
-    'chibi': {
-      name: 'Q版可愛',
-      icon: '🧸',
-      category: 'anime',
-      description: '可愛 Q 版風格',
-      prompt: 'chibi style, cute, kawaii, small body big head, adorable',
-      negative: 'realistic, mature, serious'
-    },
-    'ghibli': {
-      name: '吉卜力',
-      icon: '🌿',
-      category: 'anime',
-      description: '宮崎駿吉卜力風格',
-      prompt: 'studio ghibli style, hayao miyazaki, watercolor, dreamy atmosphere',
-      negative: 'dark, horror, realistic'
     },
     'oil_painting': {
       name: '油畫',
@@ -190,30 +158,6 @@ const CONFIG = {
       prompt: 'watercolor painting, soft edges, transparent colors, artistic, delicate',
       negative: 'sharp, digital, photorealistic'
     },
-    'impressionism': {
-      name: '印象派',
-      icon: '🌅',
-      category: 'art',
-      description: '印象派藝術',
-      prompt: 'impressionism, monet style, loose brushwork, light effects, artistic',
-      negative: 'realistic, detailed, sharp'
-    },
-    'van_gogh': {
-      name: '梵高風格',
-      icon: '🌻',
-      category: 'art',
-      description: '梵高的繪畫風格',
-      prompt: 'van gogh style, starry night, swirling brushstrokes, expressive, vibrant',
-      negative: 'realistic, modern, digital'
-    },
-    'ukiyo_e': {
-      name: '浮世繪',
-      icon: '🗾',
-      category: 'traditional',
-      description: '日本浮世繪',
-      prompt: 'ukiyo-e, japanese woodblock print, hokusai style, traditional japanese art',
-      negative: 'modern, realistic, western'
-    },
     'digital_art': {
       name: '數位藝術',
       icon: '💻',
@@ -221,22 +165,6 @@ const CONFIG = {
       description: '現代數位繪畫',
       prompt: 'digital art, digital painting, concept art, artstation, detailed',
       negative: 'traditional, photograph, sketch'
-    },
-    'concept_art': {
-      name: '概念設計',
-      icon: '🎭',
-      category: 'digital',
-      description: '遊戲概念藝術',
-      prompt: 'concept art, game design, detailed illustration, professional',
-      negative: 'amateur, simple, sketch'
-    },
-    'vector': {
-      name: '向量插畫',
-      icon: '📐',
-      category: 'digital',
-      description: '扁平向量風格',
-      prompt: 'vector art, flat design, clean lines, minimalist, geometric',
-      negative: 'realistic, textured, 3d'
     },
     'pixel_art': {
       name: '像素藝術',
@@ -254,46 +182,6 @@ const CONFIG = {
       prompt: '3d render, octane render, blender, detailed model, ray tracing',
       negative: '2d, flat, sketch'
     },
-    'low_poly': {
-      name: '低多邊形',
-      icon: '🔷',
-      category: 'digital',
-      description: '低面數 3D 風格',
-      prompt: 'low poly, geometric, stylized 3d, minimal polygons, clean shapes',
-      negative: 'realistic, high detail, organic'
-    },
-    'clay': {
-      name: '黏土質感',
-      icon: '🧱',
-      category: 'digital',
-      description: '黏土建模風格',
-      prompt: 'clay render, claymation, soft shapes, tactile, playful',
-      negative: 'realistic, sharp, metallic'
-    },
-    'fantasy': {
-      name: '奇幻藝術',
-      icon: '🧙',
-      category: 'fantasy',
-      description: '奇幻魔法世界',
-      prompt: 'fantasy art, magical, ethereal, enchanted, mystical atmosphere',
-      negative: 'realistic, modern, mundane'
-    },
-    'dark_fantasy': {
-      name: '黑暗奇幻',
-      icon: '🦇',
-      category: 'fantasy',
-      description: '黑暗哥特風格',
-      prompt: 'dark fantasy, gothic, mysterious, dramatic lighting, ominous',
-      negative: 'bright, cheerful, cute'
-    },
-    'fairy_tale': {
-      name: '童話風格',
-      icon: '🏰',
-      category: 'fantasy',
-      description: '童話故事風格',
-      prompt: 'fairy tale, storybook illustration, whimsical, dreamy, magical',
-      negative: 'realistic, dark, modern'
-    },
     'cyberpunk': {
       name: '賽博朋克',
       icon: '🌃',
@@ -302,125 +190,13 @@ const CONFIG = {
       prompt: 'cyberpunk, neon lights, futuristic city, high tech low life, dystopian',
       negative: 'nature, traditional, ancient'
     },
-    'sci_fi': {
-      name: '科幻未來',
-      icon: '🚀',
-      category: 'scifi',
-      description: '科幻科技風格',
-      prompt: 'sci-fi, futuristic, high tech, space age, advanced technology',
-      negative: 'fantasy, medieval, traditional'
-    },
-    'steampunk': {
-      name: '蒸汽朋克',
-      icon: '⚙️',
-      category: 'scifi',
-      description: '維多利亞蒸汽時代',
-      prompt: 'steampunk, victorian era, brass, gears, steam powered, retro futuristic',
-      negative: 'modern, digital, clean'
-    },
-    'abstract': {
-      name: '抽象藝術',
-      icon: '🎨',
-      category: 'abstract',
-      description: '抽象表現主義',
-      prompt: 'abstract art, non representational, expressive, bold colors, artistic',
-      negative: 'realistic, detailed, photographic'
-    },
-    'geometric': {
-      name: '幾何抽象',
-      icon: '🔶',
-      category: 'abstract',
-      description: '幾何圖形藝術',
-      prompt: 'geometric abstract, shapes, patterns, mathematical, clean lines',
-      negative: 'organic, realistic, messy'
-    },
-    'psychedelic': {
-      name: '迷幻藝術',
-      icon: '🌈',
-      category: 'abstract',
-      description: '迷幻視覺效果',
-      prompt: 'psychedelic art, trippy, vibrant colors, surreal, kaleidoscopic',
-      negative: 'realistic, muted, simple'
-    },
-    'vintage': {
-      name: '復古照片',
-      icon: '📻',
-      category: 'retro',
-      description: '懷舊復古質感',
-      prompt: 'vintage photography, retro, aged, nostalgic, film grain, faded colors',
-      negative: 'modern, digital, clean'
-    },
-    'polaroid': {
-      name: '寶麗來',
-      icon: '📸',
-      category: 'retro',
-      description: '拍立得風格',
-      prompt: 'polaroid style, instant camera, vintage look, soft focus, faded',
-      negative: 'modern, sharp, digital'
-    },
-    'vaporwave': {
-      name: '蒸汽波',
-      icon: '🌸',
-      category: 'retro',
-      description: '80年代美學',
-      prompt: 'vaporwave aesthetic, 80s 90s nostalgia, pastel colors, glitch art',
-      negative: 'realistic, modern, natural'
-    },
-    'minimalist': {
-      name: '極簡主義',
-      icon: '⚪',
-      category: 'minimal',
-      description: '簡約設計',
-      prompt: 'minimalist, simple, clean, negative space, elegant, less is more',
-      negative: 'complex, detailed, busy'
-    },
-    'line_art': {
-      name: '線條藝術',
-      icon: '✏️',
-      category: 'minimal',
-      description: '簡潔線條畫',
-      prompt: 'line art, simple lines, black and white, clean strokes, elegant',
-      negative: 'colored, textured, complex'
-    },
-    'comic': {
-      name: '漫畫風格',
-      icon: '💥',
-      category: 'other',
-      description: '美式漫畫',
-      prompt: 'comic book style, bold lines, halftone, pop art, graphic novel',
-      negative: 'realistic, soft, watercolor'
-    },
-    'noir': {
-      name: '黑色電影',
-      icon: '🎩',
-      category: 'other',
-      description: '黑白電影風格',
-      prompt: 'film noir, black and white, dramatic shadows, high contrast, mysterious',
-      negative: 'colorful, bright, cheerful'
-    },
-    'horror': {
-      name: '恐怖驚悚',
-      icon: '👻',
-      category: 'other',
-      description: '恐怖氛圍',
-      prompt: 'horror, creepy, dark atmosphere, unsettling, eerie, terrifying',
-      negative: 'cute, bright, cheerful'
-    },
-    'surreal': {
-      name: '超現實',
-      icon: '🌀',
-      category: 'other',
-      description: '超現實主義',
-      prompt: 'surrealism, dreamlike, bizarre, dali style, impossible, mind bending',
-      negative: 'realistic, normal, logical'
-    },
-    'pop_art': {
-      name: '波普藝術',
-      icon: '🎪',
-      category: 'other',
-      description: '波普藝術風格',
-      prompt: 'pop art, warhol style, bold colors, graphic, repetition, commercial',
-      negative: 'subtle, realistic, classical'
+    'fantasy': {
+      name: '奇幻藝術',
+      icon: '🧙',
+      category: 'fantasy',
+      description: '奇幻魔法世界',
+      prompt: 'fantasy art, magical, ethereal, enchanted, mystical atmosphere',
+      negative: 'realistic, modern, mundane'
     }
   },
   
@@ -428,6 +204,7 @@ const CONFIG = {
   MAX_HISTORY: 100,
   DEFAULT_QUALITY: 'standard'
 };
+
 const TRANSLATIONS = {
   'zh-TW': {
     title: 'Flux AI Pro',
@@ -447,14 +224,13 @@ const TRANSLATIONS = {
       sizePreset: '尺寸預設',
       artStyle: '藝術風格',
       styleCount: '種風格',
-      categories: '大類別',
       qualityMode: '質量模式',
       economy: '經濟模式',
-      economyDesc: '快速生成，適合測試',
+      economyDesc: '快速生成',
       standard: '標準模式',
-      standardDesc: '平衡質量與速度（推薦）',
+      standardDesc: '平衡質量與速度',
       ultra: '超高清模式',
-      ultraDesc: '極致質量，生成時間較長',
+      ultraDesc: '極致質量',
       advancedOptions: '進階選項',
       seed: '隨機種子',
       seedPlaceholder: '-1 為隨機',
@@ -477,32 +253,20 @@ const TRANSLATIONS = {
       failed: '生成失敗',
       download: '下載圖像',
       regenerate: '再次生成',
-      viewHistory: '查看歷史',
       reuse: '重用參數'
     },
     prompt: {
       title: '提示詞',
       positive: '正面提示詞',
-      positivePlaceholder: '描述你想生成的圖像...\n\n例如：\n一隻可愛的橘色貓咪坐在窗邊，陽光灑在它身上，柔和的光影效果，高清攝影',
+      positivePlaceholder: '描述你想生成的圖像...',
       negative: '負面提示詞',
-      negativePlaceholder: '描述不想要的元素...\n\n例如：\n模糊、低質量、變形、多餘的肢體',
+      negativePlaceholder: '描述不想要的元素...',
       negativeOptional: '（可選）',
       referenceImages: '參考圖像 URL',
       referenceImagesPlaceholder: 'https://example.com/image.jpg',
-      referenceOptional: '（圖生圖 - 可選）',
-      autoTranslate: '支持中文自動翻譯',
-      supportImageToImage: '支持圖生圖的模型：Kontext',
-      styleHints: '風格提示',
-      hints: [
-        '詳細的描述可以獲得更好的效果',
-        '使用藝術風格可以增強視覺效果',
-        '中文提示詞會自動翻譯為英文',
-        '負面提示詞幫助排除不想要的元素',
-        '參考圖像僅適用於 Kontext 模型'
-      ],
+      referenceOptional: '（可選）',
       currentStyle: '當前風格',
-      noStyle: '無風格',
-      styleDescription: '風格描述'
+      noStyle: '無風格'
     },
     history: {
       title: '生成歷史',
@@ -512,149 +276,15 @@ const TRANSLATIONS = {
       noHistoryDesc: '你生成的圖像將會顯示在這裡',
       export: '匯出記錄',
       clear: '清空歷史',
-      confirmClear: '確定要清空所有歷史記錄嗎？此操作不可撤銷。',
-      delete: '刪除',
-      viewImage: '查看大圖',
+      confirmClear: '確定要清空所有歷史記錄嗎？',
       close: '關閉'
-    },
-    styleCategories: {
-      none: '無風格',
-      realistic: '寫實風格',
-      anime: '動漫風格',
-      art: '藝術風格',
-      digital: '數位藝術',
-      cinematic: '電影風格',
-      fantasy: '奇幻風格',
-      scifi: '科幻風格',
-      abstract: '抽象風格',
-      traditional: '傳統藝術',
-      modern: '現代風格',
-      retro: '復古風格',
-      minimal: '極簡風格',
-      other: '其他風格'
-    },
-    status: {
-      online: '系統正常',
-      apiConfigured: 'API 已配置',
-      ready: '就緒'
     },
     errors: {
       promptRequired: '請輸入提示詞',
-      generationFailed: '生成失敗，請稍後重試',
-      networkError: '網絡錯誤，請檢查連接',
-      apiError: 'API 錯誤'
-    }
-  },
-  'en': {
-    title: 'Flux AI Pro',
-    subtitle: 'Professional AI Image Generation',
-    version: 'Version',
-    nav: { generate: 'Generate', history: 'History', settings: 'Settings' },
-    params: {
-      title: 'Parameters',
-      modelSelection: 'Model',
-      priceLabel: 'Price',
-      speedLabel: 'Speed',
-      paramsLabel: 'Params',
-      sizePreset: 'Size',
-      artStyle: 'Style',
-      styleCount: 'Styles',
-      categories: 'Categories',
-      qualityMode: 'Quality',
-      economy: 'Economy',
-      economyDesc: 'Fast generation',
-      standard: 'Standard',
-      standardDesc: 'Balanced quality',
-      ultra: 'Ultra',
-      ultraDesc: 'High quality',
-      advancedOptions: 'Advanced',
-      seed: 'Seed',
-      seedPlaceholder: '-1 for random',
-      numOutputs: 'Count',
-      autoOptimize: 'Auto optimize',
-      autoHD: 'Auto HD',
-      generateBtn: 'Generate'
-    },
-    results: {
-      title: 'Results',
-      waiting: 'No images yet',
-      waitingDesc: 'Fill parameters and click generate',
-      generating: 'Generating',
-      generatingDesc: 'Please wait',
-      timeElapsed: 'Time',
-      seconds: 's',
-      success: 'Success!',
-      successDesc: 'Generated',
-      images: 'images',
-      failed: 'Failed',
-      download: 'Download',
-      regenerate: 'Regenerate',
-      viewHistory: 'History',
-      reuse: 'Reuse'
-    },
-    prompt: {
-      title: 'Prompt',
-      positive: 'Positive',
-      positivePlaceholder: 'Describe your image...\n\nExample:\nA cute orange cat sitting by the window, sunlight, soft lighting, high quality',
-      negative: 'Negative',
-      negativePlaceholder: 'Unwanted elements...\n\nExample:\nblurry, low quality, distorted, extra limbs',
-      negativeOptional: '(Optional)',
-      referenceImages: 'Reference',
-      referenceImagesPlaceholder: 'https://example.com/image.jpg',
-      referenceOptional: '(Optional)',
-      autoTranslate: 'Auto translate',
-      supportImageToImage: 'Image-to-Image: Kontext',
-      styleHints: 'Hints',
-      hints: [
-        'Detailed descriptions work better',
-        'Use art styles for enhanced visuals',
-        'Auto translation supported',
-        'Use negative prompts to exclude elements',
-        'Reference images work with Kontext model'
-      ],
-      currentStyle: 'Style',
-      noStyle: 'None',
-      styleDescription: 'Description'
-    },
-    history: {
-      title: 'History',
-      count: 'records',
-      total: 'Total',
-      noHistory: 'No history',
-      noHistoryDesc: 'Generated images appear here',
-      export: 'Export',
-      clear: 'Clear',
-      confirmClear: 'Clear all history?',
-      delete: 'Delete',
-      viewImage: 'View',
-      close: 'Close'
-    },
-    styleCategories: {
-      none: 'None',
-      realistic: 'Realistic',
-      anime: 'Anime',
-      art: 'Art',
-      digital: 'Digital',
-      cinematic: 'Cinematic',
-      fantasy: 'Fantasy',
-      scifi: 'Sci-Fi',
-      abstract: 'Abstract',
-      traditional: 'Traditional',
-      modern: 'Modern',
-      retro: 'Retro',
-      minimal: 'Minimal',
-      other: 'Other'
-    },
-    status: { online: 'Online', apiConfigured: 'Configured', ready: 'Ready' },
-    errors: {
-      promptRequired: 'Prompt required',
-      generationFailed: 'Generation failed',
-      networkError: 'Network error',
-      apiError: 'API Error'
+      generationFailed: '生成失敗，請稍後重試'
     }
   }
 };
-
 function corsHeaders(additionalHeaders = {}) {
   return {
     'Access-Control-Allow-Origin': '*',
@@ -686,11 +316,7 @@ function getLanguage(request) {
   
   const acceptLang = request.headers.get('accept-language') || '';
   
-  if (acceptLang.includes('zh-TW') || acceptLang.includes('zh-HK')) {
-    return 'zh-TW';
-  }
-  
-  if (acceptLang.includes('zh')) {
+  if (acceptLang.includes('zh-TW') || acceptLang.includes('zh-HK') || acceptLang.includes('zh')) {
     return 'zh-TW';
   }
   
@@ -717,16 +343,6 @@ function successResponse(data) {
   });
 }
 
-function log(level, message, data = {}) {
-  const timestamp = new Date().toISOString();
-  const logEntry = {
-    timestamp,
-    level,
-    message,
-    ...data
-  };
-  console.log(JSON.stringify(logEntry));
-}
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -778,20 +394,9 @@ export default {
         return handleGetModels();
       }
       
-      if (path === '/api/styles') {
-        return handleGetStyles(lang);
-      }
-      
       return errorResponse('Not Found', 404);
       
     } catch (error) {
-      log('error', 'Request failed', {
-        error: error.message,
-        stack: error.stack,
-        path: url.pathname,
-        ip: clientIP
-      });
-      
       return errorResponse('Internal server error: ' + error.message, 500);
     }
   }
@@ -810,12 +415,6 @@ function handleHealthCheck(env) {
       models: CONFIG.PROVIDERS.pollinations.models.length,
       styles: Object.keys(CONFIG.STYLE_PRESETS).length,
       sizes: Object.keys(CONFIG.PRESET_SIZES).length
-    },
-    endpoints: {
-      generate: '/_internal/generate',
-      config: '/api/config',
-      models: '/api/models',
-      styles: '/api/styles'
     }
   };
   
@@ -839,35 +438,6 @@ function handleGetModels() {
   });
 }
 
-function handleGetStyles(lang = 'zh-TW') {
-  const t = TRANSLATIONS[lang] || TRANSLATIONS['zh-TW'];
-  
-  const stylesByCategory = {};
-  
-  Object.entries(CONFIG.STYLE_PRESETS).forEach(([key, style]) => {
-    const category = style.category;
-    if (!stylesByCategory[category]) {
-      stylesByCategory[category] = {
-        name: t.styleCategories[category] || category,
-        styles: []
-      };
-    }
-    
-    stylesByCategory[category].styles.push({
-      id: key,
-      name: style.name,
-      icon: style.icon,
-      description: style.description
-    });
-  });
-  
-  return successResponse({
-    total: Object.keys(CONFIG.STYLE_PRESETS).length,
-    categories: Object.keys(stylesByCategory).length,
-    styles: stylesByCategory
-  });
-}
-
 async function handleGenerate(request, env, clientIP) {
   const startTime = Date.now();
   
@@ -886,11 +456,9 @@ async function handleGenerate(request, env, clientIP) {
       seed: body.seed !== undefined ? parseInt(body.seed) : -1,
       style: body.style || 'none',
       quality_mode: body.quality_mode || 'standard',
-      n: body.n || 1,
       negative_prompt: body.negative_prompt || '',
       auto_optimize: body.auto_optimize !== false,
-      auto_hd: body.auto_hd !== false,
-      reference_images: body.reference_images || []
+      auto_hd: body.auto_hd !== false
     };
     
     const currentSeed = params.seed === -1 
@@ -904,12 +472,12 @@ async function handleGenerate(request, env, clientIP) {
       const styleConfig = CONFIG.STYLE_PRESETS[params.style];
       
       if (styleConfig.prompt) {
-        finalPrompt = `${params.prompt}, ${styleConfig.prompt}`;
+        finalPrompt = params.prompt + ', ' + styleConfig.prompt;
       }
       
       if (styleConfig.negative) {
         finalNegative = finalNegative 
-          ? `${finalNegative}, ${styleConfig.negative}`
+          ? finalNegative + ', ' + styleConfig.negative
           : styleConfig.negative;
       }
     }
@@ -918,19 +486,17 @@ async function handleGenerate(request, env, clientIP) {
       switch (params.quality_mode) {
         case 'ultra':
           finalPrompt += ', ultra high quality, 8k uhd, highly detailed, masterpiece';
-          finalNegative += ', low quality, blurry, pixelated, low resolution';
+          finalNegative += ', low quality, blurry, pixelated';
           break;
         case 'standard':
           finalPrompt += ', high quality, detailed';
           finalNegative += ', low quality, blurry';
           break;
-        case 'economy':
-          break;
       }
     }
     
     const encodedPrompt = encodeURIComponent(finalPrompt);
-    const apiUrl = `${CONFIG.PROVIDERS.pollinations.endpoint}${CONFIG.PROVIDERS.pollinations.pathPrefix}/${encodedPrompt}?model=${params.model}&width=${params.width}&height=${params.height}&seed=${currentSeed}&nologo=true&enhance=true`;
+    const apiUrl = CONFIG.PROVIDERS.pollinations.endpoint + CONFIG.PROVIDERS.pollinations.pathPrefix + '/' + encodedPrompt + '?model=' + params.model + '&width=' + params.width + '&height=' + params.height + '&seed=' + currentSeed + '&nologo=true&enhance=true';
     
     const headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -940,16 +506,8 @@ async function handleGenerate(request, env, clientIP) {
     };
     
     if (CONFIG.POLLINATIONS_AUTH.enabled && CONFIG.POLLINATIONS_AUTH.token) {
-      headers['Authorization'] = `${CONFIG.POLLINATIONS_AUTH.method} ${CONFIG.POLLINATIONS_AUTH.token}`;
+      headers['Authorization'] = CONFIG.POLLINATIONS_AUTH.method + ' ' + CONFIG.POLLINATIONS_AUTH.token;
     }
-    
-    log('info', 'Generating image', {
-      model: params.model,
-      size: `${params.width}x${params.height}`,
-      seed: currentSeed,
-      style: params.style,
-      ip: clientIP
-    });
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), CONFIG.FETCH_TIMEOUT);
@@ -963,22 +521,13 @@ async function handleGenerate(request, env, clientIP) {
     clearTimeout(timeoutId);
     
     if (!response.ok) {
-      throw new Error(`API returned status ${response.status}: ${response.statusText}`);
+      throw new Error('API returned status ' + response.status);
     }
     
     const imageBlob = await response.blob();
     const imageBuffer = await imageBlob.arrayBuffer();
     
     const generationTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    
-    log('info', 'Image generated successfully', {
-      model: params.model,
-      seed: currentSeed,
-      size: `${params.width}x${params.height}`,
-      time: generationTime + 's',
-      bytes: imageBuffer.byteLength,
-      ip: clientIP
-    });
     
     return new Response(imageBuffer, {
       status: 200,
@@ -993,22 +542,13 @@ async function handleGenerate(request, env, clientIP) {
         'X-Style-Name': CONFIG.STYLE_PRESETS[params.style]?.name || params.style,
         'X-Quality-Mode': params.quality_mode,
         'X-Generation-Time': generationTime,
-        'X-Generation-Mode': params.reference_images.length > 0 ? '圖生圖' : '文生圖',
         'Cache-Control': 'public, max-age=31536000, immutable'
       })
     });
     
   } catch (error) {
-    const generationTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    
-    log('error', 'Image generation failed', {
-      error: error.message,
-      time: generationTime + 's',
-      ip: clientIP
-    });
-    
     if (error.name === 'AbortError') {
-      return errorResponse('Request timeout after ' + (CONFIG.FETCH_TIMEOUT / 1000) + ' seconds', 408);
+      return errorResponse('Request timeout', 408);
     }
     
     return errorResponse('Generation failed: ' + error.message, 500);
@@ -1024,7 +564,6 @@ function getHTML(lang = 'zh-TW') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${t.title} v${CONFIG.PROJECT_VERSION}</title>
 <meta name="description" content="${t.subtitle}">
-<meta name="keywords" content="AI, 圖像生成, Flux, Stable Diffusion, AI Art">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -1036,27 +575,11 @@ tailwind.config = {
       colors: {
         background: "hsl(240 10% 3.9%)",
         foreground: "hsl(0 0% 98%)",
-        card: "hsl(240 10% 5%)",
-        "card-foreground": "hsl(0 0% 98%)",
         primary: {
           DEFAULT: "hsl(142.1 76.2% 36.3%)",
           foreground: "hsl(355.7 100% 97.3%)"
         },
-        secondary: {
-          DEFAULT: "hsl(240 3.7% 15.9%)",
-          foreground: "hsl(0 0% 98%)"
-        },
-        muted: {
-          DEFAULT: "hsl(240 3.7% 15.9%)",
-          foreground: "hsl(240 5% 64.9%)"
-        },
-        accent: {
-          DEFAULT: "hsl(240 3.7% 15.9%)",
-          foreground: "hsl(0 0% 98%)"
-        },
-        border: "hsl(240 3.7% 15.9%)",
-        input: "hsl(240 3.7% 15.9%)",
-        ring: "hsl(142.1 76.2% 36.3%)"
+        border: "hsl(240 3.7% 15.9%)"
       }
     }
   }
@@ -1070,7 +593,7 @@ body {
   background: linear-gradient(135deg, #0a0f1e 0%, #1a1f3a 50%, #0f1419 100%);
   background-attachment: fixed;
   color: hsl(0 0% 98%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
 }
 
@@ -1121,10 +644,6 @@ body {
   box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
 }
 
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -1152,44 +671,6 @@ body {
 
 .collapsible-content.open {
   max-height: 2000px;
-}
-
-.style-option {
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  background: rgba(30, 35, 50, 0.3);
-}
-
-.style-option:hover {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.3);
-  transform: translateY(-1px);
-}
-
-.style-option.active {
-  background: rgba(34, 197, 94, 0.2);
-  border-color: rgba(34, 197, 94, 0.5);
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  backdrop-filter: blur(10px);
-  transition: all 0.2s ease;
-}
-
-.badge:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .image-container {
@@ -1228,12 +709,6 @@ body {
   background: rgba(34, 197, 94, 0.7);
 }
 
-@media (max-width: 1024px) {
-  .glass-card {
-    backdrop-filter: blur(15px) saturate(150%);
-  }
-}
-
 .modal {
   display: none;
   position: fixed;
@@ -1255,11 +730,6 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-::selection {
-  background-color: rgba(34, 197, 94, 0.3);
-  color: inherit;
 }
 </style>
 </head>
@@ -1285,11 +755,6 @@ body {
           <span class="hidden sm:inline">${t.nav.history}</span>
           <span id="historyCount" class="px-2 py-0.5 rounded-full bg-green-500 text-white text-xs font-bold min-w-[20px] text-center">0</span>
         </button>
-        
-        <select id="langSwitch" class="px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm cursor-pointer input-field">
-          <option value="zh-TW" ${lang === 'zh-TW' ? 'selected' : ''}>🇹🇼 繁中</option>
-          <option value="en" ${lang === 'en' ? 'selected' : ''}>🇬🇧 EN</option>
-        </select>
       </div>
     </div>
   </header>
@@ -1312,7 +777,7 @@ body {
             <select id="model" class="input-field w-full rounded-lg px-3 py-2.5 text-sm cursor-pointer font-medium">
               ${CONFIG.PROVIDERS.pollinations.models.map(m => {
                 const emoji = m.category === 'fast' ? '⚡' : m.category === 'balanced' ? '⚖️' : m.category === 'image-to-image' ? '🎨' : '🖼️';
-                return `<option value="${m.id}">${emoji} ${m.name}</option>`;
+                return '<option value="' + m.id + '">' + emoji + ' ' + m.name + '</option>';
               }).join('')}
             </select>
             
@@ -1339,7 +804,7 @@ body {
             </label>
             <select id="size" class="input-field w-full rounded-lg px-3 py-2.5 text-sm cursor-pointer">
               ${Object.entries(CONFIG.PRESET_SIZES).map(([key, size]) => {
-                return `<option value="${key}">${size.icon} ${size.name} (${size.width}×${size.height})</option>`;
+                return '<option value="' + key + '">' + size.icon + ' ' + size.name + ' (' + size.width + '×' + size.height + ')</option>';
               }).join('')}
             </select>
           </div>
@@ -1348,11 +813,10 @@ body {
             <label class="block text-sm font-medium mb-2 flex items-center gap-2">
               <span>🎨</span>
               <span>${t.params.artStyle}</span>
-              <span class="text-xs text-gray-400 ml-auto">(45+ ${t.params.styleCount})</span>
             </label>
             <select id="style" class="input-field w-full rounded-lg px-3 py-2.5 text-sm cursor-pointer">
               ${Object.entries(CONFIG.STYLE_PRESETS).map(([key, style]) => {
-                return `<option value="${key}">${style.icon} ${style.name}</option>`;
+                return '<option value="' + key + '">' + style.icon + ' ' + style.name + '</option>';
               }).join('')}
             </select>
             
@@ -1404,29 +868,14 @@ body {
                 >
               </div>
               
-              <div>
-                <label class="block text-xs font-medium mb-1.5 flex items-center gap-2">
-                  <span>🔢</span>
-                  <span>${t.params.numOutputs}</span>
-                </label>
-                <input 
-                  type="number" 
-                  id="numOutputs" 
-                  value="1" 
-                  min="1" 
-                  max="4" 
-                  class="input-field w-full rounded-lg px-3 py-2 text-sm"
-                >
-              </div>
-              
               <div class="space-y-2">
                 <label class="flex items-center gap-2 text-xs cursor-pointer hover:text-green-400 transition">
-                  <input type="checkbox" id="autoOptimize" checked class="rounded w-4 h-4 text-green-600 focus:ring-2 focus:ring-green-500">
+                  <input type="checkbox" id="autoOptimize" checked class="rounded w-4 h-4 text-green-600">
                   <span>⚡ ${t.params.autoOptimize}</span>
                 </label>
                 
                 <label class="flex items-center gap-2 text-xs cursor-pointer hover:text-green-400 transition">
-                  <input type="checkbox" id="autoHD" checked class="rounded w-4 h-4 text-green-600 focus:ring-2 focus:ring-green-500">
+                  <input type="checkbox" id="autoHD" checked class="rounded w-4 h-4 text-green-600">
                   <span>🔍 ${t.params.autoHD}</span>
                 </label>
               </div>
@@ -1440,9 +889,6 @@ body {
           >
             <span class="text-xl group-hover:scale-110 transition-transform">🎨</span>
             <span>${t.params.generateBtn}</span>
-            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-            </svg>
           </button>
         </form>
       </div>
@@ -1600,22 +1046,32 @@ body {
           ></textarea>
           <p class="text-xs text-yellow-400 mt-1.5 flex items-center gap-1">
             <span>⚠️</span>
-            <span>${t.prompt.supportImageToImage}</span>
+            <span>支持圖生圖的模型：Kontext</span>
           </p>
         </div>
 
         <div class="border-t border-gray-700 pt-4">
           <div class="text-sm font-medium mb-3 flex items-center gap-2">
             <span>💡</span>
-            <span>${t.prompt.styleHints}</span>
+            <span>風格提示</span>
           </div>
           <div class="space-y-2">
-            ${t.prompt.hints.map((hint, idx) => `
-              <div class="flex items-start gap-2 text-xs text-gray-400 bg-gray-800/30 p-2 rounded-lg">
-                <span class="text-green-400 font-bold">${idx + 1}.</span>
-                <span>${hint}</span>
-              </div>
-            `).join('')}
+            <div class="flex items-start gap-2 text-xs text-gray-400 bg-gray-800/30 p-2 rounded-lg">
+              <span class="text-green-400 font-bold">1.</span>
+              <span>詳細的描述可以獲得更好的效果</span>
+            </div>
+            <div class="flex items-start gap-2 text-xs text-gray-400 bg-gray-800/30 p-2 rounded-lg">
+              <span class="text-green-400 font-bold">2.</span>
+              <span>使用藝術風格可以增強視覺效果</span>
+            </div>
+            <div class="flex items-start gap-2 text-xs text-gray-400 bg-gray-800/30 p-2 rounded-lg">
+              <span class="text-green-400 font-bold">3.</span>
+              <span>中文提示詞會自動翻譯為英文</span>
+            </div>
+            <div class="flex items-start gap-2 text-xs text-gray-400 bg-gray-800/30 p-2 rounded-lg">
+              <span class="text-green-400 font-bold">4.</span>
+              <span>負面提示詞幫助排除不想要的元素</span>
+            </div>
           </div>
         </div>
 
@@ -1649,7 +1105,7 @@ body {
         <div class="flex items-center gap-3">
           <span class="text-2xl">📚</span>
           <h3 class="text-xl font-bold">${t.history.title}</h3>
-          <span class="badge bg-green-600/20 text-green-400 border border-green-600/30">
+          <span class="badge bg-green-600/20 text-green-400 border border-green-600/30 px-3 py-1 rounded-full text-xs">
             ${t.history.total} <span id="modalHistoryCount">0</span> ${t.history.count}
           </span>
         </div>
@@ -1689,7 +1145,8 @@ body {
       </div>
     </div>
   </div>
-
+`;
+}
   <script>
     const CONFIG = ${JSON.stringify(CONFIG)};
     const TRANSLATIONS = ${JSON.stringify(TRANSLATIONS)};
@@ -1717,7 +1174,6 @@ body {
       document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
       document.getElementById('exportHistoryBtn').addEventListener('click', exportHistory);
       document.getElementById('closeViewerBtn').addEventListener('click', hideImageViewer);
-      document.getElementById('langSwitch').addEventListener('change', switchLanguage);
       document.getElementById('retryBtn').addEventListener('click', () => {
         showState('empty');
       });
@@ -1739,6 +1195,7 @@ body {
       updateStylePreview();
       updateQualityDesc();
     }
+
     async function handleGenerate(e) {
       e.preventDefault();
       
@@ -1759,7 +1216,6 @@ body {
         seed: parseInt(document.getElementById('seed').value) || -1,
         style: document.getElementById('style').value,
         quality_mode: document.getElementById('qualityMode').value,
-        n: parseInt(document.getElementById('numOutputs').value) || 1,
         negative_prompt: document.getElementById('negativePrompt').value.trim(),
         auto_optimize: document.getElementById('autoOptimize').checked,
         auto_hd: document.getElementById('autoHD').checked,
@@ -1811,7 +1267,7 @@ body {
             url: imageUrl,
             seed: usedSeed,
             model: usedModel,
-            size: \`\${sizeConfig.width}×\${sizeConfig.height}\`,
+            size: sizeConfig.width + '×' + sizeConfig.height,
             time: genTime,
             style: styleName
           }
@@ -1833,15 +1289,7 @@ body {
       images.forEach((img, idx) => {
         const card = document.createElement('div');
         card.className = 'image-container group cursor-pointer';
-        card.innerHTML = \`
-          <img src="\${img.url}" alt="Generated \${idx + 1}" class="w-full h-auto">
-          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-            <button class="download-single px-4 py-2 bg-green-600 rounded-lg text-white font-medium flex items-center gap-2 transform scale-90 group-hover:scale-100 transition" data-url="\${img.url}" data-idx="\${idx}">
-              <span>⬇️</span>
-              <span>下載</span>
-            </button>
-          </div>
-        \`;
+        card.innerHTML = '<img src="' + img.url + '" alt="Generated ' + idx + '" class="w-full h-auto"><div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"><button class="download-single px-4 py-2 bg-green-600 rounded-lg text-white font-medium flex items-center gap-2 transform scale-90 group-hover:scale-100 transition" data-url="' + img.url + '" data-idx="' + idx + '"><span>⬇️</span><span>下載</span></button></div>';
         
         card.addEventListener('click', (e) => {
           if (!e.target.closest('.download-single')) {
@@ -1873,8 +1321,11 @@ body {
     function showState(state) {
       const states = ['empty', 'loading', 'results', 'error'];
       states.forEach(s => {
-        document.getElementById(\`\${s}State\`).classList.toggle('hidden', s !== state);
-        document.getElementById(\`\${s}State\`).classList.toggle('flex', s === state);
+        const elem = document.getElementById(s + 'State');
+        if (elem) {
+          elem.classList.toggle('hidden', s !== state);
+          elem.classList.toggle('flex', s === state);
+        }
       });
       
       if (state === 'results') {
@@ -1978,7 +1429,6 @@ body {
       document.getElementById('historyCount').textContent = count;
       document.getElementById('modalHistoryCount').textContent = count;
     }
-
     function showHistory() {
       document.getElementById('historyModal').classList.add('show');
       renderHistory();
@@ -2005,30 +1455,7 @@ body {
       history.forEach((item, idx) => {
         const card = document.createElement('div');
         card.className = 'glass-card p-3 rounded-xl hover:scale-105 transition cursor-pointer';
-        card.innerHTML = \`
-          <div class="aspect-square rounded-lg overflow-hidden mb-2 bg-gray-900">
-            <img src="\${item.result.url}" alt="History \${idx}" class="w-full h-full object-cover">
-          </div>
-          <div class="text-xs space-y-1">
-            <p class="text-gray-400 truncate">\${item.prompt}</p>
-            <div class="flex items-center justify-between text-gray-500">
-              <span>🤖 \${item.result.model}</span>
-              <span>📐 \${item.result.size}</span>
-            </div>
-            <div class="flex items-center justify-between text-gray-500">
-              <span>⏱️ \${item.result.time}s</span>
-              <span>\${new Date(item.timestamp).toLocaleDateString()}</span>
-            </div>
-          </div>
-          <div class="mt-2 flex gap-2">
-            <button class="reuse-history flex-1 px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 rounded text-xs transition" data-idx="\${idx}">
-              ♻️ 重用
-            </button>
-            <button class="delete-history px-2 py-1 bg-red-600/20 hover:bg-red-600/40 rounded text-xs transition" data-idx="\${idx}">
-              🗑️
-            </button>
-          </div>
-        \`;
+        card.innerHTML = '<div class="aspect-square rounded-lg overflow-hidden mb-2 bg-gray-900"><img src="' + item.result.url + '" alt="History ' + idx + '" class="w-full h-full object-cover"></div><div class="text-xs space-y-1"><p class="text-gray-400 truncate">' + item.prompt + '</p><div class="flex items-center justify-between text-gray-500"><span>🤖 ' + item.result.model + '</span><span>📐 ' + item.result.size + '</span></div><div class="flex items-center justify-between text-gray-500"><span>⏱️ ' + item.result.time + 's</span><span>' + new Date(item.timestamp).toLocaleDateString() + '</span></div></div><div class="mt-2 flex gap-2"><button class="reuse-history flex-1 px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 rounded text-xs transition" data-idx="' + idx + '">♻️ 重用</button><button class="delete-history px-2 py-1 bg-red-600/20 hover:bg-red-600/40 rounded text-xs transition" data-idx="' + idx + '">🗑️</button></div>';
         
         card.querySelector('img').addEventListener('click', () => {
           showImageViewer(item.result.url);
@@ -2091,7 +1518,7 @@ body {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = \`flux-ai-history-\${Date.now()}.json\`;
+      a.download = 'flux-ai-history-' + Date.now() + '.json';
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -2100,9 +1527,7 @@ body {
       const modal = document.getElementById('imageViewerModal');
       const content = document.getElementById('viewerContent');
       
-      content.innerHTML = \`
-        <img src="\${url}" alt="Full size" class="w-full h-auto max-h-[85vh] object-contain">
-      \`;
+      content.innerHTML = '<img src="' + url + '" alt="Full size" class="w-full h-auto max-h-[85vh] object-contain">';
       
       modal.classList.add('show');
     }
@@ -2114,7 +1539,7 @@ body {
     function downloadImage(url, idx) {
       const a = document.createElement('a');
       a.href = url;
-      a.download = \`flux-ai-\${Date.now()}-\${idx}.png\`;
+      a.download = 'flux-ai-' + Date.now() + '-' + idx + '.png';
       a.click();
     }
 
@@ -2130,14 +1555,8 @@ body {
       }
       alert('✅ 參數已重用，您可以修改提示詞後再次生成！');
     }
-
-    function switchLanguage(e) {
-      const newLang = e.target.value;
-      const url = new URL(window.location.href);
-      url.searchParams.set('lang', newLang);
-      window.location.href = url.toString();
-    }
   </script>
 </body>
-</html>`;
+</html>
+`;
 }
